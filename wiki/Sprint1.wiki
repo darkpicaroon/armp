@@ -12,7 +12,8 @@
 === Backlog ===
 
 || *[LabelInformation ID]* || *[LabelInformation Description]* || *[LabelInformation How to Demo]* || *[LabelInformation Imp.]* || *[LabelInformation Owner]* || *[LabelInformation Est.]* || *[LabelInformation Elaps.]* || *[LabelInformation Status]* ||
-|| US01 || Installation of eclipse and the [http://developer.android.com/sdk/android-2.2.html SDK for Android 2.2], implementation of an [http://developer.android.com/guide/tutorials/hello-world.html Hello World application for Android] and test with the Android emulator. || Run the test from eclipse. (source required) || 100 || All || 1 || 0 || http://fabienrenaud.com/gatech/star-white.png ||
+|| US01 || Installation of the [http://www.eclipse.org/downloads/packages/eclipse-ide-java-developers/heliossr1 Java eclipse IDE (Helios version)], the [http://developer.android.com/sdk/android-2.2.html SDK for Android 2.2] and the [http://developer.android.com/sdk/eclipse-adt.html ADT plugin]. || Launch _eclipse_ and the _Android SDK and AVD Manager_. || 100 || All || 1 || 1/2 || http://fabienrenaud.com/gatech/star-gold.png ||
+|| US02 || Implementation of an [http://developer.android.com/guide/tutorials/hello-world.html Hello World application for Android] and test with the Android emulator. || Run the test from eclipse. || 99 || All || 1 || 0 || http://fabienrenaud.com/gatech/star-white.png ||
 
 === Links ===
 
