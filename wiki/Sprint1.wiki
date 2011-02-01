@@ -1,5 +1,6 @@
 === Objectives ===
 
+ * Setup the Android's required development tools.
  * Add to the default music player of Android a Google Maps feature.
 
 === Resources ===
