@@ -20,7 +20,7 @@ Elapsed time since the User Story has been started.
 
 === Owner ===
 Developer who is plan to work, is working or has worked on the User Story.
-Use _All_ if everybody has worked on.
+Use _All_ to mean every developer.
 
 === Sprint ===
 The completion sprint.
