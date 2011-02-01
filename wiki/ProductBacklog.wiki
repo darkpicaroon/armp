@@ -1,21 +1,7 @@
 ==== About ====
-
 The Product Backlog evolves during the Use Case (new stories, modified importance, ...).
 The Product Owner is in charge of "gardening" this table (he is often assisted by the Scrum Master).
 
-=== Columns information ===
- * *ID* _Story id_
- * *Description* _Short description_
- * *How to Demo* _Links, screenshots, sources and explanations to see easily and quickly that the Story has been completed._
- * *Imp.* _Importance (-1: no evaluation yet)._
- * *Est.* _Estimation in hours (0: no evaluation yet)._
- * *Sprint* _Completion Sprint_
- * *Status* _Can take 4 values:_
-  ** (/) _Completed_
-  ** (b) _Work in Progress_
-  ** (off) _Standby_
-  ** (x) _Canceled or Postponed_
-
 === Backlog ===
-|| *ID* || *Description* || *How to Demo* || *Imp.* || *Est.* || *Sprint* || *Status* ||
-|| US01 || Installation of eclipse and the [http://developer.android.com/sdk/android-2.2.html SDK for Android 2.2], implementation of an [http://developer.android.com/guide/tutorials/hello-world.html Hello World application for Android] and test it with the Android emulator. || Run the test from eclipse. (source required) || 100 || 1 || [Sprint1 Sprint 1] || (off) ||
+||  *[LabelInformation ID]* || *[LabelInformation Description]* || *[LabelInformation How to Demo]* || *[LabelInformation Imp.]* || *[LabelInformation Est.]* || *[LabelInformation Sprint]* || *[LabelInformation Status]* ||
+|| US01 || Installation of eclipse and the [http://developer.android.com/sdk/android-2.2.html SDK for Android 2.2], implementation of an [http://developer.android.com/guide/tutorials/hello-world.html Hello World application for Android] and test it with the Android emulator. || Run the test from eclipse. (source required) || 100 || 1 || [Sprint1 Sprint 1] || http://fabienrenaud.com/gatech/star-white.png ||
