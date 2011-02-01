@@ -1,7 +1,8 @@
+#labels Phase-Requirements,Phase-Design,Phase-Implementation
 ==== About ====
 The Product Backlog evolves during the Use Case (new stories, modified importance, ...).
 The Product Owner is in charge of "gardening" this table (he is often assisted by the Scrum Master).
 
 === Backlog ===
 ||  *[LabelInformation ID]* || *[LabelInformation Description]* || *[LabelInformation How to Demo]* || *[LabelInformation Imp.]* || *[LabelInformation Est.]* || *[LabelInformation Sprint]* || *[LabelInformation Status]* ||
-|| US01 || Installation of eclipse and the [http://developer.android.com/sdk/android-2.2.html SDK for Android 2.2], implementation of an [http://developer.android.com/guide/tutorials/hello-world.html Hello World application for Android] and test it with the Android emulator. || Run the test from eclipse. (source required) || 100 || 1 || [Sprint1 Sprint 1] || http://fabienrenaud.com/gatech/star-white.png ||
+|| US01 || Installation of eclipse and the [http://developer.android.com/sdk/android-2.2.html SDK for Android 2.2], implementation of an [http://developer.android.com/guide/tutorials/hello-world.html Hello World application for Android] and test with the Android emulator. || Run the test from eclipse. (source required) || 100 || 1 || [Sprint1 Sprint 1] || http://fabienrenaud.com/gatech/star-white.png ||
