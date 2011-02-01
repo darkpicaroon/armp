@@ -19,4 +19,4 @@ The Product Owner is in charge of "gardening" this table (he is often assisted b
 
 === Backlog ===
 || *ID* || *Description* || *How to Demo* || *Imp.* || *Est.* || *Owner* || *Sprint* || *Status* ||
-|| US01 || Installation of eclipse and the [http://developer.android.com/sdk/android-2.2.html SDK for Android 2.2], implementation of an [http://developer.android.com/guide/tutorials/hello-world.html Hello World application for Android] and test it with the Android emulator. || Run the test from eclipse. (source required) || 100 || 1 || All || [Sprint0 Sprint 0] || (off) ||
+|| US01 || Installation of eclipse and the [http://developer.android.com/sdk/android-2.2.html SDK for Android 2.2], implementation of an [http://developer.android.com/guide/tutorials/hello-world.html Hello World application for Android] and test it with the Android emulator. || Run the test from eclipse. (source required) || 100 || 1 || All || [Sprint1] || (off) ||
