@@ -1,0 +1,26 @@
+=== ID ===
+The User Story id.
+
+=== Description ===
+A short description of the User Story.
+
+=== How to Demo ===
+Links, screenshots, sources and explanations to see easily and quickly the results of the User Story.
+
+=== Imp. ===
+Importance.
+-1: no evaluation yet.
+
+=== Est. ===
+Estimation in hours.
+0: no evaluation yet.
+
+=== Sprint ===
+The completion sprint.
+
+=== Status ===
+Can take 4 values:
+ * http://fabienrenaud.com/gatech/success.gif _Completed_
+ * http://fabienrenaud.com/gatech/star-gold.png _Work in Progress_
+ * http://fabienrenaud.com/gatech/star-white.png _Standby_
+ * http://fabienrenaud.com/gatech/warning.gif _Canceled or Postponed_
