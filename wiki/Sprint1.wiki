@@ -1,12 +1,17 @@
 #summary One-sentence summary of this page.
 
-= Sprint 1 =
+== Sprint 1 ==
 
-== Objectives ==
+=== Objectives ===
 
-Add to the default music player of Android a Google Maps feature.
+ * Add to the default music player of Android a Google Maps feature.
 
-== Backlog ==
+=== Resources ===
 
-|| ID || Description || How to Demo || Imp. || Est. || Owner || Status ||
-|| US01 || Installation of eclipse and the [http://developer.android.com/sdk/android-2.2.html SDK for Android 2.2], implementation of an [http://developer.android.com/guide/tutorials/hello-world.html Hello World application for Android] and test it with the Android emulator. || Run the test from eclipse. (source required) || 100 || 1 || All || (off) ||
+ * Start day: 02/1/2011
+ * End day: 08/1/2011
+
+=== Backlog ===
+
+|| ID || Description || How to Demo || Imp. || Owner || Est. || Status ||
+|| US01 || Installation of eclipse and the [http://developer.android.com/sdk/android-2.2.html SDK for Android 2.2], implementation of an [http://developer.android.com/guide/tutorials/hello-world.html Hello World application for Android] and test it with the Android emulator. || Run the test from eclipse. (source required) || 100 || All || 1 || (off) ||
