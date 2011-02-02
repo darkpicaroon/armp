@@ -10,6 +10,19 @@
 
 === Backlog ===
 
+<table width="100%" border="0">
+<tr>
+<td width="auto"></td>
+<td width="24">http://fabienrenaud.com/gatech/success.gif</td>
+<td width="60">_Success_</td>
+<td width="24">http://fabienrenaud.com/gatech/star-gold.png</td>
+<td width="110">_Work in Progress_</td>
+<td width="24">http://fabienrenaud.com/gatech/star-white.png</td>
+<td width="55">_Standy_</td>
+<td width="24">http://fabienrenaud.com/gatech/warning.gif</td>
+<td width="150">_Canceled or Postpone_</td>
+</tr>
+</table>
 || *[LabelInformation ID]* || *[LabelInformation Description]* || *[LabelInformation How to Demo]* || *[LabelInformation Imp.]* || *[LabelInformation Owner]* || *[LabelInformation Est.]* || *[LabelInformation Elaps.]* || *[LabelInformation Status]* ||
 || US08 || Download of the OpenAL, build with the NDK and test on the Android. || Play a music with OpenAL on Android || 96 ||  || 3 || 0 || http://fabienrenaud.com/gatech/star-white.png ||
 || US09 || Implementation of web hosted music playback with OpenAL. || Play a web hosted music with OpenAL on Android || 95 || || 2 || 0 || http://fabienrenaud.com/gatech/star-white.png ||
