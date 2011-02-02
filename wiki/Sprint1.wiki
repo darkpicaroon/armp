@@ -11,7 +11,19 @@
  * End day: 08/1/2011
 
 === Backlog ===
-
+<table width="100%" border="0">
+<tr>
+<td width="auto"></td>
+<td width="24">http://fabienrenaud.com/gatech/success.gif</td>
+<td width="60">_Success_</td>
+<td width="24">http://fabienrenaud.com/gatech/star-gold.png</td>
+<td width="110">_Work in Progress_</td>
+<td width="24">http://fabienrenaud.com/gatech/star-white.png</td>
+<td width="55">_Standy_</td>
+<td width="24">http://fabienrenaud.com/gatech/warning.gif</td>
+<td width="150">_Canceled or Postpone_</td>
+</tr>
+</table>
 || *[LabelInformation ID]* || *[LabelInformation Description]* || *[LabelInformation How to Demo]* || *[LabelInformation Imp.]* || *[LabelInformation Owner]* || *[LabelInformation Est.]* || *[LabelInformation Elaps.]* || *[LabelInformation Status]* ||
 || US01 || Installation of the [http://www.eclipse.org/downloads/packages/eclipse-ide-java-developers/heliossr1 Java eclipse IDE (Helios version)], the [http://developer.android.com/sdk/android-2.2.html SDK for Android 2.2] and the [http://developer.android.com/sdk/eclipse-adt.html ADT plugin]. || Launch _eclipse_ and the _Android SDK and AVD Manager_. || 100 || All || 1 || 1/2 || http://fabienrenaud.com/gatech/star-gold.png ||
 || US02 || Implementation of an [http://developer.android.com/guide/tutorials/hello-world.html Hello World application for Android] and test with the Android emulator. || Run the test from eclipse. || 99 || All || 1 || 0 || http://fabienrenaud.com/gatech/star-white.png ||
