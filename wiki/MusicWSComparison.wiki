@@ -12,8 +12,31 @@ _`*`PAR: Premium Account Requested
 
 == Details ==
 === Deezer ===
+
+Deezer proposes a very light API ([http://www.deezer.com/fr/#developers/simpleapi/ simpleapi]), with few methods :
+ * Search
+ * Lookup artist, album and tracks.
+
+A stronger API seems to exist but is not released yet see: [http://www.deezer.com/fr/#developers/api/ Deezer API] (only reachable by changing the url).
+
+Those API are only available by submitting our projects to Deezer and it looks like their answer are not instant. 
+
+
 === Grooveshark ===
+
+Grooveshark API documentation is slight. Many methods are referenced but with no clear uses of them.
+
+A public APi also exists: [http://apishark.com/ here]. There are more information on how to use the different methods and it's free of charge 
+but the main problem is that it is unofficial see it's [http://apishark.com/API_TOS.pdf Terms of Service].
+
 === Last.FM ===
+
+LastFM provides us an API than can be used as well on desktop applications and or mobile devices. The documentation gathers 
+a big number of methods and is welled structured. 
+
+It is required to be authenticated to ask for the API and as said on the terms of service 
+'you must be a registered User to have access to, retrieve and use the Last.fm Data'. 
+
 === Pandora ===
 
  * Not allowed for non US residents.
