@@ -1,16 +1,17 @@
 #labels Phase-Requirements,Phase-Design,Phase-Implementation
-=== Objectives ===
+= Sprint 1 =
+== Objectives ==
 
  * Setup the Android's required development tools.
  * Add to the default music player of Android a Google Maps feature.
  * Compare music web services available.
 
-=== Resources ===
+== Resources ==
 
  * Start day: 02/1/2011
  * End day: 08/1/2011
 
-=== Backlog ===
+== Backlog ==
 <table width="100%" border="0">
 <tr>
 <td width="auto"></td>
@@ -29,10 +30,10 @@
 || US02 || Implementation of an [http://developer.android.com/guide/tutorials/hello-world.html Hello World application for Android] and test with the Android emulator. || Run the test from eclipse. || 99 || All || 1 || 1 || http://fabienrenaud.com/gatech/success.gif ||
 || US03 || Download and push on the svn of the Android stock music application. || Build and run the base application. [http://code.google.com/p/armp/source/detail?r=33 See revision 33] || 98 || abarreir || 1/2 || 1.5 || http://fabienrenaud.com/gatech/success.gif ||
 || US04 || Add a tab displaying a map view on the application. || _Screenshot_ || 97 || || 1.5 || 0 || http://fabienrenaud.com/gatech/star-white.png ||
-|| US05 || Creation of the music web services comparision matrix. || Read the [MusicWSComparison Music Web Services comparison] page. || 75 || Fabien || 1/2 || 0 || http://fabienrenaud.com/gatech/star-gold.png ||
+|| US05 || Creation of the music web services comparision matrix. || Read the [MusicWSComparison Music Web Services comparison] page. || 75 || Fabien || 1/2 || 1/2 || http://fabienrenaud.com/gatech/success.gif ||
 || US06 || Study and compare the following web services : Deezer, Last.FM and Grooveshark. || Read the [MusicWSComparison Music Web Services comparison] page. || 74 || Mathieu || 2 || 0 || http://fabienrenaud.com/gatech/star-white.png ||
-|| US07 || Study and compare the following web services : Spotify, Pandora and Soundcloud. || Read the [MusicWSComparison Music Web Services comparison] page. || 73 || Fabien|| 2 || 0 || http://fabienrenaud.com/gatech/star-white.png ||
+|| US07 || Study and compare the following web services : Spotify, Pandora and Soundcloud. || Read the [MusicWSComparison Music Web Services comparison] page. || 73 || Fabien|| 2 || 0 || http://fabienrenaud.com/gatech/star-gold.png ||
 
-=== Links ===
+== Links ==
 
  * [ProductBacklog Product Backlog]
