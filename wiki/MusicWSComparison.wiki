@@ -4,7 +4,7 @@
 || *Name* || *Version* || *Platforms* || *PAR*`*` || *Services* || *Request* || *Response* || *Doc* || *Subscription* || *License* || *Terms* || 
 || Deezer || 3.0 || Windows, Mac OS X, Linux || || Search, Lookup Artist/Album/Lookup Track|| HTTP/GET || XML, JSON, PHP || [http://www.deezer.com/fr/developers/#developers/simpleapi/ Here]. || [http://www.deezer.com/fr/api#api/new.php Here]. || || ||
 || Grooveshark || 1.0 || Windows, Mac OS X, Linux || || [http://developers.grooveshark.com/ See detailed services here].|| HTTP/GET || JSON-encoded objects || [http://developers.grooveshark.com/ Here]. || Need web service key. || || ||
-|| Last.FM || 2.0 || Windows, Mac OS X, Linux || || Search, album/artiste browsing, chart, radio, [http://www.lastfm.fr/api/intro see more]. || HTTP/GET || Text, XML, XSPF, RSS || [http://www.lastfm.fr/api/intro Here]. || [http://www.lastfm.fr/api/account Here]. Requires an account! || [http://www.lastfm.fr/api/tos Here]. || ||
+|| Last.FM || 2.0 || Windows, Mac OS X, Linux || || Search, album/artiste browsing, chart, radio, [http://www.lastfm.fr/api/intro see more]. || HTTP/GET || Text, XML, XSPF, RSS || [http://www.lastfm.fr/api/intro Here]. || [http://www.lastfm.fr/api/account Here]. Requires an account! || ||[http://www.lastfm.fr/api/tos Here]. ||
 || Pandora ||
 || Soundcloud ||
 || Spotify || 0.0.6 || Windows, Mac OS X, Linux || Yes || Search, Artist/Album browsing, Session/User/Image/Playlist/Toplist handling || C call || C type || [http://developer.spotify.com/en/libspotify/docs/ Here] || [https://developer.spotify.com/en/libspotify/application-key/ Here]. Requires a Premium account first! || [http://www.opensource.org/licenses/mit-license.php MIT] || [http://developer.spotify.com/en/libspotify/terms-of-use/ Here] ||
