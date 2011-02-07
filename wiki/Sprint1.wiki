@@ -32,7 +32,7 @@
 || US04 || Add a tab displaying a map view on the application. || _Screenshot, added code and explanations_ || 97 || || 1.5 || 0 || http://fabienrenaud.com/gatech/star-white.png ||
 || US05 || Creation of the music web services comparision matrix. || Read the [MusicWSComparison Music Web Services comparison] page. || 75 || Fabien || 1/2 || 1/2 || http://fabienrenaud.com/gatech/success.gif ||
 || US06 || Study and compare the following web services : Deezer, Last.FM and Grooveshark. || Read the [MusicWSComparison Music Web Services comparison] page. || 74 || Mathieu || 2 || 0 || http://fabienrenaud.com/gatech/star-white.png ||
-|| US07 || Study and compare the following web services : Spotify, Pandora and Soundcloud. || Read the [MusicWSComparison Music Web Services comparison] page. || 73 || Fabien|| 2 || 0 || http://fabienrenaud.com/gatech/star-gold.png ||
+|| US07 || Study and compare the following web services : Spotify, Pandora and Soundcloud. || Read the [MusicWSComparison Music Web Services comparison] page. || 73 || Fabien|| 2 || 2.5 || http://fabienrenaud.com/gatech/success.gif ||
 
 == Links ==
 
