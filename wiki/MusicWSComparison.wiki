@@ -1,0 +1,20 @@
+= Music Web Services Comparison =
+== Summary ==
+
+|| *MWS name* ||
+|| Deezer ||
+|| Grooveshark ||
+|| Last.FM ||
+|| Pandora ||
+|| Soundcloud ||
+|| Spotify ||
+
+_MWS: Music Web Service_
+
+== Details ==
+=== Deezer ===
+=== Grooveshark ===
+=== Last.FM ===
+=== Pandora ===
+=== Soundcloud ===
+=== Spotify ===
