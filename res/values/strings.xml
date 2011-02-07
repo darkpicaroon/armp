@@ -247,6 +247,8 @@
     <string name="videobrowserlabel">Videos</string>
     <!-- Activity label. This might show up in the activity-picker -->
     <string name="mediapickerlabel">Armp</string>
+    <!-- Activity label. This might show up in the activity-picker -->
+    <string name="maplabel">Localized music</string>
 
     <!-- Shown as a transient message whenever a file fails to play -->
     <string name="playback_failed">Sorry, the player does not support this type of audio file.</string>

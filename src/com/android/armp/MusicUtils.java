@@ -1201,6 +1201,10 @@ public class MusicUtils {
             case R.id.playlisttab:
                 intent.setDataAndType(Uri.EMPTY, MediaStore.Audio.Playlists.CONTENT_TYPE);
                 break;
+            case R.id.maptab:
+            	intent = new Intent(a, LocalizedMusicActivity.class);
+            	a.startActivity(intent);
+            	break;
             case R.id.nowplayingtab:
                 intent = new Intent(a, MediaPlaybackActivity.class);
                 a.startActivity(intent);

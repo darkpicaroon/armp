@@ -33,6 +33,9 @@
             android:name="android.app.default_searchable"
             android:value="com.android.armp.QueryBrowserActivity"
         />
+        
+        <uses-library android:name="com.google.android.maps" />
+        
         <activity android:name="com.android.armp.MusicBrowserActivity"
             android:theme="@android:style/Theme.NoTitleBar"
         >
@@ -227,6 +230,10 @@
                 <data android:mimeType="vnd.android.cursor.dir/audio"/>
             </intent-filter>
         </activity>
+        
+        <activity android:name="com.android.armp.LocalizedMusicActivity"
+                android:label="@string/maplabel" />
+                        
         <activity android:name="com.android.armp.CreatePlaylist"
             android:theme="@android:style/Theme.Dialog" />
         <activity android:name="com.android.armp.RenamePlaylist"
