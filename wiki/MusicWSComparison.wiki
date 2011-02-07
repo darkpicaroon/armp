@@ -1,15 +1,15 @@
 = Music Web Services Comparison =
 == Summary ==
 
-|| *MWS name* ||
-|| Deezer ||
+|| *Name* || *Version* || *Platforms* || *PAR*`*` || *Services* || *Request* || *Response* || *Doc* || *Subscription* || *License* || *Terms* || 
+|| Deezer || || || || || HTTP/GET || XML, JSON, PHP || || || || ||
 || Grooveshark ||
 || Last.FM ||
 || Pandora ||
 || Soundcloud ||
-|| Spotify ||
+|| Spotify || 0.0.6 || Windows, Mac OS X, Linux || Yes || Search, Artist/Album browsing, Session/User/Image/Playlist/Toplist handling || C call || C type || [http://developer.spotify.com/en/libspotify/docs/ Here] || [https://developer.spotify.com/en/libspotify/application-key/ Here]. Requires a Premium account first! || [http://www.opensource.org/licenses/mit-license.php MIT] || [http://developer.spotify.com/en/libspotify/terms-of-use/ Here] ||
 
-_MWS: Music Web Service_
+_`*`PAR: Premium Account Requested
 
 == Details ==
 === Deezer ===
