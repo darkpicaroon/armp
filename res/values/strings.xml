@@ -110,6 +110,10 @@
     <string name="playlists_menu">Playlists</string>
     <!-- Playlists screen title -->
     <string name="playlists_title">Playlists</string>
+    <!-- Category label on Library screen -->
+    <string name="maps_menu">AroundMe</string>
+    <!-- Map view screen title -->
+    <string name="maps_title">AroundMe</string>
     <!-- Videos screen title -->
     <string name="videos_title">Videos</string>
     <!-- All media screen title -->

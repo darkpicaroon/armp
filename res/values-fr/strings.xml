@@ -120,11 +120,11 @@
     <string name="weekpicker_title" msgid="699535378922101701">"Définir la durée"</string>
     <string name="save_as_playlist" msgid="5180413608901885255">"Enregistrer comme playlist"</string>
     <string name="clear_playlist" msgid="4565515100924905315">"Effacer la playlist"</string>
-    <string name="musicbrowserlabel" msgid="3162022214114562892">"Musique"</string>
+    <string name="musicbrowserlabel" msgid="3162022214114562892">"Armp"</string>
     <string name="musicshortcutlabel" msgid="2602980193508150226">"Playlist musicale"</string>
-    <string name="mediaplaybacklabel" msgid="6733604841530940397">"Musique"</string>
+    <string name="mediaplaybacklabel" msgid="6733604841530940397">"Armp"</string>
     <string name="videobrowserlabel" msgid="8522326678447494657">"Vidéos"</string>
-    <string name="mediapickerlabel" msgid="4549836003229914299">"Musique"</string>
+    <string name="mediapickerlabel" msgid="4549836003229914299">"Armp"</string>
     <string name="playback_failed" msgid="4477832192645009774">"Désolé, le lecteur ne prend pas en charge ce type de fichier audio."</string>
     <string name="cancel" msgid="886559484711947520">"Annuler"</string>
     <string name="remove_from_playlist" msgid="2548577514849026354">"Supprimer de la playlist"</string>
