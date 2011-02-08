@@ -1,0 +1,35 @@
+#labels Phase-Requirements,Phase-Design,Phase-Implementation
+=== Objectives ===
+
+ * Study and first implementation of the sound spatialization.
+
+=== Resources ===
+
+ * Start day: 02/16/2011
+ * End day: 02/22/2011
+
+=== Backlog ===
+
+<table width="100%" border="0">
+<tr>
+<td width="auto"></td>
+<td width="24">http://fabienrenaud.com/armp/success.gif</td>
+<td width="60">_Success_</td>
+<td width="24">http://fabienrenaud.com/armp/star-gold.png</td>
+<td width="110">_Work in Progress_</td>
+<td width="24">http://fabienrenaud.com/armp/star-white.png</td>
+<td width="55">_Standy_</td>
+<td width="24">http://fabienrenaud.com/armp/warning.gif</td>
+<td width="150">_Canceled or Postpone_</td>
+</tr>
+</table>
+|| *[LabelInformation ID]* || *[LabelInformation Description]* || *[LabelInformation How to Demo]* || *[LabelInformation Imp.]* || *[LabelInformation Owner]* || *[LabelInformation Est.]* || *[LabelInformation Elaps.]* || *[LabelInformation Status]* ||
+|| US09 || Implementation of web hosted music playback with the OpenAL. || Play a web hosted music with OpenAL on Android || 91 || || 2 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US10 || Study and test on the Android emulator of the OpenAL 3D sound spatialization. || || 90 || || 3 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US11 || Study and test on an Android device of the OpenAL 3D sound spatialization, using the device compass. || || 89 || || 2 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US12 || Hard coding of geolocated sounds, transforming geolocation information provided by the Android device to OpenAL location data. || || 88 || || 5 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US13 || Search and implement ways to calibrate the compass regarding how the phone is carried out by the user. || || 87 || All || 10 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+
+=== Links ===
+
+ * [ProductBacklog Product Backlog]
