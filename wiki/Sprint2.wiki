@@ -2,7 +2,6 @@
 === Objectives ===
 
  * Porting OpenAL to Android and use it from the Stock Music Player.
- * Study and first implementation of the sound spatialization.
 
 === Resources ===
 
