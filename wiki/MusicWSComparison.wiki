@@ -1,14 +1,14 @@
 = Music Web Services Comparison =
 == Summary ==
 
-|| *Name* || *Version* || *Platforms* || *Languages/Framework* || *PAR*`*` || *Services* || *Request* || *Response* || *Doc* || *Registration* || *Terms* || 
-|| Deezer || 3.0 || Windows, Mac OS X, Linux || ||  || Search, Lookup Artist/Album/Lookup Track|| HTTP/GET || XML, JSON, PHP || [http://www.deezer.com/fr/developers/#developers/simpleapi/ Here]. || [http://www.deezer.com/fr/api#api/new.php Here]. || ||
-|| Grooveshark || 1.0 || Windows, Mac OS X, Linux || || || [http://developers.grooveshark.com/ See detailed services here].|| HTTP/GET || JSON-encoded objects || [http://developers.grooveshark.com/ Here]. || Need web service key. || ||
-|| Last.FM || 2.0 || Windows, Mac OS X, Linux || Java, C++, .NET, Python, Ruby, PHP, Actionscript, C#, Perl, Javascript, Objective-C || || Search, album/artiste browsing, chart, radio, [http://www.lastfm.fr/api/intro see more]. || HTTP/GET, XML-RPC || Text, XML, JSON, XSPF, RSS || [http://www.lastfm.fr/api/intro Here]. || [http://www.lastfm.fr/api/account Here]. Requires an account! || [http://www.lastfm.fr/api/tos Here]. ||
-|| Soundcloud || Java wrapper: 1.0.0 beta ; C wrapper: 0.6.0 || N/A || Java, C, Python, Actionscript 3, PHP, Ruby, Cocoa, Javascript || No || Authentication, Search for tracks/users/groups/playlists, upload of music, add or delete comments || HTTP/GET || XML, JSON || [http://github.com/soundcloud/api/wiki/ Here] || [http://soundcloud.com/you/apps/new Here]. Requires an account. || [http://soundcloud.com/community-guidelines Community Guidelines], [http://soundcloud.com/terms-of-use Terms of Use], [http://soundcloud.com/developers/policies#trademark Trademark Guidelines], [http://soundcloud.com/pages/privacy Privacy Policy] ||
-|| Spotify || 0.0.6 || Windows, Mac OS X, Linux || C || Yes || Search, Artist/Album browsing, Session/User/Image/Playlist/Toplist handling || C call || C type || [http://developer.spotify.com/en/libspotify/docs/ Here] || [https://developer.spotify.com/en/libspotify/application-key/ Here]. Requires a Premium account first! || [http://developer.spotify.com/en/libspotify/terms-of-use/ Here] ||
+|| *Name* || *Version* || *Platforms* || *Languages/Framework* || *AMS*`*` || *Services* || *Request* || *Response* || *Doc* || *Registration* || *Terms* || 
+|| Deezer || 3.0 || Windows, Mac OS X, Linux || || Yes || Search, Lookup Artist/Album/Lookup Track|| HTTP/GET || XML, JSON, PHP || [http://www.deezer.com/fr/developers/#developers/simpleapi/ Here]. || [http://www.deezer.com/fr/api#api/new.php Here]. || ||
+|| Grooveshark || 1.0 || Windows, Mac OS X, Linux || || No || [http://developers.grooveshark.com/ See detailed services here].|| HTTP/GET || JSON-encoded objects || [http://developers.grooveshark.com/ Here]. || Need web service key. || ||
+|| Last.FM || 2.0 || Windows, Mac OS X, Linux || Java, C++, .NET, Python, Ruby, PHP, Actionscript, C#, Perl, Javascript, Objective-C || No || Search, album/artiste browsing, chart, radio, [http://www.lastfm.fr/api/intro see more]. || HTTP/GET, XML-RPC || Text, XML, JSON, XSPF, RSS || [http://www.lastfm.fr/api/intro Here]. || [http://www.lastfm.fr/api/account Here]. Requires an account! || [http://www.lastfm.fr/api/tos Here]. ||
+|| Soundcloud || Java wrapper: 1.0.0 beta ; C wrapper: 0.6.0 ||  || Java, C, Python, Actionscript 3, PHP, Ruby, Cocoa, Javascript || No || Authentication, Search for tracks/users/groups/playlists, upload of music, add or delete comments || HTTP/GET || XML, JSON || [http://github.com/soundcloud/api/wiki/ Here] || [http://soundcloud.com/you/apps/new Here]. Requires an account. || [http://soundcloud.com/community-guidelines Community Guidelines], [http://soundcloud.com/terms-of-use Terms of Use], [http://soundcloud.com/developers/policies#trademark Trademark Guidelines], [http://soundcloud.com/pages/privacy Privacy Policy] ||
+|| Spotify || 0.0.6 || Windows, Mac OS X, Linux || C || No || Search, Artist/Album browsing, Session/User/Image/Playlist/Toplist handling || C call || C type || [http://developer.spotify.com/en/libspotify/docs/ Here] || [https://developer.spotify.com/en/libspotify/application-key/ Here]. Requires a Premium account first! || [http://developer.spotify.com/en/libspotify/terms-of-use/ Here] ||
 
-_`*`PAR: Premium Account Requested
+_`*`AMS: Access to music streams
 
 == Details ==
 === Deezer ===
@@ -58,7 +58,7 @@ Soundcloud provides the following services:
  * upload music files
  * add or delete comments
 
-_No information found yet about how to access to a music stream from Soundcloud._
+_No information found yet about how to access to a music stream from Soundcloud. The API seems to provide only music information._
 
 ==== Links ====
 
