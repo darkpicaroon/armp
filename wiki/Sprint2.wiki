@@ -14,26 +14,27 @@
 <table width="100%" border="0">
 <tr>
 <td width="auto"></td>
-<td width="24">http://fabienrenaud.com/gatech/success.gif</td>
+<td width="24">http://fabienrenaud.com/armp/success.gif</td>
 <td width="60">_Success_</td>
-<td width="24">http://fabienrenaud.com/gatech/star-gold.png</td>
+<td width="24">http://fabienrenaud.com/armp/star-gold.png</td>
 <td width="110">_Work in Progress_</td>
-<td width="24">http://fabienrenaud.com/gatech/star-white.png</td>
+<td width="24">http://fabienrenaud.com/armp/star-white.png</td>
 <td width="55">_Standy_</td>
-<td width="24">http://fabienrenaud.com/gatech/warning.gif</td>
+<td width="24">http://fabienrenaud.com/armp/warning.gif</td>
 <td width="150">_Canceled or Postpone_</td>
 </tr>
 </table>
 || *[LabelInformation ID]* || *[LabelInformation Description]* || *[LabelInformation How to Demo]* || *[LabelInformation Imp.]* || *[LabelInformation Owner]* || *[LabelInformation Est.]* || *[LabelInformation Elaps.]* || *[LabelInformation Status]* ||
-|| US14 || Read and understand the Stock Media Player original source code (cf.  [Sprint1 US03]) by trying to add a _Now Playing_ panel at the bottom of the Map View of ARMP (cf. [Sprint1 US04]). || _Wiki Page..._ || 96 || Fabien, Mathieu || 8 || 0 || http://fabienrenaud.com/gatech/star-white.png ||
-|| US08 || Download of the OpenAL and build with the NDK. || Play a music with OpenAL on Android || 95 ||  || 3 || 0 || http://fabienrenaud.com/gatech/star-white.png ||
-|| US15 || Play a short music with the OpenAL on an ARMP event. || _Wiki Page_ || 94 ||  || 6 || 0 || http://fabienrenaud.com/gatech/star-white.png ||
-|| US16 || Keep playing a background music with the OpenAL after ARMP has been exited. || _Wiki Page_ || 93 || || 4 || 0 || http://fabienrenaud.com/gatech/star-white.png ||
-|| US09 || Implementation of web hosted music playback with the OpenAL. || Play a web hosted music with OpenAL on Android || 92 || || 2 || 0 || http://fabienrenaud.com/gatech/star-white.png ||
-|| US10 || Study and test on the Android emulator of the OpenAL 3D sound spatialization. || || 91 || || 3 || 0 || http://fabienrenaud.com/gatech/star-white.png ||
-|| US11 || Study and test on an Android device of the OpenAL 3D sound spatialization, using the device compass. || || 90 || || 2 || 0 || http://fabienrenaud.com/gatech/star-white.png ||
-|| US12 || Hard coding of geolocated sounds, transforming geolocation information provided by the Android device to OpenAL location data. || || 89 || || 5 || 0 || http://fabienrenaud.com/gatech/star-white.png ||
-|| US13 || Search and implement ways to calibrate the compass regarding how the phone is carried out by the user. || || 88 || All || 10 || 0 || http://fabienrenaud.com/gatech/star-white.png ||
+|| US14 || Read and understand the Stock Media Player original source code (cf.  [Sprint1 US03]) by trying to add a _Now Playing_ panel at the bottom of the Map View of ARMP (cf. [Sprint1 US04]). || _Wiki Page..._ || 96 || Fabien, Mathieu || 8 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US08 || Download of the OpenAL and build with the NDK. || _Wiki Page_ || 95 ||  || 3 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US15 || Play a short music with the OpenAL on an ARMP event. || _Wiki Page_ || 94 ||  || 6 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US16 || Keep playing a background music with the OpenAL after ARMP has been exited. || _Wiki Page_ || 93 || || 4 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US17 || Bind the ARMP GUI to the music played by the OpenAL by displaying track information such as _title_, _artist_, _duration_... || _Wiki Page_ || 92 || || 5 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US09 || Implementation of web hosted music playback with the OpenAL. || Play a web hosted music with OpenAL on Android || 91 || || 2 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US10 || Study and test on the Android emulator of the OpenAL 3D sound spatialization. || || 90 || || 3 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US11 || Study and test on an Android device of the OpenAL 3D sound spatialization, using the device compass. || || 89 || || 2 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US12 || Hard coding of geolocated sounds, transforming geolocation information provided by the Android device to OpenAL location data. || || 88 || || 5 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US13 || Search and implement ways to calibrate the compass regarding how the phone is carried out by the user. || || 87 || All || 10 || 0 || http://fabienrenaud.com/armp/star-white.png ||
 
 === Links ===
 
