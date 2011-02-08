@@ -7,27 +7,31 @@ The Product Owner is in charge of "gardening" this table (he is often assisted b
 <table width="100%" border="0">
 <tr>
 <td width="auto"></td>
-<td width="24">http://fabienrenaud.com/gatech/success.gif</td>
+<td width="24">http://fabienrenaud.com/armp/success.gif</td>
 <td width="60">_Success_</td>
-<td width="24">http://fabienrenaud.com/gatech/star-gold.png</td>
+<td width="24">http://fabienrenaud.com/armp/star-gold.png</td>
 <td width="110">_Work in Progress_</td>
-<td width="24">http://fabienrenaud.com/gatech/star-white.png</td>
+<td width="24">http://fabienrenaud.com/armp/star-white.png</td>
 <td width="55">_Standy_</td>
-<td width="24">http://fabienrenaud.com/gatech/warning.gif</td>
+<td width="24">http://fabienrenaud.com/armp/warning.gif</td>
 <td width="150">_Canceled or Postpone_</td>
 </tr>
 </table>
 ||  *[LabelInformation ID]* || *[LabelInformation Description]* || *[LabelInformation How to Demo]* || *[LabelInformation Imp.]* || *[LabelInformation Est.]* || *[LabelInformation Sprint]* || *[LabelInformation Status]* ||
-|| US01 || Installation of the [http://www.eclipse.org/downloads/packages/eclipse-ide-java-developers/heliossr1 Java eclipse IDE (Helios version)], the [http://developer.android.com/sdk/android-2.2.html SDK for Android 2.2] and the [http://developer.android.com/sdk/eclipse-adt.html ADT plugin]. || Launch _eclipse_ and the _Android SDK and AVD Manager_. || 100 || 1 || [Sprint1 Sprint 1] || http://fabienrenaud.com/gatech/success.gif ||
-|| US02 || Implementation of an [http://developer.android.com/guide/tutorials/hello-world.html Hello World application for Android] and test with the Android emulator. || Run the test from eclipse. || 99 || 1 || [Sprint1 Sprint 1] || http://fabienrenaud.com/gatech/success.gif ||
-|| US03 || Download and push on the svn of the [http://android.git.kernel.org/?p=platform/packages/apps/Music.git;a=summary Android stock music application]. || Build and run the base application. [http://code.google.com/p/armp/source/detail?r=33 See revision 33.]|| 98 || 1/2 || [Sprint1 Sprint 1] || http://fabienrenaud.com/gatech/success.gif ||
-|| US04 || Add a tab displaying a map view on the application. || _See the [http://code.google.com/p/armp/wiki/US04_HowToDemo wiki page.]_ || 97 || 1.5 || [Sprint1 Sprint 1] || http://fabienrenaud.com/gatech/success.gif ||
-|| US05 || Creation of the music web services comparision matrix. || Read the [MusicWSComparison Music Web Services comparison] page. || 75 || 1/2 || [Sprint1 Sprint 1] || http://fabienrenaud.com/gatech/success.gif ||
-|| US06 || Study and compare the following web services : Deezer, Last.FM and Grooveshark. || Read the [MusicWSComparison Music Web Services comparison] page. || 74 || 2 || [Sprint1 Sprint 1] || http://fabienrenaud.com/gatech/star-white.png ||
-|| US07 || Study and compare the following web services : Spotify, Pandora and Soundcloud. || Read the [MusicWSComparison Music Web Services comparison] page. || 73 || 2 || [Sprint1 Sprint 1] || http://fabienrenaud.com/gatech/success.gif ||
-|| US08 || Download of the OpenAL, build with the NDK and test on the Android. || Play a music with OpenAL on Android || 96 || 3 || [Sprint2 Sprint 2] || http://fabienrenaud.com/gatech/star-white.png ||
-|| US09 || Implementation of web hosted music playback with OpenAL. || Play a web hosted music with OpenAL on Android || 95 || 2 || [Sprint2 Sprint 2] || http://fabienrenaud.com/gatech/star-white.png ||
-|| US10 || Study and test on the Android emulator of the OpenAL 3D sound spatialization. || || 94 || 3 || [Sprint2 Sprint 2] || http://fabienrenaud.com/gatech/star-white.png ||
-|| US11 || Study and test on an Android device of the OpenAL 3D sound spatialization, using the device compass. || || 93 || 2 || [Sprint2 Sprint 2] || http://fabienrenaud.com/gatech/star-white.png ||
-|| US12 || Hard coding of geolocated sounds, transforming geolocation information provided by the Android device to OpenAL location data. || || 92 || 5 || [Sprint2 Sprint 2] || http://fabienrenaud.com/gatech/star-white.png ||
-|| US13 || Search and implement ways to calibrate the compass regarding how the phone is carried out by the user. || || 91 || 10 || [Sprint2 Sprint 2] || http://fabienrenaud.com/gatech/star-white.png ||
+|| US01 || Installation of the [http://www.eclipse.org/downloads/packages/eclipse-ide-java-developers/heliossr1 Java eclipse IDE (Helios version)], the [http://developer.android.com/sdk/android-2.2.html SDK for Android 2.2] and the [http://developer.android.com/sdk/eclipse-adt.html ADT plugin]. || Launch _eclipse_ and the _Android SDK and AVD Manager_. || 100 || 1 || [Sprint1 Sprint 1] || http://fabienrenaud.com/armp/success.gif ||
+|| US02 || Implementation of an [http://developer.android.com/guide/tutorials/hello-world.html Hello World application for Android] and test with the Android emulator. || Run the test from eclipse. || 99 || 1 || [Sprint1 Sprint 1] || http://fabienrenaud.com/armp/success.gif ||
+|| US03 || Download and push on the svn of the [http://android.git.kernel.org/?p=platform/packages/apps/Music.git;a=summary Android stock music application]. || Build and run the base application. [http://code.google.com/p/armp/source/detail?r=33 See revision 33.]|| 98 || 1/2 || [Sprint1 Sprint 1] || http://fabienrenaud.com/armp/success.gif ||
+|| US04 || Add a tab displaying a map view on the application. || _See the [http://code.google.com/p/armp/wiki/US04_HowToDemo wiki page.]_ || 97 || 1.5 || [Sprint1 Sprint 1] || http://fabienrenaud.com/armp/success.gif ||
+|| US05 || Creation of the music web services comparision matrix. || Read the [MusicWSComparison Music Web Services comparison] page. || 75 || 1/2 || [Sprint1 Sprint 1] || http://fabienrenaud.com/armp/success.gif ||
+|| US06 || Study and compare the following web services : Deezer, Last.FM and Grooveshark. || Read the [MusicWSComparison Music Web Services comparison] page. || 74 || 2 || [Sprint1 Sprint 1] || http://fabienrenaud.com/armp/star-white.png ||
+|| US07 || Study and compare the following web services : Spotify, Pandora and Soundcloud. || Read the [MusicWSComparison Music Web Services comparison] page. || 73 || 2 || [Sprint1 Sprint 1] || http://fabienrenaud.com/armp/success.gif ||
+|| US14 || Read and understand the Stock Media Player original source code (cf.  [Sprint1 US03]) by trying to add a _Now Playing_ panel at the bottom of the Map View of ARMP (cf. [Sprint1 US04]). || _Wiki Page..._ || 96 || 8 || [Sprint2 Sprint 2] || http://fabienrenaud.com/armp/star-white.png ||
+|| US08 || Download of the OpenAL and build with the NDK. || _Wiki Page_ || 95 || 3 || [Sprint2 Sprint 2] || http://fabienrenaud.com/armp/star-white.png ||
+|| US15 || Play a short music with the OpenAL on an ARMP event. || _Wiki Page_ || 94 || 6 || [Sprint2 Sprint 2] || http://fabienrenaud.com/armp/star-white.png ||
+|| US16 || Keep playing a background music with the OpenAL after ARMP has been exited. || _Wiki Page_ || 93 || 4 || [Sprint2 Sprint 2] || http://fabienrenaud.com/armp/star-white.png ||
+|| US17 || Bind the ARMP GUI to the music played by the OpenAL by displaying track information such as _title_, _artist_, _duration_... || _Wiki Page_ || 92 || 5 || [Sprint2 Sprint 2] || http://fabienrenaud.com/armp/star-white.png ||
+|| US09 || Implementation of web hosted music playback with the OpenAL. || Play a web hosted music with OpenAL on Android || 91 || 2 || [Sprint2 Sprint 2] || http://fabienrenaud.com/armp/star-white.png ||
+|| US10 || Study and test on the Android emulator of the OpenAL 3D sound spatialization. || || 90 || 3 || [Sprint2 Sprint 2] || http://fabienrenaud.com/armp/star-white.png ||
+|| US11 || Study and test on an Android device of the OpenAL 3D sound spatialization, using the device compass. || || 89 || 2 || [Sprint2 Sprint 2] || http://fabienrenaud.com/armp/star-white.png ||
+|| US12 || Hard coding of geolocated sounds, transforming geolocation information provided by the Android device to OpenAL location data. || || 88 || 5 || [Sprint2 Sprint 2] || http://fabienrenaud.com/armp/star-white.png ||
+|| US13 || Search and implement ways to calibrate the compass regarding how the phone is carried out by the user. || || 87 || 10 || [Sprint2 Sprint 2] || http://fabienrenaud.com/armp/star-white.png ||
