@@ -24,7 +24,7 @@
 </tr>
 </table>
 || *[LabelInformation ID]* || *[LabelInformation Description]* || *[LabelInformation How to Demo]* || *[LabelInformation Imp.]* || *[LabelInformation Owner]* || *[LabelInformation Est.]* || *[LabelInformation Elaps.]* || *[LabelInformation Status]* ||
-|| US14 || Read and understand the Stock Media Player original source code (cf.  [Sprint1 US03]) by trying to add a _Now Playing_ panel at the bottom of the Map View of ARMP (cf. [Sprint1 US04]). || _Wiki Page..._ || 96 || Fabien, Mathieu || 8 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US14 || Read and understand the Stock Media Player original source code (cf.  [Sprint1 US03]) by trying to add a _Now Playing_ panel at the bottom of the Map View of ARMP (cf. [Sprint1 US04]). || _Wiki Page..._ || 96 || Fabien, Mathieu || 8 || 0 || http://fabienrenaud.com/armp/star-gold.png ||
 || US08 || Download of the OpenAL and build with the NDK. || _Wiki Page_ || 95 ||  || 3 || 0 || http://fabienrenaud.com/armp/star-white.png ||
 || US15 || Play a short music with the OpenAL on an ARMP event. || _Wiki Page_ || 94 ||  || 6 || 0 || http://fabienrenaud.com/armp/star-white.png ||
 || US16 || Keep playing a background music with the OpenAL after ARMP has been exited. || _Wiki Page_ || 93 || || 4 || 0 || http://fabienrenaud.com/armp/star-white.png ||
