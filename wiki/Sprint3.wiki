@@ -30,7 +30,7 @@
 || US11 || Build, test and understand the OpenSL ES sample (_native-audio_) provided by the NDK. || Run it from eclipse on Android. || 88 || All || 3 || 3 ||  http://fabienrenaud.com/armp/success.gif ||
 || US12 || Adapt the OpenSL ES sample (cf. [Sprint3 US11]) and reduce the code to the necessary parts to use it with ARMP. || Play a music file from ARMP and with OpenSL ES. || 87 || All || 1 || 2 || http://fabienrenaud.com/armp/success.gif ||
 || US20 || Adapt the _Simple 3D_ example from the [http://www.khronos.org/registry/sles/specs/OpenSL_ES_Specification_1.1.pdf OpenSL ES reference] (page 526) to bring 3D effects to a music played from ARMP. || Play a music with ARMP. If the 3D effect sample is enabled, the music looks like turning around the listener. || 86 || All || 2 || 6 || http://fabienrenaud.com/armp/warning.gif ||
-|| US13 || Orientate the music with the Android compass. ||  || 86 || All || 5 || 0 || http://fabienrenaud.com/armp/warning.gif ||
+|| US13 || Orientate the music with the Android compass. ||  || 85 || All || 5 || 0 || http://fabienrenaud.com/armp/warning.gif ||
 === Links ===
 
  * [ProductBacklog Product Backlog]
