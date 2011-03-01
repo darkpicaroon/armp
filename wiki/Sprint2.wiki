@@ -29,6 +29,8 @@
 || US15 || Play a short music with the OpenAL on an ARMP event. || Play a WAV file by following the end of the [http://pielot.org/category/ndk-2/ pielot tutorial]. || 94 || All || 1 || 1 || http://fabienrenaud.com/armp/success.gif ||
 || US16 || Keep playing a background music with the OpenAL after ARMP has been exited. || _It is the default behavior of OpenAL._ || 93 || All || 2 || 0 || http://fabienrenaud.com/armp/success.gif ||
 || US17 || Bind the ARMP GUI to the music played by the OpenAL by displaying track information such as _title_, _artist_, _duration_... || _Canceled because of only WAV files. || 92 || All || 5 || 0 || http://fabienrenaud.com/armp/warning.gif ||
+|| US09 || Implementation of web hosted music playback with the OpenAL. || Play a web hosted music with OpenAL on Android || 91 || All || 2 || 0 || http://fabienrenaud.com/armp/warning.gif ||
+
 
 === Links ===
 
