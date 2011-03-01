@@ -24,11 +24,11 @@
 </tr>
 </table>
 || *[LabelInformation ID]* || *[LabelInformation Description]* || *[LabelInformation How to Demo]* || *[LabelInformation Imp.]* || *[LabelInformation Owner]* || *[LabelInformation Est.]* || *[LabelInformation Elaps.]* || *[LabelInformation Status]* ||
-|| US14 || Read and understand the Stock Media Player original source code (cf.  [Sprint1 US03]) by trying to add a _Now Playing_ panel at the bottom of the Map View of ARMP (cf. [Sprint1 US04]). || _Wiki Page..._ || 96 || Fabien, Mathieu || 8 || 0 || http://fabienrenaud.com/armp/star-gold.png ||
-|| US08 || Download of the OpenAL and build with the NDK. || _Wiki Page_ || 95 ||  || 3 || 0 || http://fabienrenaud.com/armp/star-white.png ||
-|| US15 || Play a short music with the OpenAL on an ARMP event. || _Wiki Page_ || 94 ||  || 6 || 0 || http://fabienrenaud.com/armp/star-white.png ||
-|| US16 || Keep playing a background music with the OpenAL after ARMP has been exited. || _Wiki Page_ || 93 || || 4 || 0 || http://fabienrenaud.com/armp/star-white.png ||
-|| US17 || Bind the ARMP GUI to the music played by the OpenAL by displaying track information such as _title_, _artist_, _duration_... || _Wiki Page_ || 92 || || 5 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US14 || Read and understand the Stock Media Player original source code (cf.  [Sprint1 US03]) by trying to add a _Now Playing_ panel at the bottom of the Map View of ARMP (cf. [Sprint1 US04]). || Look at the onCreate method of the LocalizedMusicActivity.java file and its associated layout. || 96 || Fabien, Mathieu || 8 || 8 || http://fabienrenaud.com/armp/success.gif ||
+|| US08 || Download of the OpenAL and build with the NDK. || Follow the beginning of [http://pielot.org/category/ndk-2/ these instructions] || 95 || All || 3 || 3 || http://fabienrenaud.com/armp/success.gif ||
+|| US15 || Play a short music with the OpenAL on an ARMP event. || Play a WAV file by following the end of the [http://pielot.org/category/ndk-2/ pielot tutorial]. || 94 || All || 1 || 1 || http://fabienrenaud.com/armp/success.gif ||
+|| US16 || Keep playing a background music with the OpenAL after ARMP has been exited. || _It is the default behavior of OpenAL._ || 93 || All || 2 || 0 || http://fabienrenaud.com/armp/success.gif ||
+|| US17 || Bind the ARMP GUI to the music played by the OpenAL by displaying track information such as _title_, _artist_, _duration_... || _Canceled because of only WAV files. || 92 || All || 5 || 0 || http://fabienrenaud.com/armp/warning.gif ||
 
 === Links ===
 
