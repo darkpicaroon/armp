@@ -24,12 +24,12 @@
 </tr>
 </table>
 || *[LabelInformation ID]* || *[LabelInformation Description]* || *[LabelInformation How to Demo]* || *[LabelInformation Imp.]* || *[LabelInformation Owner]* || *[LabelInformation Est.]* || *[LabelInformation Elaps.]* || *[LabelInformation Status]* ||
-|| US09 || Implementation of web hosted music playback with the OpenAL. || Play a web hosted music with OpenAL on Android || 91 || || 2 || 0 || http://fabienrenaud.com/armp/star-white.png ||
-|| US10 || Study and test on the Android emulator of the OpenAL 3D sound spatialization. || || 90 || || 3 || 0 || http://fabienrenaud.com/armp/star-white.png ||
-|| US11 || Study and test on an Android device of the OpenAL 3D sound spatialization, using the device compass. || || 89 || || 2 || 0 || http://fabienrenaud.com/armp/star-white.png ||
-|| US12 || Hard coding of geolocated sounds, transforming geolocation information provided by the Android device to OpenAL location data. || || 88 || || 5 || 0 || http://fabienrenaud.com/armp/star-white.png ||
-|| US13 || Search and implement ways to calibrate the compass regarding how the phone is carried out by the user. || || 87 || All || 10 || 0 || http://fabienrenaud.com/armp/star-white.png ||
-
+|| US19 || Try to play an OGG file or a MP3 file from Android using the OpenAL. || Play an OGG or MP3 file from ARMP with the OpenAL. || 90 || Fabien || 5 || 8 ||  http://fabienrenaud.com/armp/warning.gif ||
+|| US10 || Find an alternative to OpenAL to play spatialized music on Android. || The API 9 of Android (v2.3.1) supports OpenSL ES which provides 3D audio effects and spatialized music features. || 89 || abarreir || 2 || 2 ||  http://fabienrenaud.com/armp/success.gif ||
+|| US11 || Build, test and understand the OpenSL ES sample (_native-audio_) provided by the NDK. || Run it from eclipse on Android. || 88 || All || 3 || 3 ||  http://fabienrenaud.com/armp/success.gif ||
+|| US12 || Adapt the OpenSL ES sample (cf. [Sprint3 US11]) and reduce the code to the necessary parts to use it with ARMP. || Play a music file from ARMP and with OpenSL ES. || 87 || All || 1 || 2 || http://fabienrenaud.com/armp/success.gif ||
+|| US20 || Adapt the _Simple 3D_ example from the [http://www.khronos.org/registry/sles/specs/OpenSL_ES_Specification_1.1.pdf OpenSL ES reference] (page 526) to bring 3D effects to a music played from ARMP. || Play a music with ARMP. If the 3D effect sample is enabled, the music looks like turning around the listener. || 86 || All || 2 || 6 || http://fabienrenaud.com/armp/warning.gif ||
+|| US13 || Orientate the music with the Android compass. ||  || 86 || All || 5 || 0 || http://fabienrenaud.com/armp/warning.gif ||
 === Links ===
 
  * [ProductBacklog Product Backlog]
