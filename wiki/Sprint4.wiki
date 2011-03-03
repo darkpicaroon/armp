@@ -1,7 +1,8 @@
 #labels Phase-Requirements,Phase-Design,Phase-Implementation
 === Objectives ===
 
- * Study and first implementation of the sound spatialization.
+ * Basic web server implementation to get information about spots, channels and streams
+ * Basic client application implementation displaying spots and related information.
 
 === Resources ===
 
@@ -24,7 +25,15 @@
 </tr>
 </table>
 || *[LabelInformation ID]* || *[LabelInformation Description]* || *[LabelInformation How to Demo]* || *[LabelInformation Imp.]* || *[LabelInformation Owner]* || *[LabelInformation Est.]* || *[LabelInformation Elaps.]* || *[LabelInformation Status]* ||
-
+|| US21 || Database design and MySQL implementation. || On a wiki page: schema, mwb file, design explanations... || 84 || Mathieu || 0 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US22 || Implementation of a RESTful WS providing a KML file displaying spots based on location of the user. || On a wiki page: request & response data, kml sample, WS url, explanations... || 83 || Mathieu || 0 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US23 || Implementation of a RESTful WS providing a XML file giving information about channels for a given spot. || Idem || 82 || Mathieu || 0 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US24 || Implementation of a RESTful WS providing a XML file giving music/stream metadata and if it is a stream, the source of the stream. || Idem || 81 || Mathieu || 0 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US25 || Implementation of classes related to data provided by WS (rel. [Sprint4 US22]-[Sprint4 US24]) for the client side. || On the wiki page: UML schemas, ... || 80 || abarreir || 0 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US26 || Implementation of a client-side class requesting WS (rel. [Sprint4 US22]-[Sprint4 US24]) and transforming results into Java objects (rel. [Sprint4 US25]). || On the wiki page: ref to the code, test results || 79 || abarreir || 0 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US27 || Display spots on the Google Map view using KML files provided by the WS related to the [Sprint4 US22]. || On the wiki page: how the KML file is put in the map view, screenshot... || 78 || Fabien || 1 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US28 || Display information about channels when clicking on a spot using XML files provided by the WS related to the [Sprint4 US23]. || screenshot || 77 || Fabien || 3 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US29 || Display information about streams/musics when clicking on a channel using XML files provided by the WS related to the [Sprint4 US24]. || screenshot || 76 || Fabien || 3 || 0 || http://fabienrenaud.com/armp/star-white.png ||
 
 === Links ===
 
