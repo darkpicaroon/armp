@@ -1190,7 +1190,10 @@ public class MusicUtils {
         Intent intent = new Intent(Intent.ACTION_PICK);
         switch (id) {
             case R.id.artisttab:
-                intent.setDataAndType(Uri.EMPTY, "vnd.android.cursor.dir/artistalbum");
+                //intent.setDataAndType(Uri.EMPTY, "vnd.android.cursor.dir/artistalbum");
+            	// Explicitly call the activity, so Android stops asking which activity to launch..
+            	intent = new Intent(a, ArtistAlbumBrowserActivity.class);
+            	a.startActivity(intent);
                 break;
             case R.id.albumtab:
                 intent.setDataAndType(Uri.EMPTY, "vnd.android.cursor.dir/album");
