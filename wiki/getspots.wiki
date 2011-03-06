@@ -1,0 +1,40 @@
+= Request =
+This request is used to get the spots near the client application.
+
+
+= Parameters =
+<br>_lat_: The latitude of the user.</br>
+<br>_long_: The longitude of the user.</br>
+
+
+= Response =
+<br>The response given by the server is an XML type file under the following structure.</br> 
+
+
+<Folder>
+   <name></name>
+   <visibility></visibility>
+   <Placemark>
+      <Color></Color>
+      <Radius></Radius>
+      <Point>
+         <coordinates></coordinates>
+      </Point>
+   </Placemark>
+</Folder>
+
+= Sample =
+
+_request example_ = 'http://localhost/armp-dev/getspots.php?long=6.218146957908431&lat=49.10159292113388'
+
+<Folder>
+   <name>KML Circle Generator Output</name>
+   <visibility>1</visibility>
+   <Placemark id=3 >
+      <Color>ff0400ff</Color>
+      <Radius>1.2</Radius>
+      <Point>
+         <coordinates>6.218146957908431, 49.10159292113388, 0</coordinates>
+      </Point>
+   </Placemark>
+</Folder>
