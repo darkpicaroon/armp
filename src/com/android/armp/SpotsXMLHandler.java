@@ -1,12 +1,11 @@
 package com.android.armp;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.android.armp.LocalizedMusicService.Spot; 
  
 public class SpotsXMLHandler extends DefaultHandler{
  
@@ -19,14 +18,15 @@ public class SpotsXMLHandler extends DefaultHandler{
         private boolean in_pointtag = false;
         private boolean in_coordinatestag = false;
        
-        private ArrayList<LocalizedMusicService.Spot> mParsed = null;
-        private LocalizedMusicService.Spot mSpot = null;
+        private HashMap<Integer, LocalizedMusicSpot> mParsed = null;
+        private LocalizedMusicSpot mSpot = null;
+        private int mCurrSpotId;
  
         // ===========================================================
         // Getter & Setter
         // ===========================================================
  
-        public ArrayList<LocalizedMusicService.Spot> getParsedData() {
+        public HashMap<Integer, LocalizedMusicSpot> getParsedData() {
                 return this.mParsed;
         }
  
@@ -35,7 +35,7 @@ public class SpotsXMLHandler extends DefaultHandler{
         // ===========================================================
         @Override
         public void startDocument() throws SAXException {
-                this.mParsed = new ArrayList<LocalizedMusicService.Spot>();
+                this.mParsed = new HashMap<Integer, LocalizedMusicSpot>();
         }
  
         @Override
@@ -54,7 +54,9 @@ public class SpotsXMLHandler extends DefaultHandler{
                         this.in_foldertag = true;
                 }else if (localName.equals("Placemark")) {
                         this.in_placemarktag = true;
-                        mSpot = LocalizedMusicService.createSpot();
+                        String attrValue = atts.getValue("id");
+                        mCurrSpotId = Integer.parseInt(attrValue);
+                        mSpot = new LocalizedMusicSpot();
                 }else if (localName.equals("Point")) {
                         this.in_pointtag = true;
                 }else if (localName.equals("coordinates")) {
@@ -77,7 +79,7 @@ public class SpotsXMLHandler extends DefaultHandler{
                 }else if (localName.equals("Point")) {
                         this.in_pointtag = false;
                 }else if (localName.equals("coordinates")) {
-                        mParsed.add(mSpot);
+                        mParsed.put(mCurrSpotId,mSpot);
                 }
         }
        
@@ -88,8 +90,8 @@ public class SpotsXMLHandler extends DefaultHandler{
         	if(this.in_coordinatestag){
         		String coords = new String(ch, start, length);
         		int fc = coords.indexOf(','), lc = coords.lastIndexOf(',');
-        		mSpot.setLat(new Double(coords.substring(0, fc)));
-        		mSpot.setLon(new Double(coords.substring(fc+1, lc)));
+        		mSpot.setmLongitude(new Double(coords.substring(0, fc)));
+        		mSpot.setmLattitude(new Double(coords.substring(fc+1, lc)));
         	}
         }
 }
