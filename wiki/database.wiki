@@ -1,0 +1,9 @@
+#summary One-sentence summary of this page.
+
+= Database design =
+
+<img src="http://armp.googlecode.com/files/armp-db-UML.png"/>
+
+= Links =
+
+Download the armp database workbench file [http://code.google.com/p/armp/downloads/list here].
