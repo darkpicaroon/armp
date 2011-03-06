@@ -1,7 +1,9 @@
 package com.android.armp;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
+import com.android.armp.LocalizedMusicSpot.MusicChannel;
 import com.android.armp.R;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
@@ -17,9 +19,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
-import android.os.RemoteException;
+import android.util.Log;
 import android.view.Window;
-import android.widget.Toast;
 
 public class LocalizedMusicActivity extends MapActivity {
 	
@@ -34,31 +35,8 @@ public class LocalizedMusicActivity extends MapActivity {
 	boolean mIsBound;
 	
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
+	private final static String TAG = "LMA";
 	
-	/**
-	 * Handler of incoming messages from service.
-	 */
-	class IncomingHandler extends Handler {
-	    @Override
-	    public void handleMessage(Message msg) {
-	        switch (msg.what) {
-	            case LocalizedMusicService.MSG_SPOTS_UPDATE:
-	            	// Close loading progress dialog
-	    			mPD.dismiss();
-	            	ArrayList<LocalizedMusicService.Spot> p = (ArrayList<LocalizedMusicService.Spot>)msg.obj;
-	            	
-	            	for (int i = 0; i<p.size(); ++i)
-	            	{
-	            		System.out.println("Spot: " + p.get(i).getLat()+" "+p.get(i).getLon());
-	            	}
-	                break;
-	            default:
-	                super.handleMessage(msg);
-	        }
-	    }
-	}
-
-
     public LocalizedMusicActivity()
     {
     }
@@ -122,44 +100,116 @@ public class LocalizedMusicActivity extends MapActivity {
 	}
 	
 	/**
+	 * Handler of incoming messages from service.
+	 */
+	class IncomingHandler extends Handler {
+	    @Override
+	    public void handleMessage(Message msg) {
+	        switch (msg.what) {
+	            case LocalizedMusicService.MSG_SPOTS_UPDATE:
+	            	// Close loading progress dialog
+	    			mPD.dismiss();
+	    			
+	    			// Go through all the returned spots
+	            	HashMap<Integer, LocalizedMusicSpot> map = (HashMap<Integer, LocalizedMusicSpot>)msg.obj;
+	            	if(map == null)
+	            		return;
+	            	
+	            	Iterator mIt = map.keySet().iterator();
+	            	while(mIt.hasNext()) {
+	            	    int key=(Integer)mIt.next();
+	            	    LocalizedMusicSpot value=(LocalizedMusicSpot)map.get(key);
+	            	    Log.d(TAG, "Spot #"+key+": "+value.getmLattitude()+" - "+value.getmLongitude()+
+	            	    		" - "+value.getmCreationTime());
+	            	}
+	            	
+	            	break;
+	            case LocalizedMusicService.MSG_CHANNELS:
+	            	// Close loading progress dialog
+	            	mPD.dismiss();
+	            	
+	            	// Go through all the returned channels
+	            	HashMap<Integer, MusicChannel> chans = (HashMap<Integer, MusicChannel>)msg.obj;
+	            	if(chans == null)
+	            		return;
+	            	
+	            	Iterator chansIt = chans.keySet().iterator();
+	            	while(chansIt.hasNext()) {
+	            	    int key=(Integer)chansIt.next();
+	            	    MusicChannel value=(MusicChannel)chans.get(key);
+	            	    Log.d(TAG, "Channel #"+key+": "+value.toString());
+	            	}
+	            	
+	            	break;
+	            default:
+	                super.handleMessage(msg);
+	        }
+	    }
+	}
+	
+	private void getSpots() {
+		// Show dialog
+        mPD = ProgressDialog.show(LocalizedMusicActivity.this, "", "Retrieving spots...", true, false);
+        
+        // Create and send the message
+		Message msg = Message.obtain(null,
+                LocalizedMusicService.MSG_SPOTS_UPDATE);
+        msg.replyTo = mMessenger;
+        
+        try {
+        	mService.send(msg);
+        } catch (Exception e){
+        	
+        }
+	}
+	
+	private void getChannels(int spotId) {
+		// Show dialog
+        mPD = ProgressDialog.show(LocalizedMusicActivity.this, "", "Retrieving channels...", true, false);
+        
+        // Create and send the message
+		Message msg = Message.obtain(null, LocalizedMusicService.MSG_CHANNELS);
+        msg.replyTo = mMessenger;
+        msg.obj = spotId;
+        
+        try {
+        	mService.send(msg);
+        } catch (Exception e){
+        	
+        }
+	}
+	
+	private void getMusics(int channelId) {
+		// Show dialog
+        mPD = ProgressDialog.show(LocalizedMusicActivity.this, "", "Retrieving musics...", true, false);
+        
+        // Create and send the message
+		Message msg = Message.obtain(null, LocalizedMusicService.MSG_MUSICS);
+        msg.replyTo = mMessenger;
+        msg.obj = channelId;
+        
+        try {
+        	mService.send(msg);
+        } catch (Exception e){
+        	
+        }
+	}
+	
+	/**
 	 * Class for interacting with the main interface of the service.
 	 */
 	private ServiceConnection mConnection = new ServiceConnection() {
 	    public void onServiceConnected(ComponentName className,
 	            IBinder service) {
 	        mService = new Messenger(service);
-
-	        // Start by querying for spots
-	        try {
-	            Message msg = Message.obtain(null,
-	                    LocalizedMusicService.MSG_SPOTS_UPDATE);
-	            
-	            // Show dialog
-	            mPD = ProgressDialog.show(LocalizedMusicActivity.this, "", "Retrieving spots...", true, false);
-	            msg.replyTo = mMessenger;
-	            mService.send(msg);
-
-	        } catch (RemoteException e) {
-	            
-	        }
-	        
-	        System.out.println("Service connected");
 	    }
 
 	    public void onServiceDisconnected(ComponentName className) {
-	        // This is called when the connection with the service has been
-	        // unexpectedly disconnected -- that is, its process crashed.
 	        mService = null;
-
-	        System.out.println("Service disconnected");
 	    }
 	};
 
 	void doBindService() {
-	    // Establish a connection with the service.  We use an explicit
-	    // class name because there is no reason to be able to let other
-	    // applications replace our component.	
-		
 	    bindService(new Intent(LocalizedMusicActivity.this, 
 	    		LocalizedMusicService.class), mConnection, Context.BIND_AUTO_CREATE);
 	    mIsBound = true;

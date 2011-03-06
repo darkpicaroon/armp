@@ -4,11 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringBufferInputStream;
 import java.io.StringReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import com.android.armp.LocalizedMusicSpot.MusicChannel;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -47,55 +49,18 @@ import android.util.Log;
 public class LocalizedMusicService extends Service implements LocationListener {	
 	private LocationManager mLocationMng;
 	private Messenger mClient = null;
-	private ArrayList<Spot> mSpots;
+	private HashMap<Integer, LocalizedMusicSpot> mSpots;
 	private static final String TAG = "LocalizedMusicService";
-	private static LocalizedMusicService mInstance = null;
 	
-	public class Spot extends Object {
-		private double lat;
-		private double lon;
-		
-		public Spot() {
-		}
-		
-		public Spot(double lat, double lon) {
-			this.lat = lat;
-			this.lon = lon;
-		}
-
-		public void setLat(double lat) {
-			this.lat = lat;
-		}
-
-		public double getLat() {
-			return lat;
-		}
-
-		public void setLon(double lon) {
-			this.lon = lon;
-		}
-
-		public double getLon() {
-			return lon;
-		}
-	};
-	
-	public static Spot createSpot() {
-		return mInstance.new Spot();
-	}
-	
-	public class Channel extends Object {
-		
-	};
-	
-	public class Music extends Object {
-		
-	};
+	private static final String baseUrl = "http://abarreir.com/";
+	private static final String userAgent = "";
 	
 	/**
 	 * Messages
 	 */
 	static final int MSG_SPOTS_UPDATE = 1;
+	static final int MSG_CHANNELS = 2;
+	static final int MSG_MUSICS = 3;
     
 
     /**
@@ -112,6 +77,27 @@ public class LocalizedMusicService extends Service implements LocationListener {
                 	makeHTTPRequest(MSG_SPOTS_UPDATE, "");
 
                     break;
+                case MSG_CHANNELS:
+                	Integer spotKey = (Integer)msg.obj;
+                	
+                	// If we don't have any channel for this spot, retrieve them
+                	if(mSpots.get(spotKey).getmChannels().size() == 0) {
+                		makeHTTPRequest(MSG_CHANNELS, spotKey.toString());
+                	}
+                	// Else just return the channels hash
+                	else {
+                		try {
+                			Message answ = Message.obtain(null, 
+    								LocalizedMusicService.MSG_CHANNELS, 
+    								mSpots.get(spotKey).getmChannels());
+                    		mClient.send(answ);
+                		}
+                		catch(Exception e) {
+                			
+                		}                		
+                	}
+                	
+                	break;
                 default:
                     super.handleMessage(msg);
             }
@@ -130,9 +116,7 @@ public class LocalizedMusicService extends Service implements LocationListener {
         mLocationMng.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, this);
         
         // Initialize the spots array
-        mSpots = new ArrayList<Spot>();
-        
-        mInstance = this;
+        mSpots = new HashMap<Integer, LocalizedMusicSpot>();
     }
 
     @Override
@@ -162,9 +146,6 @@ public class LocalizedMusicService extends Service implements LocationListener {
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 	}
 	
-	private static final String baseUrl = "http://abarreir.com/";
-	private static final String userAgent = "";
-	
 	/**
 	 * 
 	 * @param reqId The kind of request we are performing
@@ -184,7 +165,7 @@ public class LocalizedMusicService extends Service implements LocationListener {
 					switch(reqId) {
 					case MSG_SPOTS_UPDATE:
 						Log.i(TAG, "Updating spots");
-						requestURL += "dbg.php";
+						requestURL +="?long=6.218146957908431&lat=49.10159292113388";
 						
 						// Reset the current spots
 						mSpots.clear();
@@ -193,12 +174,23 @@ public class LocalizedMusicService extends Service implements LocationListener {
 						HttpGet httpget = new HttpGet(requestURL);
 						response = mSpots = httpclient.execute(httpget, spotsResponseHandler);
 						
+						break;					
+					case MSG_CHANNELS:
+						Log.i(TAG, "Updating channels for spot #"+params);
+						requestURL += "dbg.php?spot_id="+params;
+						
+						int i = new Integer(params);
+						
+						HttpGet httpget2 = new HttpGet(requestURL);
+						response = httpclient.execute(httpget2, channelsResponseHandler);
+						mSpots.get(i).setmChannels((HashMap<Integer, MusicChannel>) response);
+						
 						break;
 					}
 					
 					// Send the answer to the activity
 					Message msg = Message.obtain(null, 
-										LocalizedMusicService.MSG_SPOTS_UPDATE, 
+										reqId, 
 										response);
 					mClient.send(msg);
 					
@@ -212,10 +204,10 @@ public class LocalizedMusicService extends Service implements LocationListener {
 		};
 		t.start();
 	}
-	
-	private ResponseHandler<ArrayList<Spot> > spotsResponseHandler = new ResponseHandler<ArrayList<Spot> >() {
+		
+	private ResponseHandler<HashMap<Integer, MusicChannel> > channelsResponseHandler = new ResponseHandler<HashMap<Integer, MusicChannel> >() {
 		//@Override
-		public ArrayList<Spot> handleResponse(HttpResponse r) {
+		public HashMap<Integer, MusicChannel> handleResponse(HttpResponse r) {
 			String result = "";
 			try {
 				// First, we retrieve the xml string from the server
@@ -230,7 +222,53 @@ public class LocalizedMusicService extends Service implements LocationListener {
 				e.printStackTrace();
 			}
 			
-			ArrayList<Spot> res = null;
+			HashMap<Integer, MusicChannel> res = null;
+			
+			// Then, we parse the retrieved string
+			try {
+				/* Get a SAXParser from the SAXPArserFactory. */
+	            SAXParserFactory spf = SAXParserFactory.newInstance();
+	            SAXParser sp = spf.newSAXParser();
+
+	            /* Get the XMLReader of the SAXParser we created. */
+	            XMLReader xr = sp.getXMLReader();
+	            
+	            /* Create a new ContentHandler and apply it to the XML-Reader*/
+	            ChannelsXMLHandler chanHandler = new ChannelsXMLHandler();
+	            xr.setContentHandler(chanHandler);
+	           
+	            /* Parse the xml-data from our string*/
+	            xr.parse(new InputSource(new StringReader(result)));
+
+	            /* Our ExampleHandler now provides the parsed data to us. */
+	            res = chanHandler.getParsedData();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			return res;
+		}
+	};
+	
+	private ResponseHandler<HashMap<Integer, LocalizedMusicSpot> > spotsResponseHandler = new ResponseHandler<HashMap<Integer, LocalizedMusicSpot> >() {
+		//@Override
+		public HashMap<Integer, LocalizedMusicSpot> handleResponse(HttpResponse r) {
+			String result = "";
+			try {
+				// First, we retrieve the xml string from the server
+				BufferedReader br = new BufferedReader(new InputStreamReader(r.getEntity().getContent()));
+				String line;
+				while ((line = br.readLine()) != null)
+	               result += line;
+				
+				Log.d(TAG, result);
+			}
+			catch(IOException e){
+				e.printStackTrace();
+			}
+			
+			HashMap<Integer, LocalizedMusicSpot> res = null;
 			
 			// Then, we parse the retrieved string
 			try {
