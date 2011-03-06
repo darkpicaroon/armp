@@ -7,6 +7,7 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +26,8 @@ public class LocalizedMusicActivity extends MapActivity {
 	private MyLocationOverlay mLocation;
 	private MapView mMapView;
 	
+	private ProgressDialog mPD = null;
+	
 	/** Messenger for communicating with service. */
 	Messenger mService = null;
 	/** Flag indicating whether we have called bind on the service. */
@@ -40,11 +43,13 @@ public class LocalizedMusicActivity extends MapActivity {
 	    public void handleMessage(Message msg) {
 	        switch (msg.what) {
 	            case LocalizedMusicService.MSG_SPOTS_UPDATE:
+	            	// Close loading progress dialog
+	    			mPD.dismiss();
 	            	ArrayList<LocalizedMusicService.Spot> p = (ArrayList<LocalizedMusicService.Spot>)msg.obj;
 	            	
 	            	for (int i = 0; i<p.size(); ++i)
 	            	{
-	            		System.out.println("Spot: " + p.get(i).geti());
+	            		System.out.println("Spot: " + p.get(i).getLat()+" "+p.get(i).getLon());
 	            	}
 	                break;
 	            default:
@@ -128,6 +133,9 @@ public class LocalizedMusicActivity extends MapActivity {
 	        try {
 	            Message msg = Message.obtain(null,
 	                    LocalizedMusicService.MSG_SPOTS_UPDATE);
+	            
+	            // Show dialog
+	            mPD = ProgressDialog.show(LocalizedMusicActivity.this, "", "Retrieving spots...", true, false);
 	            msg.replyTo = mMessenger;
 	            mService.send(msg);
 
