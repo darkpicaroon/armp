@@ -249,6 +249,8 @@
             android:theme="@android:style/Theme.Dialog" />
         <service android:name="MediaPlaybackService"
             android:exported="true" />
+        <service android:name="LocalizedMusicService"
+        	android:exported="true" />
 
         <receiver android:name="MediaAppWidgetProvider">
             <intent-filter>
