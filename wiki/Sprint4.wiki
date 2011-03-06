@@ -25,7 +25,7 @@
 </tr>
 </table>
 || *[LabelInformation ID]* || *[LabelInformation Description]* || *[LabelInformation How to Demo]* || *[LabelInformation Imp.]* || *[LabelInformation Owner]* || *[LabelInformation Est.]* || *[LabelInformation Elaps.]* || *[LabelInformation Status]* ||
-|| US21 || Database design and MySQL implementation. || Chek the database page [http://code.google.com/p/armp/wiki/database here]. || 84 || Mathieu || 0.5 || 1 || http://fabienrenaud.com/armp/success.gif ||
+|| US21 || Database design and MySQL implementation. || Check the database page [http://code.google.com/p/armp/wiki/database here]. || 84 || Mathieu || 0.5 || 1 || http://fabienrenaud.com/armp/success.gif ||
 || US22 || Implementation of a RESTful WS providing a KML file displaying spots based on location of the user. || On a wiki page: request & response data, kml sample, WS url, explanations... || 83 || Mathieu || 5 || 5 || http://fabienrenaud.com/armp/success.gif ||
 || US23 || Implementation of a RESTful WS providing a XML file giving information about channels for a given spot. || Idem || 82 || Mathieu || 2 || 2 || http://fabienrenaud.com/armp/success.gif ||
 || US24 || Implementation of a RESTful WS providing a XML file giving music/stream metadata and if it is a stream, the source of the stream. || Idem || 81 || Mathieu || 2 || 0 || http://fabienrenaud.com/armp/star-gold.png ||
