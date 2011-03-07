@@ -72,7 +72,7 @@ public class ChannelsXMLHandler extends DefaultHandler{
                 }else if (localName.equals("Genre")) {
                         this.in_genretag = true;
                         String attrValue = atts.getValue("id");
-                        mChannel.setmGenreId(new Integer(attrValue));
+                        mChannel.setGenreId(new Integer(attrValue));
                 }else if (localName.equals("Name") && this.in_genretag) {
                     this.in_genrenametag = true;
                 }else if (localName.equals("CreationTime")) {
@@ -116,7 +116,7 @@ public class ChannelsXMLHandler extends DefaultHandler{
         public void characters(char ch[], int start, int length) {
         	if(this.in_nametag && !this.in_genretag){
         		String name = new String(ch, start, length);
-        		mChannel.setmName(name);
+        		mChannel.setName(name);
         	} else if(this.in_genrenametag) {
         		// TODO Genre name
         		//String name = new String(ch, start, length);
@@ -126,7 +126,7 @@ public class ChannelsXMLHandler extends DefaultHandler{
         		SimpleDateFormat curFormater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
         		try{
         			Date dateObj = curFormater.parse(dateStr); 
-            		mChannel.setmCreationTime(dateObj);
+            		mChannel.setCreationTime(dateObj);
         		} catch (Exception e) {
         			
         		}        		
@@ -135,7 +135,7 @@ public class ChannelsXMLHandler extends DefaultHandler{
         		SimpleDateFormat curFormater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
         		try{
         			Date dateObj = curFormater.parse(dateStr); 
-            		mChannel.setmLastUpdate(dateObj);
+            		mChannel.setLastUpdate(dateObj);
         		} catch (Exception e) {
         			
         		}        		

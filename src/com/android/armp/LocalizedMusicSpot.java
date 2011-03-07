@@ -5,8 +5,9 @@ import java.util.HashMap;
 
 public class LocalizedMusicSpot extends Object {
 	private int mId;
-	private double mLattitude;
+	private double mLatitude;
 	private double mLongitude;
+	private float mRay;
 	private Date mCreationTime;
 	private HashMap<Integer, MusicChannel> mChannels;
 	private static LocalizedMusicSpot mInstance = null;
@@ -27,7 +28,7 @@ public class LocalizedMusicSpot extends Object {
 		private Date mLastUpdate;
 		private HashMap<Integer, Music> mMusics;
 
-		public void setmName(String mName) {
+		public void setName(String mName) {
 			this.mName = mName;
 		}
 		
@@ -38,39 +39,39 @@ public class LocalizedMusicSpot extends Object {
 			" - NbMusics:"+mNbMusic;
 		}
 
-		public String getmName() {
+		public String getName() {
 			return mName;
 		}
 
-		public void setmGenreId(int mGenreId) {
+		public void setGenreId(int mGenreId) {
 			this.mGenreId = mGenreId;
 		}
 
-		public int getmGenreId() {
+		public int getGenreId() {
 			return mGenreId;
 		}
 
-		public void setmCreationTime(Date mCreationTime) {
+		public void setCreationTime(Date mCreationTime) {
 			this.mCreationTime = (Date) mCreationTime.clone();
 		}
 
-		public Date getmCreationTime() {
+		public Date getCreationTime() {
 			return mCreationTime;
 		}
 
-		public void setmLastUpdate(Date mLastUpdate) {
+		public void setLastUpdate(Date mLastUpdate) {
 			this.mLastUpdate = (Date) mLastUpdate.clone();
 		}
 
-		public Date getmLastUpdate() {
+		public Date getLastUpdate() {
 			return mLastUpdate;
 		}
 
-		public void setmMusics(HashMap<Integer, Music> mMusics) {
+		public void setMusics(HashMap<Integer, Music> mMusics) {
 			this.mMusics = mMusics;
 		}
 
-		public HashMap<Integer, Music> getmMusics() {
+		public HashMap<Integer, Music> getMusics() {
 			return mMusics;
 		}
 
@@ -96,106 +97,124 @@ public class LocalizedMusicSpot extends Object {
 			
 		}
 		
-		public void setmSource(String mSource) {
+		public void setSource(String mSource) {
 			this.mSource = mSource;
 		}
 
-		public String getmSource() {
+		public String getSource() {
 			return mSource;
 		}
 
-		public void setmArtist(String mArtist) {
+		public void setArtist(String mArtist) {
 			this.mArtist = mArtist;
 		}
 
-		public String getmArtist() {
+		public String getArtist() {
 			return mArtist;
 		}
 
-		public void setmTitle(String mTitle) {
+		public void setTitle(String mTitle) {
 			this.mTitle = mTitle;
 		}
 
-		public String getmTitle() {
+		public String getTitle() {
 			return mTitle;
 		}
 
-		public void setmAlbum(String mAlbum) {
+		public void setAlbum(String mAlbum) {
 			this.mAlbum = mAlbum;
 		}
 
-		public String getmAlbum() {
+		public String getAlbum() {
 			return mAlbum;
 		}
 
-		public void setmYear(int mYear) {
+		public void setYear(int mYear) {
 			this.mYear = mYear;
 		}
 
-		public int getmYear() {
+		public int getYear() {
 			return mYear;
 		}
 
-		public void setmGenreId(int mGenreId) {
+		public void setGenreId(int mGenreId) {
 			this.mGenreId = mGenreId;
 		}
 
-		public int getmGenreId() {
+		public int getGenreId() {
 			return mGenreId;
 		}
 
-		public void setmDuration(int mDuration) {
+		public void setDuration(int mDuration) {
 			this.mDuration = mDuration;
 		}
 
-		public int getmDuration() {
+		public int getDuration() {
 			return mDuration;
 		}		
 	}
 	
 	public LocalizedMusicSpot() {
-		setmChannels(new HashMap<Integer, MusicChannel>());
+		setChannels(new HashMap<Integer, MusicChannel>());
 		mInstance = this;
 	}
 	
-	public LocalizedMusicSpot(double lon, double lat, Date crea) {
-		setmLattitude(lat);
-		setmLongitude(lon);
-		setmCreationTime(crea);
-		setmChannels(new HashMap<Integer, MusicChannel>());
+	public LocalizedMusicSpot(int id, double latitude, double longitude, float ray, Date creationTime) {
+		this.mId = id;
+		setLatitude(latitude);
+		setLongitude(longitude);
+		setRay(ray);
+		setCreationTime(creationTime);
+		setChannels(new HashMap<Integer, MusicChannel>());
 		
 		mInstance = this;
 	}
-
-	public void setmLattitude(double mLattitude) {
-		this.mLattitude = mLattitude;
+	
+	public int getId() {
+		return this.mId;
 	}
 
-	public double getmLattitude() {
-		return mLattitude;
+	public void setLatitude(double mLatitude) {
+		this.mLatitude = mLatitude;
 	}
 
-	public void setmLongitude(double mLongitude) {
+	public double getLatitude() {
+		return mLatitude;
+	}
+
+	public void setLongitude(double mLongitude) {
 		this.mLongitude = mLongitude;
 	}
 
-	public double getmLongitude() {
+	public double getLongitude() {
 		return mLongitude;
 	}
+	
+	/**
+	 * Ray of the spot
+	 * @return Ray in meters
+	 */
+	public float getRay() {
+		return mRay;
+	}
 
-	public void setmCreationTime(Date mCreationTime) {
+	public void setRay(float mRay) {
+		this.mRay = mRay;
+	}
+
+	public void setCreationTime(Date mCreationTime) {
 		this.mCreationTime = mCreationTime;
 	}
 
-	public Date getmCreationTime() {
+	public Date getCreationTime() {
 		return mCreationTime;
 	}
 
-	public void setmChannels(HashMap<Integer, MusicChannel> mChannels) {
+	public void setChannels(HashMap<Integer, MusicChannel> mChannels) {
 		this.mChannels = mChannels;
 	}
 
-	public HashMap<Integer, MusicChannel> getmChannels() {
+	public HashMap<Integer, MusicChannel> getChannels() {
 		return mChannels;
 	}
 }
