@@ -90,8 +90,8 @@ public class SpotsXMLHandler extends DefaultHandler{
         	if(this.in_coordinatestag){
         		String coords = new String(ch, start, length);
         		int fc = coords.indexOf(','), lc = coords.lastIndexOf(',');
-        		mSpot.setmLongitude(new Double(coords.substring(0, fc)));
-        		mSpot.setmLattitude(new Double(coords.substring(fc+1, lc)));
+        		mSpot.setLongitude(new Double(coords.substring(0, fc)));
+        		mSpot.setLatitude(new Double(coords.substring(fc+1, lc)));
         	}
         }
 }

@@ -81,7 +81,7 @@ public class LocalizedMusicService extends Service implements LocationListener {
                 	Integer spotKey = (Integer)msg.obj;
                 	
                 	// If we don't have any channel for this spot, retrieve them
-                	if(mSpots.get(spotKey).getmChannels().size() == 0) {
+                	if(mSpots.get(spotKey).getChannels().size() == 0) {
                 		makeHTTPRequest(MSG_CHANNELS, spotKey.toString());
                 	}
                 	// Else just return the channels hash
@@ -89,7 +89,7 @@ public class LocalizedMusicService extends Service implements LocationListener {
                 		try {
                 			Message answ = Message.obtain(null, 
     								LocalizedMusicService.MSG_CHANNELS, 
-    								mSpots.get(spotKey).getmChannels());
+    								mSpots.get(spotKey).getChannels());
                     		mClient.send(answ);
                 		}
                 		catch(Exception e) {
@@ -183,7 +183,7 @@ public class LocalizedMusicService extends Service implements LocationListener {
 						
 						HttpGet httpget2 = new HttpGet(requestURL);
 						response = httpclient.execute(httpget2, channelsResponseHandler);
-						mSpots.get(i).setmChannels((HashMap<Integer, MusicChannel>) response);
+						mSpots.get(i).setChannels((HashMap<Integer, MusicChannel>) response);
 						
 						break;
 					}
