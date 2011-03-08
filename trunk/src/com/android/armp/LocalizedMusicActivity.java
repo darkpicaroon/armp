@@ -2,55 +2,46 @@ package com.android.armp;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
-import com.android.armp.LocalizedMusicSpot.MusicChannel;
-import com.android.armp.TrackBrowserActivity.TrackListAdapter.ViewHolder;
-import com.android.armp.R;
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapActivity;
-import com.google.android.maps.MapView;
-import com.google.android.maps.MyLocationOverlay;
-import com.google.android.maps.Overlay;
-
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.res.Resources;
-import android.database.CharArrayBuffer;
-import android.database.Cursor;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.SectionIndexer;
-import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
+
+import com.android.armp.localized.LocalizedMusicService;
+import com.android.armp.localized.MusicChannel;
+import com.android.armp.localized.MusicChannelView;
+import com.android.armp.localized.MusicSpot;
+import com.android.armp.localized.SpotOverlay;
+import com.android.armp.localized.SpotOverlayAdapter;
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapView;
+import com.google.android.maps.MyLocationOverlay;
+import com.google.android.maps.Overlay;
 
 public class LocalizedMusicActivity extends MapActivity {
 
-	private List<Overlay> spotOverlays = new ArrayList<Overlay>();
+	private List<Overlay> mSpotOverlays = new ArrayList<Overlay>();
+	private List<MusicSpot> mMusicSpots;
+
 	private MyLocationOverlay mLocation;
 	private MapView mMapView;
 
-	private ProgressDialog mPD = null;
+	private ProgressDialog mProgressSpot = null;
+	private ProgressDialog mProgressChannel = null;
+	private ProgressDialog mProgressMusic = null;
 
 	/** Messenger for communicating with service. */
 	Messenger mService = null;
@@ -75,6 +66,9 @@ public class LocalizedMusicActivity extends MapActivity {
 		// Display the user's location on the map view
 		mMapView = (MapView) findViewById(R.id.mapview);
 		mLocation = new MyLocationOverlay(mMapView.getContext(), mMapView);
+		mMapView.getOverlays().add(mLocation);
+		mLocation.enableCompass();
+		mLocation.enableMyLocation();
 
 		// Display the "now playing" bar
 		MusicUtils.updateButtonBar(this, R.id.maptab);
@@ -83,12 +77,10 @@ public class LocalizedMusicActivity extends MapActivity {
 		// Bind the service
 		doBindService();
 
-		// getSpots();
-
-		// Test bidon centré sur les US
-		LocalizedMusicSpot s = new LocalizedMusicSpot(1, 37.0625, -95.677068,
-				500000, new Date());
-		refreshMusicSpot(s);
+		MusicSpot s = new MusicSpot(1, 37.0625, -95.677068, 1, new Date());
+		List<MusicSpot> list = new ArrayList<MusicSpot>();
+		list.add(s);
+		refreshMusicSpots(list);
 	}
 
 	@Override
@@ -134,109 +126,120 @@ public class LocalizedMusicActivity extends MapActivity {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case LocalizedMusicService.MSG_SPOTS_UPDATE:
-				// Close loading progress dialog
-				mPD.dismiss();
-
-				// Go through all the returned spots
-				HashMap<Integer, LocalizedMusicSpot> map = (HashMap<Integer, LocalizedMusicSpot>) msg.obj;
-				if (map == null)
-					return;
-
-				Iterator mIt = map.keySet().iterator();
-				while (mIt.hasNext()) {
-					int key = (Integer) mIt.next();
-					LocalizedMusicSpot value = (LocalizedMusicSpot) map
-							.get(key);
-					Log.d(TAG,
-							"Spot #" + key + ": " + value.getLatitude() + " - "
-									+ value.getLongitude() + " - "
-									+ value.getCreationTime());
-					refreshMusicSpot(value);
-				}
-
+			case LocalizedMusicService.MSG_SPOTS:
+				mProgressSpot.dismiss(); // Close loading progress dialog
+				mProgressSpot = null;
+				refreshMusicSpots((List<MusicSpot>) msg.obj);
 				break;
 			case LocalizedMusicService.MSG_CHANNELS:
-				// Close loading progress dialog
-				mPD.dismiss();
-
-				// Go through all the returned channels
-				HashMap<Integer, MusicChannel> chans = (HashMap<Integer, MusicChannel>) msg.obj;
-				if (chans == null)
-					return;
-
-				Iterator chansIt = chans.keySet().iterator();
-				while (chansIt.hasNext()) {
-					int key = (Integer) chansIt.next();
-					MusicChannel value = (MusicChannel) chans.get(key);
-					Log.d(TAG, "Channel #" + key + ": " + value.toString());
-				}
-				refreshMusicChannels(chans);
-
+				mProgressChannel.dismiss(); // Close loading progress dialog
+				mProgressChannel = null; 
+				refreshMusicChannels((List<MusicChannel>) msg.obj);
 				break;
+			case LocalizedMusicService.MSG_MUSICS:
 			default:
 				super.handleMessage(msg);
+				break;
 			}
 		}
 	}
 
-	private void refreshMusicSpot(LocalizedMusicSpot spot) {
-		if (spot == null) {
-			return;
+	private void refreshMusicSpots(List<MusicSpot> list) {
+		mMusicSpots = list;
+		if (list != null && list.size() > 0) {
+			for (MusicSpot ms : list) {
+				SpotOverlay moc = new SpotOverlay(ms);
+				moc.addListener(new SpotOverlayAdapter(ms) {
+					public void onTouchEvent(MotionEvent e, MapView mapView) {
+						Log.d(TAG,
+								"Downloading channels information for spot #"
+										+ this.mSpot.getId());
+						getChannels(this.mSpot);
+					}
+				});
+				mMapView.getOverlays().add(moc);
+				mSpotOverlays.add(moc);
+			}
 		}
-		MapOverlayCircle moc = new MapOverlayCircle(spot, mMapView);
-		spotOverlays.add(moc);
 	}
 
-	private void refreshMusicChannels(HashMap<Integer, MusicChannel> chans) {
-		if (chans == null) {
-			return;
-		}
-		Iterator chansIt = chans.keySet().iterator();
-		while (chansIt.hasNext()) {
-			int key = (Integer) chansIt.next();
-			MusicChannel c = (MusicChannel) chans.get(key);
+	private void refreshMusicChannels(List<MusicChannel> list) {
+		Log.d(TAG, "refreshMusicChannels");
+		if (list != null && list.size() > 0) {
+			MusicSpot spot = findSpot(list.get(0).getSpotId());
+			if (spot != null) {
+				spot.setChannels(list);
+				for (MusicChannel mc : list) {
+					Log.d(TAG, "Music channel #" + mc.getId() + " - " + mc.getName());
+				}
 
+				// Marche pas!
+				Log.d(TAG, "Ca va bogguer...");
+				Activity a = new MusicChannelView(spot, list);
+				Intent intent = new Intent(LocalizedMusicActivity.this, MusicChannelView.class);
+				a.startActivity(intent);
+			}
 		}
+	}
+
+	private MusicSpot findSpot(int spotId) {
+		if (mMusicSpots != null && mMusicSpots.size() > 0 && spotId > 0) {
+			for (MusicSpot s : mMusicSpots) {
+				if (s.getId() == spotId) {
+					return s;
+				}
+			}
+		}
+		return null;
 	}
 
 	private void getSpots() {
-		// Show dialog
-		mPD = ProgressDialog.show(LocalizedMusicActivity.this, "",
+		if (mProgressSpot != null) {
+			return;
+		}
+		GeoPoint me = mLocation.getMyLocation();
+
+		mProgressSpot = ProgressDialog.show(LocalizedMusicActivity.this, "",
 				"Retrieving spots...", true, false);
 
 		// Create and send the message
-		Message msg = Message.obtain(null,
-				LocalizedMusicService.MSG_SPOTS_UPDATE);
+		Message msg = Message.obtain(null, LocalizedMusicService.MSG_SPOTS);
 		msg.replyTo = mMessenger;
+		msg.obj = me;
 
 		try {
 			mService.send(msg);
 		} catch (Exception e) {
-
+			Log.e(TAG, e.getMessage());
 		}
 	}
 
-	private void getChannels(int spotId) {
+	private void getChannels(MusicSpot spot) {
+		if (mProgressChannel != null) {
+			return;
+		}
 		// Show dialog
-		mPD = ProgressDialog.show(LocalizedMusicActivity.this, "",
+		mProgressChannel = ProgressDialog.show(LocalizedMusicActivity.this, "",
 				"Retrieving channels...", true, false);
 
 		// Create and send the message
 		Message msg = Message.obtain(null, LocalizedMusicService.MSG_CHANNELS);
 		msg.replyTo = mMessenger;
-		msg.obj = spotId;
+		msg.obj = spot;
 
 		try {
 			mService.send(msg);
 		} catch (Exception e) {
-
+			Log.e(TAG, e.getMessage());
 		}
 	}
 
 	private void getMusics(int channelId) {
+		if (mProgressMusic != null) {
+			return;
+		}
 		// Show dialog
-		mPD = ProgressDialog.show(LocalizedMusicActivity.this, "",
+		mProgressMusic = ProgressDialog.show(LocalizedMusicActivity.this, "",
 				"Retrieving musics...", true, false);
 
 		// Create and send the message
@@ -247,7 +250,7 @@ public class LocalizedMusicActivity extends MapActivity {
 		try {
 			mService.send(msg);
 		} catch (Exception e) {
-
+			Log.e(TAG, e.getMessage());
 		}
 	}
 
@@ -257,6 +260,7 @@ public class LocalizedMusicActivity extends MapActivity {
 	private ServiceConnection mConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			mService = new Messenger(service);
+//			getSpots();
 		}
 
 		public void onServiceDisconnected(ComponentName className) {
@@ -264,68 +268,18 @@ public class LocalizedMusicActivity extends MapActivity {
 		}
 	};
 
-	void doBindService() {
+	private void doBindService() {
 		bindService(new Intent(LocalizedMusicActivity.this,
 				LocalizedMusicService.class), mConnection,
 				Context.BIND_AUTO_CREATE);
 		mIsBound = true;
 	}
 
-	void doUnbindService() {
+	private void doUnbindService() {
 		if (mIsBound) {
 			// Detach our existing connection.
 			unbindService(mConnection);
 			mIsBound = false;
-		}
-	}
-
-	private class MapOverlayCircle extends Overlay {
-		private LocalizedMusicSpot spot;
-		private Paint paint;
-
-		public MapOverlayCircle(LocalizedMusicSpot spot, MapView mapView) {
-			super();
-			this.spot = spot;
-			this.paint = new Paint();
-			paint.setAntiAlias(true);
-			paint.setColor(0x06C);
-			paint.setAlpha(127);
-			paint.setStrokeWidth(2.0f);
-			mapView.getOverlays().add(this);
-		}
-
-		@Override
-		public void draw(Canvas canvas, MapView mapView, boolean shadow) {
-			super.draw(canvas, mapView, shadow);
-			Point center = new Point();
-
-			// Transform real coordinates and distances to points and pixels
-			mapView.getProjection().toPixels(getGeoPoint(), center);
-			float pixels = mapView.getProjection().metersToEquatorPixels(
-					spot.getRay());
-
-			// Define a circle by its outside box
-			float left = center.x - pixels;
-			float top = center.y - pixels;
-			float right = center.x + pixels;
-			float bottom = center.y + pixels;
-			RectF oval = new RectF(left, top, right, bottom);
-			canvas.drawOval(oval, paint);
-		}
-
-		@Override
-		public boolean onTouchEvent(MotionEvent e, MapView mapView) {
-			getChannels(spot.getId());
-			return super.onTouchEvent(e, mapView);
-		}
-
-		public LocalizedMusicSpot getSpot() {
-			return spot;
-		}
-
-		private GeoPoint getGeoPoint() {
-			return new GeoPoint((int) (1000000.0f * spot.getLatitude()),
-					(int) (1000000.0f * spot.getLongitude()));
 		}
 	}
 }
