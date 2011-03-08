@@ -32,7 +32,7 @@
 || US25 || Implementation of classes related to data provided by WS (rel. [Sprint4 US22]-[Sprint4 US24]) for the client side. || On the wiki page: UML schemas, ... || 80 || abarreir || 0 || 0 || http://fabienrenaud.com/armp/star-white.png ||
 || US26 || Implementation of a client-side class requesting WS (rel. [Sprint4 US22]-[Sprint4 US24]) and transforming results into Java objects (rel. [Sprint4 US25]). || On the wiki page: ref to the code, test results || 79 || abarreir || 0 || 0 || http://fabienrenaud.com/armp/star-white.png ||
 || US27 || Display spots on the Google Map view using KML files provided by the WS related to the [Sprint4 US22]. || On the wiki page: how the KML file is put in the map view, screenshot... || 78 || Fabien || 3 || 4 || http://fabienrenaud.com/armp/success.gif ||
-|| US28 || Display information about channels when clicking on a spot using XML files provided by the WS related to the [Sprint4 US23]. || screenshot || 77 || Fabien || 3 || 6 || http://fabienrenaud.com/armp/star-gold.png ||
+|| US28 || Display information about channels when clicking on a spot using XML files provided by the WS related to the [Sprint4 US23]. || screenshot || 77 || Fabien || 3 || 7 || http://fabienrenaud.com/armp/star-gold.png ||
 || US29 || Display information about streams/musics when clicking on a channel using XML files provided by the WS related to the [Sprint4 US24]. || screenshot || 76 || Fabien || 3 || 0 || http://fabienrenaud.com/armp/star-white.png ||
 
 === Links ===
