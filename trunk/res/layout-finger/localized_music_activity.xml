@@ -16,8 +16,11 @@
         android:layout_weight="1"
         android:clickable="true"
         android:drawSelectorOnTop="false"
-        android:apiKey="06A1dckQYkmMgtwfy1exJLG90TwS5ngIvBL4Xew"
+        android:apiKey="0QfQVQVtmYQnZXSKvRXzFfyi3Bx-QezTWM2cr-A"
     />
+    <!-- android:apiKey="06A1dckQYkmMgtwfy1exJLG90TwS5ngIvBL4Xew" --><!-- abarreir -->
+    <!-- android:apiKey="0QfQVQVtmYQnZXSKvRXzFfyi3Bx-QezTWM2cr-A" --><!-- fabien -->
+    <!-- android:apiKey="_______________________________________" --><!-- mathieu -->
 
     <include layout="@layout/nowplaying" />
 

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ws_spots">http://fabienrenaud.com/armp/getspots.php</string>
+    <string name="ws_channels">http://fabienrenaud.com/armp/getchannels.php</string>
+    <string name="ws_musics">http://fabienrenaud.com/armp/getmusics.php</string>
+</resources>
