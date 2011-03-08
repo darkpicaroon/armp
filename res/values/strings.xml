@@ -302,5 +302,7 @@
 
     <!-- Text shown on widget when first loaded -->
     <string name="widget_initial_text">Touch to select music.</string>
+    <string name="unknown_genre">Unknown genre</string>
+    <string name="localizedchan">Channels</string>
 </resources>
 
