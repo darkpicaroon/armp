@@ -233,9 +233,6 @@
                 <data android:mimeType="vnd.android.cursor.dir/audio"/>
             </intent-filter>
         </activity>
-        
-        <activity android:name="com.android.armp.LocalizedMusicActivity"
-                android:label="@string/maplabel" />
                         
         <activity android:name="com.android.armp.CreatePlaylist"
             android:theme="@android:style/Theme.Dialog" />
@@ -249,8 +246,14 @@
             android:theme="@android:style/Theme.Dialog" />
         <service android:name="MediaPlaybackService"
             android:exported="true" />
-        <service android:name="LocalizedMusicService"
-        	android:exported="true" />
+            
+        
+        <activity android:name="LocalizedMusicActivity"
+                android:label="@string/maplabel" />
+        <activity android:name="com.android.armp.localized.MusicChannelView"
+          android:label="@string/localizedchan"/>
+        <service android:name="com.android.armp.localized.LocalizedMusicService"
+        	android:exported="false" />
 
         <receiver android:name="MediaAppWidgetProvider">
             <intent-filter>
