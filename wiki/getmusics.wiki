@@ -1,0 +1,21 @@
+= Request =
+This request is used to get the musics associated with a specified channel.
+
+
+= Parameters =
+<br>_channel_id_: the id referencing the channel.</br>
+<br>_nb_channels_: the number of musics to send back in response.</br>
+<br>_start_id_: the identifier of the music from which to start (in case some musics have already be sent to the client application.</br>
+
+= Response =
+
+There are two different possible response corresponding to the type of source:
+
+<ul>
+<li>local: In that case the server sends back the metadata corresponding to the music to enable the armp player to find that music within the client personnal folder.
+</li>
+<li>distante: If the stream of music is stored a server the response contains the url to play that stream. 
+</li>
+</ul>
+
+= Sample =
