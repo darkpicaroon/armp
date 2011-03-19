@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/flipper"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent" >
+		
+	<include android:id="@+id/map"  layout="@layout/localized_music_activity" />
+	<include android:id="@+id/chan_list"  layout="@layout/localized_music_channel_list" />
+	
+</ViewFlipper>

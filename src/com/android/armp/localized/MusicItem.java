@@ -6,11 +6,19 @@ public class MusicItem {
 	private String mArtist;
 	private String mTitle;
 	private String mAlbum;
-	private int mYear;
-	private int mGenreId;
+	private String mGenre;
+	private int mYear;	
 	private int mDuration;
+	private int mTrackNumber;
+	private int mGenreId;
 
 	public MusicItem(int id) {
+		this.mId = id;
+	}
+	
+	public MusicItem(int id, String artist, String album) {
+		this.mArtist = artist;
+		this.mAlbum = album;
 		this.mId = id;
 	}
 	
@@ -58,12 +66,20 @@ public class MusicItem {
 		return mYear;
 	}
 
-	public void setGenreId(int mGenreId) {
-		this.mGenreId = mGenreId;
+	public void setGenre(String genre) {
+		this.mGenre = genre;
 	}
 
+	public String getGenre() {
+		return mGenre;
+	}
+	
+	public void setGenreId(int genreId) {
+		this.mGenreId = genreId;
+	}
+	
 	public int getGenreId() {
-		return mGenreId;
+		return this.mGenreId;
 	}
 
 	public void setDuration(int mDuration) {
@@ -72,5 +88,13 @@ public class MusicItem {
 
 	public int getDuration() {
 		return mDuration;
+	}
+	
+	public void setTrackNumber(int trackNbr) {
+		this.mTrackNumber = trackNbr;
+	}
+	
+	public int getTrackNumber() {
+		return this.mTrackNumber;
 	}
 }

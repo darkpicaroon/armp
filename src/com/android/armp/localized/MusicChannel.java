@@ -1,9 +1,13 @@
 package com.android.armp.localized;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MusicChannel {
+public class MusicChannel implements Serializable {
 	private int mId;
 	private int mSpotId;
 	private String mName;
@@ -16,6 +20,36 @@ public class MusicChannel {
 
 	public MusicChannel(int id) {
 		this.mId = id;
+		this.mMusics = new ArrayList<MusicItem>();
+	}
+	
+	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+		SimpleDateFormat curFormater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String cTime = curFormater.format(mCreationTime), 
+			   uTime = curFormater.format(mLastUpdate);
+		
+		out.writeBytes(mId+","+mSpotId+","+mName+","+mGenreId+","+
+						mGenre+","+mNbMusic+","+cTime+","+uTime);
+	}
+
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		SimpleDateFormat curFormater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String obj = in.readLine();
+		String[] fields = obj.split(",");
+		
+		mId = new Integer(fields[0]);
+		mSpotId = new Integer(fields[1]);
+		mName = fields[2];
+		mGenreId = new Integer(fields[3]);
+		mGenre = fields[4];
+		mNbMusic = new Integer(fields[5]);
+		
+		try {
+			setCreationTime(curFormater.parse(fields[6]));
+			setLastUpdate(curFormater.parse(fields[7]));
+		} catch (Exception e) {
+
+		}
 	}
 	
 	public int getId() {

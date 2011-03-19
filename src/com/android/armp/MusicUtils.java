@@ -27,6 +27,8 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Locale;
 
+import com.android.armp.localized.MusicChannelView;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -855,6 +857,15 @@ public class MusicUtils {
 			context.startActivity(intent);
 		}
 	}
+	
+	public static void playOneShot(String music) {
+		try {
+			sService.openFile(music, true);
+			sService.play();
+		} catch (RemoteException e) {
+			Log.e(TAG, e.getMessage());
+		}
+	}
 
 	public static void clearQueue() {
 		try {
@@ -1196,7 +1207,7 @@ public class MusicUtils {
 
 	static int sActiveTabIndex = -1;
 
-	static boolean updateButtonBar(Activity a, int highlight) {
+	public static boolean updateButtonBar(Activity a, int highlight) {
 		final TabWidget ll = (TabWidget) a.findViewById(R.id.buttonbar);
 		boolean withtabs = false;
 		Intent intent = a.getIntent();
@@ -1283,7 +1294,7 @@ public class MusicUtils {
 					MediaStore.Audio.Playlists.CONTENT_TYPE);
 			break;
 		case R.id.maptab:
-			intent = new Intent(a, LocalizedMusicActivity.class);
+			intent = new Intent(a, LocalizedMusicActivity.class);		
 			a.startActivity(intent);
 			break;
 		case R.id.nowplayingtab:

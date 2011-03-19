@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+
+    android:padding="6dip">
+
+    <ImageView
+        android:src="@drawable/app_music" 
+        android:layout_height="fill_parent" 
+        android:layout_alignParentTop="true" 
+        android:id="@+id/music_icon" 
+                
+        android:layout_alignParentBottom="true" 
+        android:layout_width="wrap_content" 
+        android:layout_marginRight="6dip"/>
+    
+    <TextView
+        android:id="@+id/music_item_line2"
+
+        android:layout_width="fill_parent"
+        android:layout_height="26dip" 
+        
+        android:layout_toRightOf="@id/music_icon"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:text="Artist" />
+        
+
+	<TextView
+    	android:id="@+id/music_item_line1"
+        
+        android:layout_alignParentTop="true"
+
+        android:gravity="center_vertical" 
+        android:layout_alignWithParentIfMissing="true" 
+        android:layout_width="fill_parent" 
+        android:layout_alignParentRight="true" 
+        android:layout_height="wrap_content" 
+        android:layout_toRightOf="@id/music_icon"/>  
+<!--  android:layout_above="@id/music_item_line2" -->
+
+</RelativeLayout>

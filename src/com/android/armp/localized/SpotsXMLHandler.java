@@ -102,7 +102,7 @@ public class SpotsXMLHandler extends MyDefaultHandler {
 	public void characters(char ch[], int start, int length) {
 		if (this.inRadiusTag) {
 			String str = new String(ch, start, length);
-			mSpot.setRadius(Integer.parseInt(str));
+			mSpot.setRadius((float)Double.parseDouble(str)/100.0f);
 		} else if (this.inCoordinatesTag) {
 			String coords = new String(ch, start, length);
 			int fc = coords.indexOf(','), lc = coords.lastIndexOf(',');

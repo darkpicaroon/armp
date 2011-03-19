@@ -2,26 +2,37 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center_vertical" >
+    android:orientation="vertical">
     
     <include layout="@layout/sd_error" />
-
     <include layout="@layout/buttonbar" />
-
-    <com.google.android.maps.MapView
-        android:id="@+id/mapview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:clickable="true"
-        android:drawSelectorOnTop="false"
-        android:apiKey="0QfQVQVtmYQnZXSKvRXzFfyi3Bx-QezTWM2cr-A"
-    />
-    <!-- android:apiKey="06A1dckQYkmMgtwfy1exJLG90TwS5ngIvBL4Xew" --><!-- abarreir -->
-    <!-- android:apiKey="0QfQVQVtmYQnZXSKvRXzFfyi3Bx-QezTWM2cr-A" --><!-- fabien -->
-    <!-- android:apiKey="_______________________________________" --><!-- mathieu -->
-
-    <include layout="@layout/nowplaying" />
+    
+    <ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/flipper"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_weight="1"
+		android:drawSelectorOnTop="false">
+    
+		<com.android.armp.localized.SmartMapView
+	        android:id="@+id/mapview"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:layout_weight="1"
+	        android:clickable="true"        
+	        android:apiKey="06A1dckQYkmMgtwfy1exJLG90TwS5ngIvBL4Xew"
+	    />
+	    <!-- android:apiKey="06A1dckQYkmMgtwfy1exJLG90TwS5ngIvBL4Xew" --><!-- abarreir -->
+    	<!-- android:apiKey="0QfQVQVtmYQnZXSKvRXzFfyi3Bx-QezTWM2cr-A" --><!-- fabien -->
+    	<!-- android:apiKey="_______________________________________" --><!-- mathieu -->
+    
+		<include android:id="@+id/chan_list"  layout="@layout/localized_music_channel_list" />		
+		<include android:id="@+id/music_list" layout="@layout/localized_music_list" />
+	
+	</ViewFlipper>
+	
+	<include layout="@layout/nowplaying" />  
+    
+    
 
 </LinearLayout>
