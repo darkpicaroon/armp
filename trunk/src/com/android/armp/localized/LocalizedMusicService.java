@@ -37,17 +37,17 @@ import com.google.android.maps.GeoPoint;
 
 public class LocalizedMusicService extends Service implements LocationListener {
 	private LocationManager mLocationMng;
+	private Location mPreviousLoc = null;
 	private Messenger mClient = null;
 	private static final String TAG = "LocalizedMusicService";
-
-	private static final String userAgent = "";
+	
+	private static final float SPOTS_REFRESH_TRESHOLD = 1000.0f;
 
 	/**
 	 * Messages
 	 */
-	public static final int MSG_SPOTS = 1;
-	public static final int MSG_CHANNELS = 2;
-	public static final int MSG_MUSICS = 3;
+	public static final int MSG_REGISTER = 0;
+	public static final int MSG_UREGISTER = 1;
 
 	/**
 	 * Handler of incoming messages from clients.
@@ -55,32 +55,13 @@ public class LocalizedMusicService extends Service implements LocationListener {
 	class IncomingHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
-			if (mClient == null) {
-				mClient = msg.replyTo;
-			}
 			switch (msg.what) {
-			case MSG_SPOTS:
-				requestMusicSpots((GeoPoint) msg.obj);
+			case MSG_REGISTER:
+				mClient = msg.replyTo;
 				break;
-			case MSG_CHANNELS:
-				MusicSpot spot = (MusicSpot) msg.obj;
-				if (spot != null) {
-					// If we don't have any channel for this spot, retrieve them
-					if (spot.getChannels().size() == 0) {
-						requestMusicChannels(spot);
-					} else { // Else just return the channels hash
-						try {
-							Message answ = Message.obtain(null,
-									LocalizedMusicService.MSG_CHANNELS,
-									spot.getChannels());
-							mClient.send(answ);
-						} catch (Exception e) {
-							Log.e(TAG, e.getMessage());
-						}
-					}
-				}
+			case MSG_UREGISTER:
+				mClient = null;
 				break;
-			case MSG_MUSICS:
 			default:
 				super.handleMessage(msg);
 				break;
@@ -96,10 +77,12 @@ public class LocalizedMusicService extends Service implements LocationListener {
 
 	@Override
 	public void onCreate() {
-		// Retrieve the LocationManager to enable listening to location updates
+		// Retrieve the LocationManager to listen to location updates
 		mLocationMng = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		mLocationMng.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1,
-				this);
+		mLocationMng.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+											1, 1, this);
+		mLocationMng.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+											1, 1, this);
 
 		// To get WS urls
 		mContext = getResources();
@@ -120,6 +103,22 @@ public class LocalizedMusicService extends Service implements LocationListener {
 	}
 
 	public void onLocationChanged(Location location) {
+		/*if(mPreviousLoc == null || 
+				location.distanceTo(mPreviousLoc) > SPOTS_REFRESH_TRESHOLD) {
+			if(mPreviousLoc != null)
+				Log.d(TAG, String.valueOf(location.distanceTo(mPreviousLoc)));
+			mPreviousLoc = location;
+			
+			// Tell the activity that the user moved
+			try {
+				Message alert = Message.obtain(null,
+						LocalizedMusicService.MSG_USR_MOVE);
+				mClient.send(alert);
+			} catch(Exception e) {
+				//Log.e(TAG, e.getMessage());
+				e.printStackTrace();
+			}
+		}	*/
 	}
 
 	public void onProviderDisabled(String provider) {
@@ -130,140 +129,4 @@ public class LocalizedMusicService extends Service implements LocationListener {
 
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 	}
-
-	/**
-	 * 
-	 * @param reqId
-	 *            The kind of request we are performing
-	 */
-	private void requestMusicSpots(GeoPoint location) {
-		if (location == null) {
-			killRequest(MSG_SPOTS);
-		}
-		// double latitude = (double)(location.getLatitudeE6() / 1000000.0);
-		// double longitude = (double)(location.getLongitudeE6() / 1000000.0);
-
-		// Metz, GTL
-		double latitude = 49.102097604636;
-		double longitude = 6.2149304151535;
-		String url = mContext.getString(R.string.ws_spots) + "?";
-		url += "lat=" + latitude + "&";
-		url += "long=" + longitude;
-
-		Thread t = new Thread(new HttpGetRequest(MSG_SPOTS, url,
-				new SpotsXMLHandler()));
-		t.start();
-	}
-
-	private void requestMusicChannels(MusicSpot spot) {
-		if (spot == null) {
-			killRequest(MSG_CHANNELS);
-		}
-		String url = mContext.getString(R.string.ws_channels) + "?";
-		url += "spot_id=" + spot.getId();
-		Thread t = new Thread(new HttpGetRequest(MSG_CHANNELS, url,
-				new ChannelsXMLHandler()));
-		t.start();
-		// spot.setChannels((List<MusicChannel>) response);
-	}
-
-	private void requestMusicItems(MusicChannel channel) {
-
-	}
-
-	private void killRequest(int requestId) {
-		if (mClient != null) {
-			try {
-				mClient.send(Message.obtain(null, requestId, null));
-			} catch (RemoteException e) {
-				Log.e(TAG, e.getMessage());
-			}
-		}
-	}
-
-	private class HttpGetRequest implements Runnable {
-		private String mUrl;
-		private MyDefaultHandler mXmlHandler;
-		private int mRequestId;
-
-		public HttpGetRequest(int requestId, String url,
-				MyDefaultHandler xmlHandler) {
-			this.mRequestId = requestId;
-			this.mUrl = url;
-			this.mXmlHandler = xmlHandler;
-		}
-
-		public void run() {
-			AndroidHttpClient httpclient = null;
-			try {
-				httpclient = AndroidHttpClient.newInstance(userAgent);
-
-				Log.d(TAG, "Sending request: " + mUrl);
-				HttpGet httpget = new HttpGet(mUrl);
-				Object response = httpclient.execute(httpget,
-						new CommonResponseHandler<Object>(mXmlHandler));
-
-				// Send the answer to the activity
-				Message msg = Message.obtain(null, mRequestId, response);
-				mClient.send(msg);
-			} catch (Exception e) {
-				String msg = e != null && e.getMessage() != null ? e
-						.getMessage() : "Fatal error!";
-				Log.e(TAG, msg);
-			} finally {
-				if (httpclient != null) {
-					httpclient.close();
-				}
-			}
-		}
-	}
-
-	private class CommonResponseHandler<T> implements ResponseHandler<T> {
-		private MyDefaultHandler mXmlHandler;
-
-		public CommonResponseHandler(MyDefaultHandler xmlHandler) {
-			this.mXmlHandler = xmlHandler;
-		}
-
-		// @Override
-		public T handleResponse(HttpResponse r) {
-			String result = "";
-			try {
-				// First, we retrieve the xml string from the server
-				BufferedReader br = new BufferedReader(new InputStreamReader(r
-						.getEntity().getContent()));
-				String line;
-				while ((line = br.readLine()) != null) {
-					result += line;
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			T res = null;
-
-			// Then, we parse the retrieved string
-			try {
-				/* Get a SAXParser from the SAXPArserFactory. */
-				SAXParserFactory spf = SAXParserFactory.newInstance();
-				SAXParser sp = spf.newSAXParser();
-
-				/* Get the XMLReader of the SAXParser we created. */
-				XMLReader xr = sp.getXMLReader();
-
-				/* Create a new ContentHandler and apply it to the XML-Reader */
-				xr.setContentHandler(mXmlHandler);
-
-				/* Parse the xml-data from our string */
-				xr.parse(new InputSource(new StringReader(result)));
-
-				/* Our ExampleHandler now provides the parsed data to us. */
-				res = (T) mXmlHandler.getParsedData();
-			} catch (Exception e) {
-				Log.d(TAG, e.getMessage());
-			}
-
-			return res;
-		}
-	};
 }

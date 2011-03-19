@@ -5,7 +5,7 @@
   android:orientation="vertical">
   
     <ListView
-      android:id="@+id/channel_list_view"
+      android:id="@+id/music_list_view"
       android:layout_height="wrap_content"
       android:layout_width="match_parent" />
      
