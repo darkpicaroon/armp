@@ -1,13 +1,14 @@
 #labels Phase-Requirements,Phase-Design,Phase-Implementation
 === Objectives ===
 
- * Basic web server implementation to get information about spots, channels and streams
- * Basic client application implementation displaying spots and related information.
+ * Playback of a local music.
+ * Update server queries to optimize how spots are sent back.
+ * Add user authentication.
 
 === Resources ===
 
- * Start day: 03/2/2011
- * End day: 03/8/2011
+ * Start day: 03/9/2011
+ * End day: 03/23/2011
 
 === Backlog ===
 
@@ -25,9 +26,15 @@
 </tr>
 </table>
 || *[LabelInformation ID]* || *[LabelInformation Description]* || *[LabelInformation How to Demo]* || *[LabelInformation Imp.]* || *[LabelInformation Owner]* || *[LabelInformation Est.]* || *[LabelInformation Elaps.]* || *[LabelInformation Status]* ||
-|| US27 || Display spots on the Google Map view using KML files provided by the WS related to the [Sprint4 US22]. || On the wiki page: how the KML file is put in the map view, screenshot... || 78 || abarreir || 3 || 4 || http://fabienrenaud.com/armp/success.gif ||
-|| US28 || Display information about channels when clicking on a spot using XML files provided by the WS related to the [Sprint4 US23]. || screenshot || 77 || abarreir || 3 || 6 || http://fabienrenaud.com/armp/success.gif ||
-|| US29 || Display information about streams/musics when clicking on a channel using XML files provided by the WS related to the [Sprint4 US24]. || screenshot || 76 || abarreir || 3 || 4 || http://fabienrenaud.com/armp/success.gif ||
+|| US30 || Playback of a local music listed in the music list associated with a music channel. || See the [US30_HowToDemo wiki page] || 75 || abarreir || 2 || 2 || http://fabienrenaud.com/armp/success.gif ||
+|| US31 || Update the now playing view regarding the music being played. || See the [US31_HowToDemo wiki page] || 74 || abarreir || 3 || - || http://fabienrenaud.com/armp/star-gold.png ||
+|| US32 || Change the icon bound to a music regarding its source and availability. || See the [US32_HowToDemo wiki page] || 73 || abarreir || 0.5 || - || http://fabienrenaud.com/armp/star-white.png ||
+|| US33 || Modify spots query to send back spots from a given area (and not around a location). || - || 72 || - ||  || - || http://fabienrenaud.com/armp/star-white.png ||
+|| US34 || Advanced spots storage, to group close spots when displaying the view with a high zoom level. || - || 71 || - ||  || - || http://fabienrenaud.com/armp/star-white.png ||
+|| US35 || Add a user table in the server to associate spots/channels with the users who created them. || - || 70 || - ||  || - || http://fabienrenaud.com/armp/star-white.png ||
+|| US36 || Handle users authentication in the client-side with their google or facebook account.|| - || 69 || - ||  || - || http://fabienrenaud.com/armp/star-white.png ||
+|| US37 || Update the client-side response parsing regarding the server queries changes. || - || 68 || - ||  || - || http://fabienrenaud.com/armp/star-white.png ||
+|| US38 || Update the client-side UI to display information about the user who created a spot/channel. || - || 67 || - ||  || - || http://fabienrenaud.com/armp/star-white.png ||
 
 === Links ===
 
