@@ -2,7 +2,7 @@
 
 ==Achieved tasks==
 
-To display music spots, the application first needs to retrieve them. As described in the [US25_US26_HowToDemo US26], the UI is able to request the server for such an object. To do so, we have extended the MapView class to enable it to provide information to the Activity about the area currently displayed. This [http://code.google.com/p/armp/source/browse/trunk/src/com/android/armp/localized/SmartMapView.java SmartMapView object] listen to the user's gestures on the view and notify the activity whenever he has stopped moving around the map, giving it the area currently being displayed.
+To display music spots, the application first needs to retrieve them. As described in the [US25_US26_HowToDemo US26], the UI is able to request the server for such an object. To do so, we have extended the [http://code.google.com/android/add-ons/google-apis/reference/com/google/android/maps/MapView.html MapView] class to enable it to provide information to the Activity about the area currently displayed. This [http://code.google.com/p/armp/source/browse/trunk/src/com/android/armp/localized/SmartMapView.java SmartMapView object] listen to the user's gestures on the view and notify the activity whenever he has stopped moving around the map, giving it the area currently being displayed.
 
 With such an information, the activity is able to request the server for spots in this area (through the application object), and display overlays on the map representing the returned spots (if any).
 
