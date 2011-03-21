@@ -2,7 +2,7 @@
 
 == Actions ==
 
- * Like a specified channel
+ * Likes a specified channel.
 
 == Request ==
 <table cellspacing="4" border="0">
