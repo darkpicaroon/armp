@@ -56,3 +56,7 @@ The channel elements are the following:
   <status>1</status>
 </root>
 }}}
+
+== See also ==
+
+ * [getchannels Old getchannels.php WS]
