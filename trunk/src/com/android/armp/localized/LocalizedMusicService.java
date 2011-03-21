@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.parsers.SAXParser;
@@ -16,9 +17,13 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
+import android.app.Activity;
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationListener;
@@ -32,14 +37,20 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.android.armp.IMediaPlaybackService;
+import com.android.armp.MediaPlaybackService;
+import com.android.armp.MusicUtils;
 import com.android.armp.R;
+import com.android.armp.MusicUtils.ServiceToken;
 import com.google.android.maps.GeoPoint;
 
-public class LocalizedMusicService extends Service implements LocationListener {
+public class LocalizedMusicService extends Service implements LocationListener, ServiceConnection {
 	private LocationManager mLocationMng;
 	private Location mPreviousLoc = null;
 	private Messenger mClient = null;
 	private static final String TAG = "LocalizedMusicService";
+	
+	private static ServiceToken mToken = null;
 	
 	private static final float SPOTS_REFRESH_TRESHOLD = 1000.0f;
 
@@ -86,10 +97,13 @@ public class LocalizedMusicService extends Service implements LocationListener {
 
 		// To get WS urls
 		mContext = getResources();
+		
+		mToken = MusicUtils.bindToService(this.getApplicationContext(), this);
 	}
 
 	@Override
 	public void onDestroy() {
+		MusicUtils.unbindFromService(mToken);
 	}
 
 	/**
@@ -128,5 +142,11 @@ public class LocalizedMusicService extends Service implements LocationListener {
 	}
 
 	public void onStatusChanged(String provider, int status, Bundle extras) {
+	}
+
+	public void onServiceConnected(ComponentName name, IBinder service) {
+	}
+
+	public void onServiceDisconnected(ComponentName name) {
 	}
 }

@@ -5,8 +5,10 @@ public class Music {
 	private int mMetadataId;
 	private String mSource;
 	private String mArtist;
+	private long mArtistId;
 	private String mTitle;
 	private String mAlbum;
+	private long mAlbumId;
 	private String mGenre;
 	private int mYear;
 	private int mDuration;
@@ -49,6 +51,14 @@ public class Music {
 	public String getArtist() {
 		return mArtist;
 	}
+	
+	public void setArtistId(long artistId) {
+		this.mArtistId = artistId;
+	}
+	
+	public long getArtistId() {
+		return mArtistId;
+	}
 
 	public void setTitle(String mTitle) {
 		this.mTitle = mTitle;
@@ -64,6 +74,14 @@ public class Music {
 
 	public String getAlbum() {
 		return mAlbum;
+	}
+	
+	public void setAlbumId(long albumId) {
+		this.mAlbumId = albumId;
+	}
+	
+	public long getAlbumId() {
+		return mAlbumId;
 	}
 
 	public void setYear(int mYear) {

@@ -46,7 +46,7 @@ public class ArmpApp extends Application {
 	 * Http requests parameters
 	 */
 	private static final String userAgent    = "";
-	private static final String rootUrl      = "http://fabienrenaud.com/armp/";
+	private static final String rootUrl      = "http://fabienrenaud.com/armp/www/";
 	private static final String SPOTS_REQ    = rootUrl + "getSpots.php";
 	private static final String CHANNELS_REQ = rootUrl + "getChannels.php";
 	private static final String MUSICS_REQ   = rootUrl + "getMusics.php";
@@ -60,6 +60,9 @@ public class ArmpApp extends Application {
 	private OnSpotsReceivedListener mSpotsListener;
 	private OnChannelsReceivedListener mChanListener;
 	private OnMusicsReceivedListener mMusicsListener;
+	
+	private static ArrayList<Music> mCurrentMusics = null;
+	private static int mCurrentPosition = -1;
 
 	@Override
 	public void onCreate() {
@@ -178,6 +181,22 @@ public class ArmpApp extends Application {
 
 		return null;
 	}
+	
+	public static void setCurrentMusics(ArrayList<Music> musics) {
+		mCurrentMusics = (ArrayList<Music>) musics.clone();
+	}
+	
+	public static ArrayList<Music> getCurrentMusics() {
+		return mCurrentMusics;
+	}
+	
+	public static void setCurrentPosition(int position) {
+		mCurrentPosition = position;
+	}
+	
+	public static int getCurrentPosition() {
+		return mCurrentPosition;
+	}
 
 	/**
 	 * Callback interfaces and setters
@@ -255,6 +274,7 @@ public class ArmpApp extends Application {
 				String msg = e != null && e.getMessage() != null ? e
 						.getMessage() : "Fatal error!";
 				Log.e(TAG, msg);
+				e.printStackTrace();
 			} finally {
 				if (httpclient != null) {
 					httpclient.close();
@@ -282,6 +302,7 @@ public class ArmpApp extends Application {
 					result += line;
 				}
 			} catch (IOException e) {
+				Log.e(TAG, e.getMessage());
 				e.printStackTrace();
 			}
 
@@ -298,6 +319,8 @@ public class ArmpApp extends Application {
 
 				/* Create a new ContentHandler and apply it to the XML-Reader */
 				xr.setContentHandler(mXmlHandler);
+				
+				Log.d(TAG, result);
 
 				/* Parse the xml-data from our string */
 				xr.parse(new InputSource(new StringReader(result)));
@@ -306,6 +329,7 @@ public class ArmpApp extends Application {
 				res = (T) mXmlHandler.getParsedData();
 			} catch (Exception e) {
 				Log.d(TAG, e.getMessage());
+				e.printStackTrace();
 			}
 
 			return res;

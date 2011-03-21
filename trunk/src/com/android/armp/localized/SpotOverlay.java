@@ -21,7 +21,7 @@ import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
 public class SpotOverlay extends Overlay {
-	private static final float factor = 5000.0f; // meters for 1 radius unit
+	private static final float factor = 1.0f; // meters for 1 radius unit
 	private static final String TAG = "SpotOverlay";
 	
 	private Spot mSpot;

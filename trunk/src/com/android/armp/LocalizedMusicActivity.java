@@ -119,8 +119,9 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	 */
 	private ServiceToken mToken;
 	
-	private static final int GOT_CHANNELS = 0;
-	private static final int GOT_MUSICS = 1;
+	private static final int GOT_SPOTS = 0;
+	private static final int GOT_CHANNELS = 1;
+	private static final int GOT_MUSICS = 2;
 
 	/**
 	 * View flipper handling
@@ -140,6 +141,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		public void onSpotsReceived(ArrayList<Spot> ms) {			
 			// First, refresh the spots display
 			refreshMusicSpots((ArrayList<Spot>) ms.clone());
+			mHandler.sendEmptyMessage(GOT_SPOTS);
 			// Next, close the loading dialog
 			dismissProgress(mProgressSpot);	
 		}
@@ -166,8 +168,8 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	};
 	
 	private OnAreaChangedListener mMapAreaListener = new OnAreaChangedListener() {
-		public void onAreaChanged(GeoPoint topLeft, GeoPoint bottomRight) {
-			getSpots(mMapView.getZoomLevel(), topLeft, bottomRight);
+		public void onAreaChanged(GeoPoint ne, GeoPoint sw) {
+			getSpots(mMapView.getZoomLevel(), ne, sw);
 		}
 	};
 	
@@ -295,6 +297,8 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
+			case GOT_SPOTS:
+				mMapView.invalidate();
 			case GOT_CHANNELS:
 				displayMusicChannels();
 				break;
@@ -404,7 +408,12 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 					R.layout.localized_music_item, mCurrMusics)
 		);
 		
-		lv.setOnItemClickListener(mMusicClickedHandler); 
+		lv.setOnItemClickListener(mMusicClickedHandler);
+		
+		ArmpApp.setCurrentMusics(mCurrMusics);
+		ArmpApp.setCurrentPosition(0);
+		MusicUtils.playLocalized(0);
+		MusicUtils.updateNowPlaying(LocalizedMusicActivity.this);
 
 		mFlipper.showNext();
 		mCurrView = MUSICS_VIEW;
@@ -427,13 +436,9 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	private OnItemClickListener mMusicClickedHandler = new OnItemClickListener() {
 		public void onItemClick(AdapterView<?> arg0, View v, int position, long id) 
 		{
-			Log.d(TAG, "BATAAAARD");
-			Music m = theApp.getMusicChannel(mCurrSpotId, mCurrChanId).getMusics().get(position);
-			
-			if(m != null) {
-				MusicUtils.playOneShot(m.getSource());
-				MusicUtils.updateNowPlaying(LocalizedMusicActivity.this);
-			}
+			ArmpApp.setCurrentPosition(position);
+			MusicUtils.playLocalized(position);
+			MusicUtils.updateNowPlaying(LocalizedMusicActivity.this);
 		}
 	};
 	
@@ -510,7 +515,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		mProgressSpot = ProgressDialog.show(LocalizedMusicActivity.this, "",
 				"Retrieving spots...", true, false);
 
-		theApp.getMusicSpots(10, p1, p2);
+		theApp.getMusicSpots(zoom, p1, p2);
 	}
 
 	private void getChannels(int spotId) {

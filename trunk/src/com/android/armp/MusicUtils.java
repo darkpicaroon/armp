@@ -22,12 +22,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Locale;
 
+import com.android.armp.localized.ArmpApp;
 import com.android.armp.localized.MusicChannelView;
+import com.android.armp.model.Music;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -172,6 +175,19 @@ public class MusicUtils {
 	public static ServiceToken bindToService(Activity context) {
 		return bindToService(context, null);
 	}
+	
+	public static ServiceToken bindToService(Context context, ServiceConnection callback) {
+		ContextWrapper cw = new ContextWrapper(context);
+		cw.startService(new Intent(cw, MediaPlaybackService.class));
+		ServiceBinder sb = new ServiceBinder(callback);
+		if (cw.bindService(
+				(new Intent()).setClass(cw, MediaPlaybackService.class), sb, 0)) {
+			sConnectionMap.put(cw, sb);
+			return new ServiceToken(cw);
+		}
+		Log.e("MusicUtils", "Failed to bind to service");
+		return null;
+	}
 
 	public static ServiceToken bindToService(Activity context,
 			ServiceConnection callback) {
@@ -187,7 +203,7 @@ public class MusicUtils {
 			sConnectionMap.put(cw, sb);
 			return new ServiceToken(cw);
 		}
-		Log.e("Music", "Failed to bind to service");
+		Log.e("MusicUtils", "Failed to bind to service");
 		return null;
 	}
 
@@ -655,6 +671,10 @@ public class MusicUtils {
 		return query(context, uri, projection, selection, selectionArgs,
 				sortOrder, 0);
 	}
+	
+	public static ArrayList<Music> getCurrentLocalizedMusics() {
+		return ArmpApp.getCurrentMusics();
+	}
 
 	public static boolean isMediaScannerScanning(Context context) {
 		boolean result = false;
@@ -858,12 +878,26 @@ public class MusicUtils {
 		}
 	}
 	
-	public static void playOneShot(String music) {
+	public static void playLocalized(int position) {
 		try {
-			sService.openFile(music, true);
+			long [] list = new long[ArmpApp.getCurrentMusics().size()];
+			sService.openLocalized(list, position);
+			sService.play();
+		} catch (RemoteException ex) {
+			Log.e(TAG, ex.getMessage());
+		}
+	}
+	
+	public static void playOneShot(Context context, Music music) {
+		try {
+			sService.openFile(music.getSource(), true);
+			//sService.play((long)1, music.getArtist(), music.getAlbum(), music.getTitle());
 			sService.play();
 		} catch (RemoteException e) {
 			Log.e(TAG, e.getMessage());
+		} finally {
+			Intent intent = new Intent("com.android.armp.PLAYBACK_VIEWER").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			context.startActivity(intent);
 		}
 	}
 
