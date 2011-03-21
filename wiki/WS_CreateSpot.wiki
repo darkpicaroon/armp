@@ -1,0 +1,65 @@
+= Create Spot =
+
+== Actions ==
+
+ * Create a channel for a specified spot with a given name.
+
+== Request ==
+<table cellspacing="4" border="0">
+ <tr><td>*URL*</td><td>[http://fabienrenaud.com/armp/www/createSpot.php]</td></tr>
+ <tr><td>*Method*</td><td>POST</td></tr>
+ <tr><td>*Authentication*</td><td>Required.</td></tr>
+</table>
+
+Mandatory parameters:
+ * lat = _double_ The latitude of the spot to create.
+ * lng = _double_ The longitude of the spot to create.
+ * name = _string_ The name of the spot.
+
+Optional parameters:
+ * _None_
+
+== Response ==
+
+That WS returns a XML file with the following tree:
+ * *root*
+  * *spot* | id
+   * _spot elements_
+
+The spot elements are the following:
+<table cellspacing="4" border="0">
+<tr><td>*name*</td><td>_string_</td><td>The name of the spot</td></tr>
+<tr><td>*user*</td><td>_string_</td><td>The name of the user who created the spot</td></tr>
+<tr><td>*latitude*</td><td>_double_</td><td>The latitude of the spot</td></tr>
+<tr><td>*longitude*</td><td>_double_</td><td>The longitude of the spot</td></tr>
+<tr><td>*radius*</td><td>_int_</td><td>The radius, in meters, of the spot</td></tr>
+<tr><td>*color*</td><td>_string_</td><td>An HTML color code for the color of the spot</td></tr>
+<tr><td>*creation*</td><td>_int_</td><td>A unix timestamp date of the creation of the spot</td></tr>
+<tr><td>*update*</td><td>_int_</td><td>A unix timestamp date of the last update of the spot</td></tr>
+</table>
+
+
+==== Sample ====
+
+{{{
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <spot id="4">
+    <name>New spot</name>
+    <user>iUser</user>
+    <latitude>49.0995475230457</latitude>
+    <longitude>6.21734931382753</longitude>
+    <radius>150</radius>
+    <color>#7a00c8</color>
+    <creation>1300714653</creation>
+    <update>1300714653</update>
+  </spot>
+  <logged>1</logged>
+  <status>1</status>
+</root>
+}}}
+
+== See also ==
+
+ * [WS_GetSpots Get Spots]
+ * [WS_DefaultResponse Common/Default WS Response]
