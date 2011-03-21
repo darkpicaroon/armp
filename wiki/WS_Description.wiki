@@ -1,10 +1,14 @@
-= Web Services Descriptions =
+= Web Services Summary =
 
-== Summary ==
+|| *Filename* || *Purpose* || *Auth* || *Method* || *Mandatory parameters* || *Optional parameters* ||  ||
+|| getSpots.php || Provide all spots in a given area. || No || GET || <ul><li>latne = _double_</li><li>lngne = _double_</li><li>latsw = _double_</li><li>lngsw = _double_</li><li>zoom = _int_</li></ul> || || [WS_GetSpots More] ||
+|| getChannels.php || Provide channels for a specified spot. || Yes/No || GET || <ul><li>spotId = _int_</li></ul> || <ul><li>start = _int_</li><li>limit = _int_</li></ul> || [WS_GetChannels More] ||
+|| getMusics.php || Provide musics for a specified channel. || Yes/No || GET || <ul><li>channelId = _int_</li></ul> || <ul><li>start = _int_</li><li>limit = _int_</li></ul> || [WS_GetMusics More] ||
+|| getMessage.php || Obtains the message corresponding to a number. || No || GET || <ul><li>no = _int_</li></ul> || <ul><li>hl = _string_</li></ul> || [WS_GetMessage More] ||
+|| loginUser.php || Creates a user or updates its last connection field in the database. Initializes the php session. || Yes/No || POST || <ul><li>udid = _string_</li><li>facebookId = _int_</li><li>facebookName = _string_</li></ul> || || [WS_LoginUser More] ||
+|| likeChannel.php || Likes a specified channel. || Yes || POST || <ul><li>channelId = _int_</li></ul> || || [WS_LikeChannel More] ||
+|| createSpot.php || Creates a spot at the given location with the specified name. || Yes || POST || <ul><li>lat = _double_</li><li>lng = _double_</li><li>name = _string_</li></ul> || || [WS_CreateSpot More] ||
+|| createChannel.php || Creates a channel for a specified spot with a given name. || Yes || POST || <ul><li>{{{spotId}}} = _int_</li><li>name = _string_</li></ul> || || [WS_CreateChannel More] ||
+|| addFriends.php || Adds friends for the current user. || Yes || POST || <ul><li>facebookIds = _list of integers_</li><li>facebookNames = _list of strings_</li></ul> || || [WS_AddFriend More] ||
 
-|| *Filename* || *Purpose* || *Auth* || *Method* || *Mandatory parameters* || *Optional parameters* || *Response* ||
-|| getSpots.php || Provide all spots in a given area. || No || GET || <ul><li>latne = _double_</li><li>lngne = _double_</li><li>latsw = _double_</li><li>lngsw = _double_</li><li>zoom = _int_</li></ul> || _None_ || [WS_GetSpots Details] ||
-|| getChannels.php || Provide channels for a specified spot. || Yes/No || GET || <ul><li>spotId = _int_</li></ul> || <ul><li>start = _int_</li><li>limit = _int_</li></ul> || [WS_GetChannels Details] ||
-|| getMusics.php || Provide musics for a specified channel. || Yes/No || GET || <ul><li>channelId = _int_</li></ul> || <ul><li>start = _int_</li><li>limit = _int_</li></ul> || [WS_GetMusics Details] ||
-
-_Auth = Need to authenticated_
+_Auth = Authentication required_
