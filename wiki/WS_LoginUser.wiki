@@ -23,3 +23,7 @@ Optional parameters:
 == Response ==
 
 That WS returns the default XML response. [WS_DefaultResponse More...]
+
+== See also ==
+
+ * [WS_DefaultResponse Common/Default WS Response]
