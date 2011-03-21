@@ -15,7 +15,7 @@ Mandatory parameters:
  * no = _int_ ≥ 1000 The message number to fetch
 
 Optional parameters:
- * lang = _string_ A [http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes ISO 639-1] language code
+ * hl = _string_ A [http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes ISO 639-1] language code
 
 == Response ==
 
