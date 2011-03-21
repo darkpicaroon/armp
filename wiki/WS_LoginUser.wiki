@@ -1,0 +1,25 @@
+= Get Spots =
+
+== Actions ==
+
+ * Create a user or update its _last connection_ field in the database.
+ * Initialize the php session.
+
+== Request ==
+<table cellspacing="4" border="0">
+ <tr><td>*URL*</td><td>[http://fabienrenaud.com/armp/www/loginUser.php]</td></tr>
+ <tr><td>*Method*</td><td>POST</td></tr>
+ <tr><td>*Authentication*</td><td>Not Required. Optional</td></tr>
+</table>
+
+Mandatory parameters:
+ * udid = _string_ Represents the Unique Device ID of the user's phone
+ * facebookId = 0 ≤ _int_ ≤ 4294967295
+ * facebookName = _string_
+
+Optional parameters:
+ * _None_
+
+== Response ==
+
+That WS returns the default XML response. [WS_DefaultResponse More...]
