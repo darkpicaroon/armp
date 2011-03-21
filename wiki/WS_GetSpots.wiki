@@ -12,7 +12,7 @@ Mandatory parameters:
  * lngne = _double_
  * latsw = _double_
  * lngsw = _double_
- * zoom = _int_
+ * zoom = 0 ≤ _int_ ≤ 20
 
 Optional parameters:
  * _None_
