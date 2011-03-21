@@ -2,7 +2,7 @@
 
 == Actions ==
 
- * Add friends for the current user.
+ * Adds friends for the current user.
 
 == Request ==
 <table cellspacing="4" border="0">
