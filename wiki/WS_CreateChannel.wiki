@@ -1,0 +1,59 @@
+= Create Channel =
+
+== Actions ==
+
+ * Create a channel for a specified spot with a given name.
+
+== Request ==
+<table cellspacing="4" border="0">
+ <tr><td>*URL*</td><td>[http://fabienrenaud.com/armp/www/createChannel.php]</td></tr>
+ <tr><td>*Method*</td><td>POST</td></tr>
+ <tr><td>*Authentication*</td><td>Required.</td></tr>
+</table>
+
+Mandatory parameters:
+ * {{{spotId}}} = _int_ > 0
+ * name = _string_ The name of the channel.
+
+Optional parameters:
+ * _None_
+
+== Response ==
+
+That WS returns a XML file with the following tree:
+ * *root*
+  * *channel* | id | spotId
+   * _channel elements_
+
+The channel elements are the following:
+<table cellspacing="4" border="0">
+<tr><td>*name*</td><td>_string_</td><td>The name of the channel</td></tr>
+<tr><td>*user*</td><td>_string_</td><td>The name of the user who created the channel</td></tr>
+<tr><td>*genre*</td><td>_string_</td><td>The main genre of the channel</td></tr>
+<tr><td>*musics*</td><td>_int_</td><td>The count of musics in the channel</td></tr>
+<tr><td>*creation*</td><td>_int_</td><td>A unix timestamp date of the creation of the channel</td></tr>
+<tr><td>*update*</td><td>_int_</td><td>A unix timestamp date of the last update of the channel</td></tr>
+</table>
+
+=== Sample ===
+
+{{{
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <channel id="9" spotId="1">
+    <name>New Chan</name>
+    <user>MyUser</user>
+    <genre>None</genre>
+    <musics>0</musics>
+    <creation>1300717041</creation>
+    <update>1300717041</update>
+  </channel>
+  <logged>1</logged>
+  <status>1</status>
+</root>
+}}}
+
+== See also ==
+
+ * [WS_GetChannels Get Channels]
+ * [WS_DefaultResponse Common/Default WS Response]
