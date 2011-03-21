@@ -77,6 +77,8 @@ The spot elements are the following:
 </root>
 }}}
 
+
 == See also ==
 
+ * [WS_DefaultResponse Common/Default WS Response]
  * [getspots Old getspots.php WS]
