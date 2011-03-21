@@ -2,6 +2,8 @@ package com.android.armp.localized;
 
 import java.text.Collator;
 
+import com.android.armp.model.Music;
+
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -44,7 +46,7 @@ public class MusicSourceSolver{
 		super(context);
 	}*/
 
-	public static void solveMusicSource(MusicItem m) {
+	public static void solveMusicSource(Music m) {
 		String artist = m.getArtist();
 		String title = m.getTitle();
 		String album = m.getAlbum();

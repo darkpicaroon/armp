@@ -1,29 +1,37 @@
-package com.android.armp.localized;
+package com.android.armp.model;
 
-public class MusicItem {
+public class Music {
 	private int mId;
+	private int mMetadataId;
 	private String mSource;
 	private String mArtist;
 	private String mTitle;
 	private String mAlbum;
 	private String mGenre;
-	private int mYear;	
+	private int mYear;
 	private int mDuration;
 	private int mTrackNumber;
-	private int mGenreId;
 
-	public MusicItem(int id) {
+	public Music(int id) {
 		this.mId = id;
 	}
-	
-	public MusicItem(int id, String artist, String album) {
+
+	public Music(int id, String artist, String album) {
 		this.mArtist = artist;
 		this.mAlbum = album;
 		this.mId = id;
 	}
-	
+
 	public int getId() {
 		return this.mId;
+	}
+
+	public void setMetadataId(int metadataId) {
+		this.mMetadataId = metadataId;
+	}
+
+	public int getMetataId() {
+		return this.mMetadataId;
 	}
 
 	public void setSource(String mSource) {
@@ -73,14 +81,6 @@ public class MusicItem {
 	public String getGenre() {
 		return mGenre;
 	}
-	
-	public void setGenreId(int genreId) {
-		this.mGenreId = genreId;
-	}
-	
-	public int getGenreId() {
-		return this.mGenreId;
-	}
 
 	public void setDuration(int mDuration) {
 		this.mDuration = mDuration;
@@ -89,11 +89,11 @@ public class MusicItem {
 	public int getDuration() {
 		return mDuration;
 	}
-	
+
 	public void setTrackNumber(int trackNbr) {
 		this.mTrackNumber = trackNbr;
 	}
-	
+
 	public int getTrackNumber() {
 		return this.mTrackNumber;
 	}
