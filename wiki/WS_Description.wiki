@@ -1,0 +1,78 @@
+= Web Services Descriptions =
+
+== Summary ==
+
+|| *Filename* || *Purpose* || *Auth* || *Method* || *Mandatory parameters* || *Optional parameters* || *Response* ||
+|| getSpots.php || Provide all spots in a given area. || No || GET || <ul><li>latne = _double_</li><li>lngne = _double_</li><li>latsw = _double_</li><li>lngsw = _double_</li><li>zoom = _int_</li></ul> || _None_ || Details ||
+|| getChannels.php || Provide channels for a specified spot. || Yes/No || GET || <ul><li>spotId = _int_</li></ul> || <ul><li>start = _int_</li><li>limit = _int_</li></ul> || Details ||
+|| getMusics.php || Provide musics for a specified channel. || Yes/No || GET || <ul><li>channelId = _int_</li></ul> || <ul><li>start = _int_</li><li>limit = _int_</li></ul> || Details ||
+
+_Auth = Need to authenticated_
+
+== Details ==
+
+=== Get Spots ===
+
+==== Response ====
+
+That WS returns an xml file with the following tree:
+ * *root*
+  * {{{*}}} *spot* | id
+   * _spot elements_
+
+The spot elements are the following:
+<table cellspacing="4" border="0">
+<tr><td>*name*</td><td>_string_</td><td>The name of the spot</td></tr>
+<tr><td>*user*</td><td>_string_</td><td>The name of the user who created the spot</td></tr>
+<tr><td>*latitude*</td><td>_double_</td><td>The latitude of the spot</td></tr>
+<tr><td>*longitude*</td><td>_double_</td><td>The longitude of the spot</td></tr>
+<tr><td>*radius*</td><td>_int_</td><td>The radius, in meters, of the spot</td></tr>
+<tr><td>*color*</td><td>_string_</td><td>An HTML color code for the color of the spot</td></tr>
+<tr><td>*creation*</td><td>_int_</td><td>A unix timestamp date of the creation of the spot</td></tr>
+<tr><td>*update*</td><td>_int_</td><td>A unix timestamp date of the last update of the spot</td></tr>
+</table>
+
+
+==== Sample ====
+
+{{{
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <spot id="4">
+    <name>IUT</name>
+    <user>Super User</user>
+    <latitude>49.0995475230457</latitude>
+    <longitude>6.21734931382753</longitude>
+    <radius>150</radius>
+    <color>#7a00c8</color>
+    <creation>1300714653</creation>
+    <update>1300714653</update>
+  </spot>
+  <spot id="1">
+    <name>GTL</name>
+    <user>Super User</user>
+    <latitude>49.1020271699258</latitude>
+    <longitude>6.2151284447632</longitude>
+    <radius>150</radius>
+    <color>#7a00c8</color>
+    <creation>1300713451</creation>
+    <update>1300713451</update>
+  </spot>
+  <spot id="3">
+    <name>Stadium</name>
+    <user>Super User</user>
+    <latitude>49.1021255103074</latitude>
+    <longitude>6.21948435220338</longitude>
+    <radius>150</radius>
+    <color>#7a00c8</color>
+    <creation>1300714553</creation>
+    <update>1300714553</update>
+  </spot>
+  <logged>1</logged>
+  <status>1</status>
+</root>
+}}}
+
+=== Get Channels ===
+
+=== Get Musics ===
