@@ -2,7 +2,7 @@
 
 == Actions ==
 
- * Create a channel for a specified spot with a given name.
+ * Create a spot at the given location with the specified name.
 
 == Request ==
 <table cellspacing="4" border="0">
