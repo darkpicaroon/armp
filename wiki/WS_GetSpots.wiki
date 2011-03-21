@@ -1,5 +1,10 @@
 = Get Spots =
 
+== Actions ==
+
+ * Obtains all spots in an area.
+ * If the zoom is low, the response will group spots.
+
 == Request ==
 <table cellspacing="4" border="0">
  <tr><td>*URL*</td><td>[http://fabienrenaud.com/armp/www/getSpots.php]</td></tr>
