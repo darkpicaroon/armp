@@ -1,0 +1,39 @@
+= Get Spots =
+
+== Action ==
+
+ * Obtains the message corresponding to a number.
+
+== Request ==
+<table cellspacing="4" border="0">
+ <tr><td>*URL*</td><td>[http://fabienrenaud.com/armp/www/getMessage.php]</td></tr>
+ <tr><td>*Method*</td><td>GET</td></tr>
+ <tr><td>*Authentication*</td><td>Not Required</td></tr>
+</table>
+
+Mandatory parameters:
+ * no = _int_ ≥ 0 The message number to fetch
+
+Optional parameters:
+ * lang = _string_ A [http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes ISO 639-1] language code
+
+== Response ==
+
+That WS returns a XML file with the following tree:
+ * *root*
+  * *message*
+
+=== Sample ===
+
+{{{
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <message>Some parameters are missing.</message>
+  <logged>1</logged>
+  <status>1</status>
+</root>
+}}}
+
+== See also ==
+
+ * [WS_DefaultResponse Common/Default WS Response]
