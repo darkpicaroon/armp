@@ -24,7 +24,7 @@ Optional parameters:
 
 == Response ==
 
-That WS returns an xml file with the following tree:
+That WS returns a XML file with the following tree:
  * *root*
   * {{{*}}} *spot* | id
    * _spot elements_
