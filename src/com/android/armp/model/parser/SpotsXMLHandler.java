@@ -6,6 +6,8 @@ import java.util.List;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import android.util.Log;
+
 import com.android.armp.model.Spot;
 
 public class SpotsXMLHandler extends MyDefaultHandler {

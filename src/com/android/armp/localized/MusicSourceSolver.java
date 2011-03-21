@@ -26,6 +26,7 @@ public class MusicSourceSolver{
             MediaStore.Audio.Media.TITLE_KEY,
             MediaStore.Audio.Media.DATA,
             MediaStore.Audio.Media.ALBUM,
+            MediaStore.Audio.Media.ALBUM_ID,
             MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.ARTIST_ID,
             MediaStore.Audio.Media.DURATION,
@@ -41,10 +42,6 @@ public class MusicSourceSolver{
 			mInstance = new MusicSourceSolver(context);
 		return mInstance;
 	}
-	
-	/*public MusicSourceSolver(Context context) {
-		super(context);
-	}*/
 
 	public static void solveMusicSource(Music m) {
 		String artist = m.getArtist();
@@ -93,6 +90,10 @@ public class MusicSourceSolver{
 			int colIdx = cursor.getColumnIndex(MediaStore.Audio.Media._ID);
 			long newId = cursor.getLong(colIdx);
 	        m.setSource(ContentUris.withAppendedId(uri, newId).toString());
+	        colIdx = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST_ID);
+	        m.setArtistId(cursor.getLong(colIdx));
+	        colIdx = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
+	        m.setAlbumId(cursor.getLong(colIdx));
 		}
 		
 		Log.d(TAG, "Nb results for "+artist+": "+cursor.getCount());

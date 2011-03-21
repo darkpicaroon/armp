@@ -50,11 +50,13 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 import com.android.armp.R;
 import com.android.armp.IMediaPlaybackService;
+import com.android.armp.model.Music;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Vector;
 
@@ -107,13 +109,18 @@ public class MediaPlaybackService extends Service {
     
     private MultiPlayer mPlayer;
     private String mFileToPlay;
+    private Music mMusicToPlay = null;
+    private ArrayList<Music> mMusics = null;
     private int mShuffleMode = SHUFFLE_NONE;
     private int mRepeatMode = REPEAT_NONE;
     private int mMediaMountedCount = 0;
     private long [] mAutoShuffleList = null;
     private boolean mOneShot;
+    private boolean mLocalisedMode;
     private long [] mPlayList = null;
+    private long [] mPlayList2 = null;
     private int mPlayListLen = 0;
+    private int mPlayListLen2 = 0;
     private Vector<Integer> mHistory = new Vector<Integer>(MAX_HISTORY_SIZE);
     private Cursor mCursor;
     private int mPlayPos = -1;
@@ -473,19 +480,22 @@ public class MediaPlaybackService extends Service {
             // To deal with this, try querying for the current file, and if
             // that fails, wait a while and try again. If that too fails,
             // assume there is a problem and don't restore the state.
-            Cursor crsr = MusicUtils.query(this,
-                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                        new String [] {"_id"}, "_id=" + mPlayList[mPlayPos] , null, null);
-            if (crsr == null || crsr.getCount() == 0) {
-                // wait a bit and try again
-                SystemClock.sleep(3000);
-                crsr = getContentResolver().query(
-                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                        mCursorCols, "_id=" + mPlayList[mPlayPos] , null, null);
+            if(!mLocalisedMode) {
+            	Cursor crsr = MusicUtils.query(this,
+            			MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+            			new String [] {"_id"}, "_id=" + mPlayList[mPlayPos] , null, null);
+            	if (crsr == null || crsr.getCount() == 0) {
+            		// wait a bit and try again
+            		SystemClock.sleep(3000);
+            		crsr = getContentResolver().query(
+            				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+            				mCursorCols, "_id=" + mPlayList[mPlayPos] , null, null);
+            	}
+            	if (crsr != null) {
+            		crsr.close();
+            	}
             }
-            if (crsr != null) {
-                crsr.close();
-            }
+                   
 
             // Make sure we don't auto-skip to the next song, since that
             // also starts playback. What could happen in that case is:
@@ -834,10 +844,23 @@ public class MediaPlaybackService extends Service {
      * specified position is 0.
      * @param list The new list of tracks.
      */
-    public void open(long [] list, int position) {
+    public void open(long [] list, int position, boolean localized) {
         synchronized (this) {
             if (mShuffleMode == SHUFFLE_AUTO) {
                 mShuffleMode = SHUFFLE_NORMAL;
+            }
+            if(localized != mLocalisedMode) {
+            	mLocalisedMode = localized;
+            	if(!mLocalisedMode) {
+            		Log.d(LOGTAG, "Switching localized mode off");
+            		mMusics = null;
+            		reloadQueue();
+            	}
+            	else {
+            		Log.d(LOGTAG, "Switching localized mode on");
+            		mMusics = MusicUtils.getCurrentLocalizedMusics();
+            		saveQueue(true);
+            	}            	
             }
             long oldId = getAudioId();
             int listlength = list.length;
@@ -852,16 +875,17 @@ public class MediaPlaybackService extends Service {
                     }
                 }
             }
-            if (newlist) {
-                addToPlayList(list, -1);
-                notifyChange(QUEUE_CHANGED);
-            }
             int oldpos = mPlayPos;
             if (position >= 0) {
                 mPlayPos = position;
             } else {
                 mPlayPos = mRand.nextInt(mPlayListLen);
             }
+            if (newlist) {
+                addToPlayList(list, -1);
+                notifyChange(QUEUE_CHANGED);
+            }
+            
             mHistory.clear();
 
             saveBookmarkIfNeeded();
@@ -937,22 +961,34 @@ public class MediaPlaybackService extends Service {
                 return;
             }
             stop(false);
-
-            String id = String.valueOf(mPlayList[mPlayPos]);
             
-            mCursor = getContentResolver().query(
-                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                    mCursorCols, "_id=" + id , null, null);
-            if (mCursor != null) {
-                mCursor.moveToFirst();
-                open(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI + "/" + id, false);
-                // go to bookmark if needed
+            if(mLocalisedMode) {
+            	open(mMusics.get(mPlayPos).getSource(), false, true);
+            	// go to bookmark if needed
                 if (isPodcast()) {
                     long bookmark = getBookmark();
                     // Start playing a little bit before the bookmark,
                     // so it's easier to get back in to the narrative.
                     seek(bookmark - 5000);
                 }
+            } 
+            else {
+            	String id = String.valueOf(mPlayList[mPlayPos]);
+                
+                mCursor = getContentResolver().query(
+                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                        mCursorCols, "_id=" + id , null, null);
+                if (mCursor != null) {
+                    mCursor.moveToFirst();
+                    open(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI + "/" + id, false, false);
+                    // go to bookmark if needed
+                    if (isPodcast()) {
+                        long bookmark = getBookmark();
+                        // Start playing a little bit before the bookmark,
+                        // so it's easier to get back in to the narrative.
+                        seek(bookmark - 5000);
+                    }
+                }            	
             }
         }
     }
@@ -982,7 +1018,7 @@ public class MediaPlaybackService extends Service {
      * @param oneshot when set to true, playback will stop after this file completes, instead
      * of moving on to the next track in the list 
      */
-    public void open(String path, boolean oneshot) {
+    public void open(String path, boolean oneshot, boolean localized) {
         synchronized (this) {
             if (path == null) {
                 return;
@@ -996,7 +1032,7 @@ public class MediaPlaybackService extends Service {
             }
             
             // if mCursor is null, try to associate path with a database cursor
-            if (mCursor == null) {
+            if (mCursor == null && !mLocalisedMode) {
 
                 ContentResolver resolver = getContentResolver();
                 Uri uri;
@@ -1054,7 +1090,7 @@ public class MediaPlaybackService extends Service {
 
     /**
      * Starts playback of a previously opened file.
-     */
+     */    
     public void play() {
         mAudioManager.requestAudioFocus(mAudioFocusListener, AudioManager.STREAM_MUSIC,
                 AudioManager.AUDIOFOCUS_GAIN);
@@ -1345,13 +1381,16 @@ public class MediaPlaybackService extends Service {
                     // if we're near the start or end, clear the bookmark
                     pos = 0;
                 }
+                if(!mLocalisedMode) {
+                	// write 'pos' to the bookmark field
+                    ContentValues values = new ContentValues();
+                    values.put(MediaStore.Audio.Media.BOOKMARK, pos);
+                    Uri uri = ContentUris.withAppendedId(
+                            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, mCursor.getLong(IDCOLIDX));
+                    // TODO: ref to mCursor
+                    getContentResolver().update(uri, values, null, null);
+                }
                 
-                // write 'pos' to the bookmark field
-                ContentValues values = new ContentValues();
-                values.put(MediaStore.Audio.Media.BOOKMARK, pos);
-                Uri uri = ContentUris.withAppendedId(
-                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, mCursor.getLong(IDCOLIDX));
-                getContentResolver().update(uri, values, null, null);
             }
         } catch (SQLiteException ex) {
         }
@@ -1557,7 +1596,7 @@ public class MediaPlaybackService extends Service {
     public long getAudioId() {
         synchronized (this) {
             if (mPlayPos >= 0 && mPlayer.isInitialized()) {
-                return mPlayList[mPlayPos];
+            	return mLocalisedMode ? mMusics.get(mPlayPos).getId() : mPlayList[mPlayPos];
             }
         }
         return -1;
@@ -1592,45 +1631,61 @@ public class MediaPlaybackService extends Service {
 
     public String getArtistName() {
         synchronized(this) {
+        	if(mLocalisedMode) {
+        		return mMusics.get(mPlayPos).getArtist();
+        	}
             if (mCursor == null) {
                 return null;
             }
+            // TODO: ref to mCursor
             return mCursor.getString(mCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST));
         }
     }
     
     public long getArtistId() {
         synchronized (this) {
+        	if(mLocalisedMode)
+        		return mMusics.get(mPlayPos).getArtistId();        	
             if (mCursor == null) {
                 return -1;
             }
+         // TODO: ref to mCursor
             return mCursor.getLong(mCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST_ID));
         }
     }
 
     public String getAlbumName() {
         synchronized (this) {
+        	if(mLocalisedMode)
+        		return mMusics.get(mPlayPos).getAlbum(); 
             if (mCursor == null) {
                 return null;
             }
+         // TODO: ref to mCursor
             return mCursor.getString(mCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM));
         }
     }
 
     public long getAlbumId() {
         synchronized (this) {
+        	if(mLocalisedMode)
+        		return mMusics.get(mPlayPos).getAlbumId(); 
             if (mCursor == null) {
                 return -1;
             }
+         // TODO: ref to mCursor
             return mCursor.getLong(mCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
         }
     }
 
     public String getTrackName() {
         synchronized (this) {
+        	if(mLocalisedMode)
+        		return mMusics.get(mPlayPos).getTitle(); 
             if (mCursor == null) {
                 return null;
             }
+         // TODO: ref to mCursor
             return mCursor.getString(mCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE));
         }
     }
@@ -1640,6 +1695,7 @@ public class MediaPlaybackService extends Service {
             if (mCursor == null) {
                 return false;
             }
+         // TODO: ref to mCursor
             return (mCursor.getInt(PODCASTCOLIDX) > 0);
         }
     }
@@ -1649,6 +1705,7 @@ public class MediaPlaybackService extends Service {
             if (mCursor == null) {
                 return 0;
             }
+         // TODO: ref to mCursor
             return mCursor.getLong(BOOKMARKCOLIDX);
         }
     }
@@ -1855,10 +1912,16 @@ public class MediaPlaybackService extends Service {
         }
         public void openFile(String path, boolean oneShot)
         {
-            mService.get().open(path, oneShot);
+            mService.get().open(path, oneShot, false);
         }
         public void open(long [] list, int position) {
-            mService.get().open(list, position);
+            mService.get().open(list, position, false);
+        }
+        public void openFileLocalized(String path, boolean oneShot) {
+        	mService.get().open(path, oneShot, true);
+        }
+        public void openLocalized(long [] list, int position){
+        	mService.get().open(list, position, true);
         }
         public int getQueuePosition() {
             return mService.get().getQueuePosition();

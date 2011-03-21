@@ -24,6 +24,8 @@ interface IMediaPlaybackService
     void openFile(String path, boolean oneShot);
     void openFileAsync(String path);
     void open(in long [] list, int position);
+    void openFileLocalized(String path, boolean oneShot);
+    void openLocalized(in long [] list, int position);
     int getQueuePosition();
     boolean isPlaying();
     void stop();

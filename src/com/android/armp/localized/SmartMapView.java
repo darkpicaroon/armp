@@ -41,7 +41,7 @@ public class SmartMapView extends MapView {
 	public void dispatchDraw(Canvas canvas) {
 		super.dispatchDraw(canvas);
 		
-		GeoPoint p = getMapCenter();	
+		GeoPoint p = getMapCenter();
 		double dist = distanceBetween(p, mPrevCenter);
 
 		// If the user stopped moving around the map
@@ -52,13 +52,13 @@ public class SmartMapView extends MapView {
 			int lat = p.getLatitudeE6();
 			int lon = p.getLongitudeE6();
 			
-			GeoPoint tl = new GeoPoint(lat-latSpanCenter,
-										lon-lonSpanCenter);
-			GeoPoint br = new GeoPoint(lat+latSpanCenter,
+			GeoPoint ne = new GeoPoint(lat+latSpanCenter,
 										lon+lonSpanCenter);
+			GeoPoint sw = new GeoPoint(lat-latSpanCenter,
+										lon-lonSpanCenter);
 			
 			// Notify the listener
-			mListener.onAreaChanged(tl, br);			
+			mListener.onAreaChanged(ne, sw);			
 		} 
 		else if (dist >= MOTION_TRESHOLD) {
 			mPrevCenter = p;
