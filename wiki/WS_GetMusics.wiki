@@ -1,5 +1,9 @@
 = Get Musics =
 
+== Actions ==
+
+ * Obtains musics metadata, or music sources for a specified channel.
+
 == Request ==
 <table cellspacing="4" border="0">
  <tr><td>*URL*</td><td>[http://fabienrenaud.com/armp/www/getMusics.php]</td></tr>
@@ -68,4 +72,5 @@ The metadata elements are the following:
 
 == See also ==
 
+ * [WS_DefaultResponse Common/Default WS Response]
  * [getmusics Old getmusic.php WS]
