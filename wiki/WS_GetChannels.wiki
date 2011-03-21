@@ -1,5 +1,11 @@
 = Get Channels =
 
+== Actions ==
+
+ * Obtains channels of a specified spots.
+ * Default behavior will give the 10 first channels if the user is unauthentified.
+ * If the user is authentified...
+
 == Request ==
 <table cellspacing="4" border="0">
  <tr><td>*URL*</td><td>[http://fabienrenaud.com/armp/www/getChannels.php]</td></tr>
@@ -58,5 +64,5 @@ The channel elements are the following:
 }}}
 
 == See also ==
-
+ * [WS_DefaultResponse Common/Default WS Response]
  * [getchannels Old getchannels.php WS]
