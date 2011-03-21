@@ -1,4 +1,4 @@
-package com.android.armp.localized;
+package com.android.armp.model.parser;
 
 import org.xml.sax.helpers.DefaultHandler;
 

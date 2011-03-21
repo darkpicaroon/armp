@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 import com.android.armp.R;
+import com.android.armp.model.Spot;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
 import com.google.android.maps.MapView;
@@ -23,14 +24,14 @@ public class SpotOverlay extends Overlay {
 	private static final float factor = 5000.0f; // meters for 1 radius unit
 	private static final String TAG = "SpotOverlay";
 	
-	private MusicSpot mSpot;
+	private Spot mSpot;
 	private Bitmap mBmp;
 	private Paint mPaint;
 	private float top, right, bottom, left;
 	
 	private List<SpotOverlayAdapter> listeners = new ArrayList<SpotOverlayAdapter>();
 
-	public SpotOverlay(MusicSpot spot, Bitmap bmp) {
+	public SpotOverlay(Spot spot, Bitmap bmp) {
 		super();
 		this.mBmp = bmp;
 		this.mSpot = spot;

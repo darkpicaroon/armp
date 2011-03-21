@@ -17,15 +17,17 @@ import android.widget.TextView;
 import com.android.armp.LocalizedMusicActivity;
 import com.android.armp.MusicUtils;
 import com.android.armp.R;
+import com.android.armp.model.Channel;
+import com.android.armp.model.Spot;
 
 public class MusicChannelView extends ListActivity {
 
-	private MusicSpot mSpot;
-	private ArrayList<MusicChannel> mChannels = null;
+	private Spot mSpot;
+	private ArrayList<Channel> mChannels = null;
 	private MusicChannelAdapter mAdapter;
 	
-	private static MusicSpot mOldSpot = null;
-	private static ArrayList<MusicChannel> mOldChannels = null;
+	private static Spot mOldSpot = null;
+	private static ArrayList<Channel> mOldChannels = null;
 	
 	public MusicChannelView() {
 		
@@ -41,13 +43,13 @@ public class MusicChannelView extends ListActivity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
 		Bundle b = this.getIntent().getExtras();
-		mSpot = (MusicSpot) b.get(LocalizedMusicActivity.spotTag);
+		mSpot = (Spot) b.get(LocalizedMusicActivity.spotTag);
 		if(mSpot == null) {
 			mSpot = mOldSpot;
 		} else {
 			mOldSpot = mSpot;
 		}
-		mChannels = (ArrayList<MusicChannel>)b.get(LocalizedMusicActivity.channelsTag);
+		mChannels = (ArrayList<Channel>)b.get(LocalizedMusicActivity.channelsTag);
 		if(mChannels == null) {
 			mChannels = mOldChannels;
 		} else {
@@ -99,11 +101,11 @@ public class MusicChannelView extends ListActivity {
 		}
 	} */
 	
-	private class MusicChannelAdapter extends ArrayAdapter<MusicChannel> {
+	private class MusicChannelAdapter extends ArrayAdapter<Channel> {
 
-        private ArrayList<MusicChannel> items;
+        private ArrayList<Channel> items;
 
-        public MusicChannelAdapter(Context context, int textViewResourceId, ArrayList<MusicChannel> items) {
+        public MusicChannelAdapter(Context context, int textViewResourceId, ArrayList<Channel> items) {
                 super(context, textViewResourceId, items);
                 this.items = items;
         }
@@ -115,7 +117,7 @@ public class MusicChannelView extends ListActivity {
                     LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     v = vi.inflate(R.layout.localized_music_channel_item, null);
                 }
-                MusicChannel mc = items.get(position);
+                Channel mc = items.get(position);
                 if (mc != null) {
                         TextView tt = (TextView) v.findViewById(R.id.channel_item_line1);
                         TextView bt = (TextView) v.findViewById(R.id.channel_item_line2);

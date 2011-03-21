@@ -53,14 +53,14 @@ import com.android.armp.localized.ArmpApp.OnChannelsReceivedListener;
 import com.android.armp.localized.ArmpApp.OnMusicsReceivedListener;
 import com.android.armp.localized.ArmpApp.OnSpotsReceivedListener;
 import com.android.armp.localized.LocalizedMusicService;
-import com.android.armp.localized.MusicChannel;
 import com.android.armp.localized.MusicChannelView;
-import com.android.armp.localized.MusicItem;
-import com.android.armp.localized.MusicSpot;
 import com.android.armp.localized.SmartMapView;
 import com.android.armp.localized.SmartMapView.OnAreaChangedListener;
 import com.android.armp.localized.SpotOverlay;
 import com.android.armp.localized.SpotOverlayAdapter;
+import com.android.armp.model.Channel;
+import com.android.armp.model.Music;
+import com.android.armp.model.Spot;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
@@ -75,7 +75,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	 * Music spots and spots overlays
 	 */
 	private List<Overlay> mSpotOverlays = new ArrayList<Overlay>();
-	private List<MusicSpot> mMusicSpots;
+	private List<Spot> mMusicSpots;
 
 	/**
 	 * Map view references
@@ -103,8 +103,8 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	 */
 	private static int mCurrSpotId;
 	private static int mCurrChanId;
-	private static ArrayList<MusicChannel> mCurrChans;
-	private static ArrayList<MusicItem> mCurrMusics;
+	private static ArrayList<Channel> mCurrChans;
+	private static ArrayList<Music> mCurrMusics;
 	
 	/** 
 	 * Messenger to communicate with the service. 
@@ -137,18 +137,18 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	 * Events listeners
 	 */
 	private OnSpotsReceivedListener mSpotsListener = new OnSpotsReceivedListener() {
-		public void onSpotsReceived(ArrayList<MusicSpot> ms) {			
+		public void onSpotsReceived(ArrayList<Spot> ms) {			
 			// First, refresh the spots display
-			refreshMusicSpots((ArrayList<MusicSpot>) ms.clone());
+			refreshMusicSpots((ArrayList<Spot>) ms.clone());
 			// Next, close the loading dialog
 			dismissProgress(mProgressSpot);	
 		}
 	};
 	
 	private OnChannelsReceivedListener mChanListener = new OnChannelsReceivedListener() {
-		public void onChannelsReceived(ArrayList<MusicChannel> mc) {
+		public void onChannelsReceived(ArrayList<Channel> mc) {
 			// The view must be refreshed in the main thread
-			mCurrChans = (ArrayList<MusicChannel>) mc.clone();
+			mCurrChans = (ArrayList<Channel>) mc.clone();
 			mHandler.sendEmptyMessage(GOT_CHANNELS);
 			
 			dismissProgress(mProgressChannel);
@@ -156,9 +156,9 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	};
 	
 	private OnMusicsReceivedListener mMusicsListener = new OnMusicsReceivedListener() {
-		public void onMusicsReceived(ArrayList<MusicItem> mi) {
+		public void onMusicsReceived(ArrayList<Music> mi) {
 			// The view must be refreshed in the main thread
-			mCurrMusics = (ArrayList<MusicItem>) mi.clone();
+			mCurrMusics = (ArrayList<Music>) mi.clone();
 			mHandler.sendEmptyMessage(GOT_MUSICS);
 			
 			dismissProgress(mProgressMusic);
@@ -318,13 +318,13 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		}
 	}
 
-	private void refreshMusicSpots(ArrayList<MusicSpot> list) {
+	private void refreshMusicSpots(ArrayList<Spot> list) {
 		if (list != null && list.size() > 0) {
 			// First, clear the displayed overlays
 			mMapView.getOverlays().clear();
 			
 			// Display the spots
-			for (MusicSpot ms : list) {
+			for (Spot ms : list) {
 				// Create bitmap
 				Bitmap bmp = BitmapFactory.decodeResource(
 						getResources(), R.drawable.spot_marker);
@@ -378,7 +378,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	private void displayMusicChannels() {
 		if (mCurrChans != null && mCurrChans.size() > 0) {
 			if (mCurrSpotId != 0) {
-				for (MusicChannel mc : mCurrChans) {
+				for (Channel mc : mCurrChans) {
 					Log.d(TAG, "Music channel #" + mc.getId() + " - "
 								+ mc.getName());
 				}
@@ -414,7 +414,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	private OnItemClickListener mChannelClickedHandler = new OnItemClickListener() {
 	    public void onItemClick(AdapterView<?> parent, View v, int position, long id)
 	    {
-	    	MusicChannel mc = theApp.getMusicSpot(mCurrSpotId).getChannels().get(position);
+	    	Channel mc = theApp.getMusicSpot(mCurrSpotId).getChannels().get(position);
 	    	
 	    	if(mc != null) {
 	    		mCurrChanId = mc.getId();
@@ -428,7 +428,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		public void onItemClick(AdapterView<?> arg0, View v, int position, long id) 
 		{
 			Log.d(TAG, "BATAAAARD");
-			MusicItem m = theApp.getMusicChannel(mCurrSpotId, mCurrChanId).getMusics().get(position);
+			Music m = theApp.getMusicChannel(mCurrSpotId, mCurrChanId).getMusics().get(position);
 			
 			if(m != null) {
 				MusicUtils.playOneShot(m.getSource());
@@ -437,12 +437,12 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		}
 	};
 	
-	private class MusicAdapter extends ArrayAdapter<MusicItem> {
+	private class MusicAdapter extends ArrayAdapter<Music> {
 
-		private ArrayList<MusicItem> items;
+		private ArrayList<Music> items;
 
 		public MusicAdapter(Context context, int textViewResourceId, 
-				ArrayList<MusicItem> items) {
+				ArrayList<Music> items) {
 			super(context, textViewResourceId, items);
 			this.items = items;
 		}
@@ -454,7 +454,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.localized_music_item, null);
 			}
-			MusicItem mc = items.get(position);
+			Music mc = items.get(position);
 			if (mc != null) {
 				TextView tt = (TextView) v.findViewById(R.id.music_item_line1);
 				TextView bt = (TextView) v.findViewById(R.id.music_item_line2);
@@ -471,11 +471,11 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	}	
 	
 	
-	private class MusicChannelAdapter extends ArrayAdapter<MusicChannel> {
-        private ArrayList<MusicChannel> items;
+	private class MusicChannelAdapter extends ArrayAdapter<Channel> {
+        private ArrayList<Channel> items;
 
         public MusicChannelAdapter(Context context, int textViewResourceId, 
-        							ArrayList<MusicChannel> items) {
+        							ArrayList<Channel> items) {
                 super(context, textViewResourceId, items);
                 this.items = items;
         }
@@ -487,7 +487,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
                     LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     v = vi.inflate(R.layout.localized_music_channel_item, null);
                 }
-                MusicChannel mc = items.get(position);
+                Channel mc = items.get(position);
                 if (mc != null) {
                         TextView tt = (TextView) v.findViewById(R.id.channel_item_line1);
                         TextView bt = (TextView) v.findViewById(R.id.channel_item_line2);
