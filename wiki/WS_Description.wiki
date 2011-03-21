@@ -5,6 +5,6 @@
 || *Filename* || *Purpose* || *Auth* || *Method* || *Mandatory parameters* || *Optional parameters* || *Response* ||
 || getSpots.php || Provide all spots in a given area. || No || GET || <ul><li>latne = _double_</li><li>lngne = _double_</li><li>latsw = _double_</li><li>lngsw = _double_</li><li>zoom = _int_</li></ul> || _None_ || [WS_GetSpots Details] ||
 || getChannels.php || Provide channels for a specified spot. || Yes/No || GET || <ul><li>spotId = _int_</li></ul> || <ul><li>start = _int_</li><li>limit = _int_</li></ul> || [WS_GetChannels Details] ||
-|| getMusics.php || Provide musics for a specified channel. || Yes/No || GET || <ul><li>channelId = _int_</li></ul> || <ul><li>start = _int_</li><li>limit = _int_</li></ul> || [WS_GetMusic Details] ||
+|| getMusics.php || Provide musics for a specified channel. || Yes/No || GET || <ul><li>channelId = _int_</li></ul> || <ul><li>start = _int_</li><li>limit = _int_</li></ul> || [WS_GetMusics Details] ||
 
 _Auth = Need to authenticated_
