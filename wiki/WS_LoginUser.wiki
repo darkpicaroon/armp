@@ -2,8 +2,8 @@
 
 == Actions ==
 
- * Create a user or update its _last connection_ field in the database.
- * Initialize the php session.
+ * Creates a user or updates its _last connection_ field in the database.
+ * Initializes the php session.
 
 == Request ==
 <table cellspacing="4" border="0">
