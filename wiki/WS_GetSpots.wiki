@@ -76,3 +76,7 @@ The spot elements are the following:
   <status>1</status>
 </root>
 }}}
+
+== See also ==
+
+ * [getspots Old getspots.php WS]
