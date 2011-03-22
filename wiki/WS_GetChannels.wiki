@@ -4,7 +4,8 @@
 
  * Obtains channels of a specified spots.
  * Default behavior will give the 10 first channels if the user is unauthentified.
- * If the user is authentified...
+ * If the user is authentified, it sorts channels according to the user's preference.
+
 
 == Request ==
 <table cellspacing="4" border="0">
