@@ -32,18 +32,31 @@
 || US30 || Playback of a local music listed in the music list associated with a music channel. || See the [US30_HowToDemo wiki page] || 75 || abarreir || 2 || 2 || http://fabienrenaud.com/armp/success.gif ||
 || US31 || Update the now playing view regarding the music being played. || See the [US31_HowToDemo wiki page] || 74 || abarreir || 3 || 4 || http://fabienrenaud.com/armp/success.gif ||
 || US32 || Change the icon bound to a music regarding its source and availability. || See the [US32_HowToDemo wiki page] || 73 || abarreir || 0.5 || - || http://fabienrenaud.com/armp/star-white.png ||
-|| US33 || Modify spots query to send back spots from a given area (and not around a location). || - || 72 || - ||  || - || http://fabienrenaud.com/armp/star-white.png ||
-|| US34 || Advanced spots storage, to group close spots when displaying the view with a high zoom level. || - || 71 || - ||  || - || http://fabienrenaud.com/armp/star-white.png ||
-|| US35 || Add a user table in the server to associate spots/channels with the users who created them. || - || 70 || - ||  || - || http://fabienrenaud.com/armp/star-white.png ||
-|| US36 || Handle users authentication in the client-side with their google or facebook account.|| - || 69 || - ||  || - || http://fabienrenaud.com/armp/star-white.png ||
-|| US37 || Update the client-side response parsing regarding the server queries changes. || - || 68 || - ||  || - || http://fabienrenaud.com/armp/star-white.png ||
-|| US38 || Update the client-side UI to display information about the user who created a spot/channel. || - || 67 || - ||  || - || http://fabienrenaud.com/armp/star-white.png ||
+
 || US39 || Implementation of a RESTful WS updating the frequency information about the user's music genre on phone. || See the [WS_SetFrequencyOnPhone wiki page] || 66 || Mathieu || 2 || 3 || http://fabienrenaud.com/armp/success.gif ||
 || US40 || Implementation of a RESTful WS updating the frequency of listening of a channel. || See the [WS_SetFrequencyOnPhone wiki page] || 65 || Mathieu || 2 || 2.5 || http://fabienrenaud.com/armp/success.gif ||
 || US41 || Implementation of a RESTful WS updating the starting time of a channel listening. || See the [WS_SetChannelStartTime wiki page] || 64 || Mathieu || 1 || 1.5 || http://fabienrenaud.com/armp/success.gif ||
 || US42 || Implementation of a RESTful WS updating the ending time of a channel listening. || See the [WS_SetChannelEndTime wiki page] || 63 || Mathieu || 1 || 1 || http://fabienrenaud.com/armp/success.gif ||
 || US43 || Implementation of a RESTful WS creating user's friends according to facebook friends. || See the [WS_AddFriends wiki page] || 62 || Mathieu || 2 || 4 || http://fabienrenaud.com/armp/success.gif ||
 || US44 || Updating the WS_getChannels to take user's preference into account. || See the [getchannels wiki page] || 61 || Mathieu || 2 || 4 || http://fabienrenaud.com/armp/success.gif ||
+|| US || Update database tables to support users, friends and statistical data about what channels/genres users are listening to. || See || xx || Fabien || 4 || 5 || http://fabienrenaud.com/armp/success.gif ||
+|| US || Update Web Services (WS) _getChannels_ and _getMusics_ to be easier to use and more secured. || See || xx || Fabien || 1 || 1 || http://fabienrenaud.com/armp/success.gif ||
+|| US || Update WS _getSpots_ to be more secured and use North East, South West coordinates and zoom level to fetch spots. || See || xx || Fabien || 1 || 1 || http://fabienrenaud.com/armp/success.gif ||
+|| US || Create PHP objects and basic requests matching the new tables of the database. || See || xx || Fabien || 2 || 2 || http://fabienrenaud.com/armp/success.gif ||
+|| US || Create a WS to authenticate a user with its Facebook id and UDID information and that initializes a session. || See || xx || Fabien || 3 || 3 || http://fabienrenaud.com/armp/success.gif ||
+|| US || Create a WS that allows a user to like a channel. || See || xx || Fabien || ½ || ½ || http://fabienrenaud.com/armp/success.gif ||
+|| US || Create a WS that allows a user to create a spot. || See || xx || Fabien || 1 || 1 || http://fabienrenaud.com/armp/success.gif ||
+|| US || Create a WS that allows a user to create a channel. || See || xx || Fabien || 1 || 1 || http://fabienrenaud.com/armp/success.gif ||
+|| US || Create a WS that allows a user to add a music to a channel. || See || xx || Fabien || 1 || 1 || http://fabienrenaud.com/armp/success.gif ||
+|| US || Implement an error system management to obtain easier debug information when an error occurs in a WS. Update all WS to use that system. || See || xx || Fabien || 2 || 2 || http://fabienrenaud.com/armp/success.gif ||
+|| US || Implement some spatial functions in PHP: _distance between two coordinates_, _radius of earth depending on the latitude_, _destination point given distance and bearing from start point_. || See || xx || Fabien || 2 || 3 || http://fabienrenaud.com/armp/success.gif ||
+|| US || Implement a user-friendly web interface using Google Maps to easily display/add spots, display/add channels, display musics. || [http://fabienrenaud.com/armp/www/adm/ Go to the web site] || xx || Fabien || 15 || 18 || http://fabienrenaud.com/armp/success.gif ||
+|| US || Replace the _old database tools_ with the PHP PDO library. || See || xx || Fabien || 1½ || 1½ || http://fabienrenaud.com/armp/success.gif ||
+|| US || Improve performances of the WS _addFriends_. || See || xx || Fabien || 2 || 2 || http://fabienrenaud.com/armp/success.gif ||
+|| US || Update the server's database and upload new WS and web site. || See || xx || Fabien || 2 || 2 || http://fabienrenaud.com/armp/success.gif ||
+|| US || Update android objects and XML parsers to match changes of WS responses. || See || xx || Fabien || 2 || 2 || http://fabienrenaud.com/armp/success.gif ||
+|| US || Implement a Java applet to be able to upload easily multiple musics' metadatas throught the Web UI. || See || xx || Fabien || 6 || 8 || http://fabienrenaud.com/armp/warning.gif ||
+
 
 
 === Links ===
