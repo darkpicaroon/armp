@@ -28,10 +28,11 @@
 </tr>
 </table>
 || *[LabelInformation ID]* || *[LabelInformation Description]* || *[LabelInformation How to Demo]* || *[LabelInformation Imp.]* || *[LabelInformation Owner]* || *[LabelInformation Est.]* || *[LabelInformation Elaps.]* || *[LabelInformation Status]* ||
-|| US32 || Change the icon bound to a music regarding its source and availability. || See the [US32_HowToDemo wiki page] || 48 || abarreir || 0.5 || - || http://fabienrenaud.com/armp/star-white.png ||
+|| US32 || Change the icon bound to a music regarding its source and availability. || See the [US32_HowToDemo wiki page] || 48 || abarreir || ½ || - || http://fabienrenaud.com/armp/star-white.png ||
 || US56 || Update the database to be able to retrieve users that are _currently_ in a spot, to have a picture for a spot, to improve users' privacy. Then, put it online. || ... || 47 || Fabien || 1 || 0 || http://fabienrenaud.com/armp/star-white.png ||
 || US55 || Implement a Java applet to be able to upload easily multiple musics' metadatas throught the Web UI. || ... || 46 || Fabien || 9 || 6 || http://fabienrenaud.com/armp/star-gold.png ||
-|| US57 || ... || ... || 46 || × || 0 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+
+|| US || ... || ... || xx || × || 0 || 0 || http://fabienrenaud.com/armp/star-white.png ||
 
 === Links ===
 
