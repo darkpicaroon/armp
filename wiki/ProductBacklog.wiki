@@ -48,7 +48,7 @@ The Product Owner is in charge of "gardening" this table (he is often assisted b
 || US29 || Display information about streams/musics when clicking on a channel using XML files provided by the WS related to the [Sprint4 US24]. || See the [US29_HowToDemo wiki page] || 76 || 3 || [Sprint5 Sprint 5] || http://fabienrenaud.com/armp/success.gif ||
 || US30 || Playback of a local music listed in the music list associated with a music channel. || See the [US30_HowToDemo wiki page] || 75 || 2 || [Sprint5 Sprint 5] || http://fabienrenaud.com/armp/success.gif ||
 || US31 || Update the now playing view regarding the music being played. || See the [US31_HowToDemo wiki page] || 74 || 3 || [Sprint5 Sprint 5] || http://fabienrenaud.com/armp/success.gif ||
-|| US32 || Change the icon bound to a music regarding its source and availability. || See the [US32_HowToDemo wiki page] || 73 || 0.5 || [Sprint5 Sprint 5] || http://fabienrenaud.com/armp/star-white.png ||
+|| US32 || Change the icon bound to a music regarding its source and availability. || See the [US32_HowToDemo wiki page] || 48 || 0.5 || [Sprint6 Sprint 6] || http://fabienrenaud.com/armp/star-white.png ||
 || US33 || Update database tables to support users, friends and statistical data about what channels/genres users are listening to. || See || 72 || 4 || [Sprint5 Sprint 5] || http://fabienrenaud.com/armp/success.gif ||
 || US34 || Update Web Services (WS) _getChannels_ and _getMusics_ to be easier to use and more secured. || See || 71 || 1 || [Sprint5 Sprint 5] || http://fabienrenaud.com/armp/success.gif ||
 || US35 || Update WS _getSpots_ to be more secured and use North East, South West coordinates and zoom level to fetch spots. || See || 70 || 1 || [Sprint5 Sprint 5] || http://fabienrenaud.com/armp/success.gif ||
@@ -72,5 +72,4 @@ The Product Owner is in charge of "gardening" this table (he is often assisted b
 || US53 || Improve performances of the WS _addFriends_. || See || 52 || 2 || [Sprint5 Sprint 5] || http://fabienrenaud.com/armp/success.gif ||
 || US54 || Update the server's database and upload new WS and web site. || Run some tests on [WS_Description web services]. || 51 || 2 || [Sprint5 Sprint 5] || http://fabienrenaud.com/armp/success.gif ||
 || US55 || Update android objects and XML parsers to match changes of WS responses. || See [http://code.google.com/p/armp/source/detail?r=146 revision 146]. || 50 || 2 || [Sprint5 Sprint 5] || http://fabienrenaud.com/armp/success.gif ||
-|| US55 || Implement a Java applet to be able to upload easily multiple musics' metadatas throught the Web UI. || _Not completely finished yet._ || 49 || 6 || [Sprint5 Sprint 5] || http://fabienrenaud.com/armp/warning.gif ||
-|| US56 || ... || ... || 48 || 0 || [Sprint6 Sprint 6] || http://fabienrenaud.com/armp/star-white.png ||
+|| US56 || Implement a Java applet to be able to upload easily multiple musics' metadatas throught the Web UI. || _Not completely finished yet._ || 46 || 6 || [Sprint6 Sprint 6] || http://fabienrenaud.com/armp/warning.gif ||
