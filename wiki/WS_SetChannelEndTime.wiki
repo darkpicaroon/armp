@@ -2,7 +2,7 @@
 
 == Actions ==
 
- * Update the user's history with the time when the he stopped listening to a channel.
+ * Updates the user's history with the time when the he stopped listening to a channel.
 
 == Request ==
 <table cellspacing="4" border="0">
