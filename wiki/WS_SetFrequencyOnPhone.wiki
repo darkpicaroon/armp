@@ -1,0 +1,27 @@
+= Set Frequency On Phone =
+
+== Actions ==
+
+ * Adds the frequency of music genre according to the ones on his phone.
+
+== Request ==
+<table cellspacing="4" border="0">
+ <tr><td>*URL*</td><td>[http://fabienrenaud.com/armp/www/setFrequencyOnPhone.php]</td></tr>
+ <tr><td>*Method*</td><td>POST</td></tr>
+ <tr><td>*Authentication*</td><td>Required.</td></tr>
+</table>
+
+Mandatory parameters:
+ * genres = _list of strings_ Strings have to be separated with *;*
+ * freqs = _list of integers_ Integers have to be separated with *;*
+
+Optional parameters:
+ * _None_
+
+== Response ==
+
+That WS returns the default XML response. [WS_DefaultResponse More...]
+
+== See also ==
+
+ * [WS_DefaultResponse Common/Default WS Response]
