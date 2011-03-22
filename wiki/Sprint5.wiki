@@ -55,7 +55,7 @@
 || US53 || Improve performances of the WS _addFriends_. || See || 52 || Fabien || 2 || 2 || http://fabienrenaud.com/armp/success.gif ||
 || US54 || Update the server's database and upload new WS and web site. || Run some tests on [WS_Description web services]. || 51 || Fabien || 2 || 2 || http://fabienrenaud.com/armp/success.gif ||
 || US55 || Update android objects and XML parsers to match changes of WS responses. || See [http://code.google.com/p/armp/source/detail?r=146 revision 146]. || 50 || Fabien || 2 || 2 || http://fabienrenaud.com/armp/success.gif ||
-|| US55 || Implement a Java applet to be able to upload easily multiple musics' metadatas throught the Web UI. || _Not completely finished yet._ || 49 || Fabien || 6 || 6 || http://fabienrenaud.com/armp/warning.gif ||
+|| US56 || Implement a Java applet to be able to upload easily multiple musics' metadatas throught the Web UI. || _Not completely finished yet._ || 49 || Fabien || 6 || 6 || http://fabienrenaud.com/armp/warning.gif ||
 
 === Links ===
 
