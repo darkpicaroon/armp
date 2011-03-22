@@ -1,8 +1,8 @@
-= Set Channel startTime =
+= Set user history startTime =
 
 == Actions ==
 
- * Update the time when the user started listening to a channel.
+ * Update the user's history with the time when the he started listening to a channel.
 
 == Request ==
 <table cellspacing="4" border="0">
