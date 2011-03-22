@@ -1,0 +1,31 @@
+#labels Phase-Requirements,Phase-Design,Phase-Implementation
+=== Objectives ===
+
+ * ...
+
+=== Resources ===
+
+ * Start day: 3/23/2011
+ * End day: 3/29/2011
+
+=== Backlog ===
+
+<table width="100%" border="0">
+<tr>
+<td width="auto"></td>
+<td width="24">http://fabienrenaud.com/armp/success.gif</td>
+<td width="60">_Success_</td>
+<td width="24">http://fabienrenaud.com/armp/star-gold.png</td>
+<td width="110">_Work in Progress_</td>
+<td width="24">http://fabienrenaud.com/armp/star-white.png</td>
+<td width="55">_Standy_</td>
+<td width="24">http://fabienrenaud.com/armp/warning.gif</td>
+<td width="150">_Canceled or Postpone_</td>
+</tr>
+</table>
+|| *[LabelInformation ID]* || *[LabelInformation Description]* || *[LabelInformation How to Demo]* || *[LabelInformation Imp.]* || *[LabelInformation Owner]* || *[LabelInformation Est.]* || *[LabelInformation Elaps.]* || *[LabelInformation Status]* ||
+|| US56 || ... || ... || 48 || × || 0 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+
+=== Links ===
+
+ * [ProductBacklog Product Backlog]
