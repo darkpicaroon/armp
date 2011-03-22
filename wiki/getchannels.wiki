@@ -1,6 +1,5 @@
 = Request =
-This request is used to get the channels associated with a spot sorted according to the user's preference if he is authenticated.
-
+This request is used to get the channels associated with a spot.
 
 = Parameters =
 <br>_spot_id_: the id referencing the spot.</br>
