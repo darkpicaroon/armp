@@ -9,6 +9,7 @@
 || likeChannel.php || Likes a specified channel. || Yes || POST || <ul><li>channelId = _int_</li></ul> || || [WS_LikeChannel More] ||
 || createSpot.php || Creates a spot at the given location with the specified name. || Yes || POST || <ul><li>lat = _double_</li><li>lng = _double_</li><li>name = _string_</li></ul> || || [WS_CreateSpot More] ||
 || createChannel.php || Creates a channel for a specified spot with a given name. || Yes || POST || <ul><li>{{{spotId}}} = _int_</li><li>name = _string_</li></ul> || || [WS_CreateChannel More] ||
+|| createMusic.php || Creates/adds a music for a specified channel. || Yes || POST || <ul><li>{{{channelId}}} = _int_</li><li>title = _string_</li><li>genre = _string_</li><li>duration = _int_</li></ul> || <ul><li>source = _string_</li><li>artist = _string_</li><li>album = _string_</li><li>year = _int_</li><li>track = _string_</li></ul> || [WS_CreateMusic More] ||
 || addFriends.php || Adds friends for the current user. || Yes || POST || <ul><li>facebookIds = _list of integers_</li><li>facebookNames = _list of strings_</li></ul> || || [WS_AddFriends More] ||
 
 _Auth = Authentication required_
