@@ -6,6 +6,7 @@
  * Like a channel from the Android
  * Record sounds/voice from the Android and associate it with a spot.
  * Listen to music samples from [http://www.mndigital.com/ MediaNet] if the user doesn't have the music on its smartphone.
+ * Full operational Web UI to create spots, channels and to upload musics or music's metadata with a facebook account.
 
 === Resources ===
 
