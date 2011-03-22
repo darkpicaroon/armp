@@ -6,9 +6,14 @@ import java.util.List;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
+import android.graphics.drawable.shapes.Shape;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -28,6 +33,7 @@ public class SpotOverlay extends Overlay {
 	private Bitmap mBmp;
 	private Paint mPaint;
 	private float top, right, bottom, left;
+	private CustomShapeDrawable mShapeDrawable;
 	
 	private List<SpotOverlayAdapter> listeners = new ArrayList<SpotOverlayAdapter>();
 
@@ -35,12 +41,7 @@ public class SpotOverlay extends Overlay {
 		super();
 		this.mBmp = bmp;
 		this.mSpot = spot;
-		this.mPaint = new Paint();
-		mPaint.setAntiAlias(true);
-		mPaint.setColor(0x06C);
-		mPaint.setAlpha(50);
-		mPaint.setStrokeWidth(2.0f);
-		
+		mShapeDrawable = new CustomShapeDrawable(new OvalShape());
 		Log.d(TAG, "Displayed spot: "+spot.toString());
 	}
 
@@ -53,21 +54,23 @@ public class SpotOverlay extends Overlay {
 		mapView.getProjection().toPixels(getGeoPoint(), center);
 		float pixels = mapView.getProjection().metersToEquatorPixels(
 				factor * mSpot.getRadius());
-		
+
 		// Define a circle by its outside box
 		left = center.x - pixels;
 		top = center.y - pixels;
 		right = center.x + pixels;
 		bottom = center.y + pixels;
-		RectF oval = new RectF(left, top, right, bottom);
-		canvas.drawOval(oval, mPaint);
+		Rect oval = new Rect((int)left, (int)top, (int)right, (int)bottom);
+
+		mShapeDrawable.setBounds(oval);
+		mShapeDrawable.setStrokeColour(Color.argb(160, 220, 140, 0));
+		mShapeDrawable.draw(canvas);
 		
 		pixels = mapView.getProjection().metersToEquatorPixels(
 				factor * mBmp.getWidth());
-		//mapView.getProjection().
 		
 		canvas.drawBitmap(mBmp, center.x-mBmp.getWidth()/2, 
-				center.y-mBmp.getHeight()/2, null);
+				center.y-mBmp.getHeight(), null);
 	}
 
 	@Override
@@ -99,4 +102,29 @@ public class SpotOverlay extends Overlay {
 	public void addListener(SpotOverlayAdapter l) {
 		this.listeners.add(l);
 	}
+	
+	private class CustomShapeDrawable extends ShapeDrawable {
+		Paint fillpaint, strokepaint;
+		private static final int WIDTH = 2; 
+		public CustomShapeDrawable(Shape s) {
+		    super(s);
+		    fillpaint = this.getPaint();
+		    fillpaint.setARGB(10, 120, 120, 120);
+		    strokepaint = new Paint(fillpaint);
+		    strokepaint.setStyle(Paint.Style.STROKE);
+		    strokepaint.setStrokeWidth(WIDTH);
+		    strokepaint.setARGB(160, 0, 0, 0);
+		     }
+		@Override
+		protected void onDraw(Shape shape, Canvas canvas, Paint fillpaint) {
+		    shape.draw(canvas, fillpaint);
+		    shape.draw(canvas, strokepaint);
+		}
+
+		public void setStrokeColour(int c){
+		strokepaint.setColor(c);
+		}
+
+
+		}
 }

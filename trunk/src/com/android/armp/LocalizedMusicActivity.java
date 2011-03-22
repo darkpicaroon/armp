@@ -331,7 +331,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 			for (Spot ms : list) {
 				// Create bitmap
 				Bitmap bmp = BitmapFactory.decodeResource(
-						getResources(), R.drawable.spot_marker);
+						getResources(), R.drawable.spot_pin);
 				
 				SpotOverlay moc = new SpotOverlay(ms, bmp);
 				moc.addListener(new SpotOverlayAdapter(ms) {
@@ -464,11 +464,11 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 				TextView tt = (TextView) v.findViewById(R.id.music_item_line1);
 				TextView bt = (TextView) v.findViewById(R.id.music_item_line2);
 				if (tt != null) {
-					tt.setText("Title: "+mc.getTitle());  
+					tt.setText(mc.getTitle());  
 					tt.setVisibility(TextView.VISIBLE);
 				}
 				if(bt != null){                        	
-					bt.setText("Artist: "+ mc.getArtist());
+					bt.setText(mc.getArtist());
 				}
 			}
 			return v;
@@ -497,10 +497,10 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
                         TextView tt = (TextView) v.findViewById(R.id.channel_item_line1);
                         TextView bt = (TextView) v.findViewById(R.id.channel_item_line2);
                         if (tt != null) {
-                              tt.setText("Name: "+mc.getName());                            
+                              tt.setText(mc.getName());                            
                         }
                         if(bt != null){
-                              bt.setText("Genre: "+ mc.getGenre());
+                              bt.setText(mc.getGenre());
                         }
                 }
                 return v;
