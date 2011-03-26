@@ -44,7 +44,7 @@ The spot elements are the following:
 
 If the heavy mode is on, the _spot elements_ will also contain a tree identical of those replied by the [WS_GetChannels Get Channels Web Service] with the same heavy option enabled.
 
-==== Sample ====
+==== Samples ====
 
 ==== Heavy mode Off ====
 
