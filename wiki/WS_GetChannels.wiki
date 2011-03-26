@@ -40,7 +40,7 @@ The channel elements are the following:
 <tr><td>*update*</td><td>_int_</td><td>A unix timestamp date of the last update of the channel</td></tr>
 </table>
 
-If the heavy mode is on, the channel elements will also contain a tree identical of those replied by the [WS_GetMusics Get Musics Web Service] (except root).
+If the heavy mode is on, the _channel elements_ will also contain a tree identical of those replied by the [WS_GetMusics Get Musics Web Service] (except root).
 
 === Sample ===
 
@@ -48,22 +48,24 @@ If the heavy mode is on, the channel elements will also contain a tree identical
 {{{
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <channel id="9" spotId="1">
-    <name>chan1</name>
-    <user>Super User</user>
-    <genre>None</genre>
-    <musics>0</musics>
-    <creation>1300717041</creation>
-    <update>1300717041</update>
-  </channel>
-  <channel id="10" spotId="1">
-    <name>chan2</name>
-    <user>Super User</user>
-    <genre>None</genre>
-    <musics>0</musics>
-    <creation>1300717046</creation>
-    <update>1300717046</update>
-  </channel>
+  <channels>
+    <channel id="9" spotId="1">
+      <name>chan1</name>
+      <user>Super User</user>
+      <genre>None</genre>
+      <musics>0</musics>
+      <creation>1300717041</creation>
+      <update>1300717041</update>
+    </channel>
+    <channel id="10" spotId="1">
+      <name>chan2</name>
+      <user>Super User</user>
+      <genre>None</genre>
+      <musics>0</musics>
+      <creation>1300717046</creation>
+      <update>1300717046</update>
+    </channel>
+  </channels>
   <logged>1</logged>
   <status>1</status>
 </root>
