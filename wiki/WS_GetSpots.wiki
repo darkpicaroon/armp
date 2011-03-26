@@ -26,7 +26,7 @@ Optional parameters:
 
 That WS returns a XML file with the following tree:
  * *root*
-  * spots
+  * *spots*
    * {{{*}}} *spot* | id
     * _spot elements_
 
