@@ -85,6 +85,7 @@ public class MusicSourceSolver{
 		        MediaStore.Audio.Media.TITLE
 		);
 		
+		
 		if(cursor.getCount() == 1) {
 			cursor.moveToFirst();
 			int colIdx = cursor.getColumnIndex(MediaStore.Audio.Media._ID);

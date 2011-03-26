@@ -111,9 +111,9 @@
     <!-- Playlists screen title -->
     <string name="playlists_title">Playlists</string>
     <!-- Category label on Library screen -->
-    <string name="maps_menu">AroundMe</string>
+    <string name="maps_menu">Spots</string>
     <!-- Map view screen title -->
-    <string name="maps_title">AroundMe</string>
+    <string name="maps_title">Spots</string>
     <!-- Videos screen title -->
     <string name="videos_title">Videos</string>
     <!-- All media screen title -->

@@ -29,6 +29,8 @@ public class SpotOverlay extends Overlay {
 	private static final float factor = 1.0f; // meters for 1 radius unit
 	private static final String TAG = "SpotOverlay";
 	
+	private static final int ICON_TRESHOLD = 16;
+	
 	private Spot mSpot;
 	private Bitmap mBmp;
 	private Paint mPaint;
@@ -61,16 +63,23 @@ public class SpotOverlay extends Overlay {
 		right = center.x + pixels;
 		bottom = center.y + pixels;
 		Rect oval = new Rect((int)left, (int)top, (int)right, (int)bottom);
-
 		mShapeDrawable.setBounds(oval);
-		mShapeDrawable.setStrokeColour(Color.argb(160, 220, 140, 0));
-		mShapeDrawable.draw(canvas);
 		
-		pixels = mapView.getProjection().metersToEquatorPixels(
-				factor * mBmp.getWidth());
-		
-		canvas.drawBitmap(mBmp, center.x-mBmp.getWidth()/2, 
-				center.y-mBmp.getHeight(), null);
+		if(mapView.getZoomLevel() > ICON_TRESHOLD) {		
+			mShapeDrawable.setStrokeColour(Color.argb(160, 0, 40, 255));
+			mShapeDrawable.setFillColour(Color.argb(30, 0, 0, 0));
+			mShapeDrawable.draw(canvas);
+			
+			pixels = mapView.getProjection().metersToEquatorPixels(
+					factor * mBmp.getWidth());
+			
+			canvas.drawBitmap(mBmp, center.x-mBmp.getWidth()/2, 
+					center.y-mBmp.getHeight(), null);
+		} else {
+			mShapeDrawable.setStrokeColour(Color.argb(255, 255, 255, 255));
+			mShapeDrawable.setFillColour(Color.argb(80, 0, 40, 255));
+			mShapeDrawable.draw(canvas);
+		}
 	}
 
 	@Override
@@ -105,11 +114,11 @@ public class SpotOverlay extends Overlay {
 	
 	private class CustomShapeDrawable extends ShapeDrawable {
 		Paint fillpaint, strokepaint;
-		private static final int WIDTH = 2; 
+		private static final int WIDTH = 1; 
 		public CustomShapeDrawable(Shape s) {
 		    super(s);
 		    fillpaint = this.getPaint();
-		    fillpaint.setARGB(10, 120, 120, 120);
+		    fillpaint.setARGB(0, 0, 0, 0);
 		    strokepaint = new Paint(fillpaint);
 		    strokepaint.setStyle(Paint.Style.STROKE);
 		    strokepaint.setStrokeWidth(WIDTH);
@@ -124,7 +133,10 @@ public class SpotOverlay extends Overlay {
 		public void setStrokeColour(int c){
 		strokepaint.setColor(c);
 		}
-
+		
+		public void setFillColour(int c){
+			fillpaint.setColor(c);
+		}
 
 		}
 }
