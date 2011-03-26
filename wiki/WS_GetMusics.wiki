@@ -21,10 +21,11 @@ Optional parameters:
 == Response ==
 That WS returns an xml file with the following tree:
  * *root*
-  * {{{*}}} *music* | id
-   * *source* _(optional)_
-   * *metadata* | id
-    * _metadata elements*
+  * *musics*
+   * {{{*}}} *music* | id
+    * *source* _(optional)_
+    * *metadata* | id
+     * _metadata elements*
 
 The metadata elements are the following:
 <table cellspacing="4" border="0">
@@ -43,28 +44,30 @@ The metadata elements are the following:
 {{{
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <music id="4">
-    <metadata id="1">
-      <title>Run Run Run</title>
-      <artist>Phoenix</artist>
-      <album>Alphabetical</album>
-      <year>2011</year>
-      <track>1</track>
-      <genre>Instrumental</genre>
-      <duration>200</duration>
-    </metadata>
-  </music>
-  <music id="5">
-    <metadata id="2">
-      <title>Heart Skipped a Beat</title>
-      <artist>The xx</artist>
-      <album>xx</album>
-      <year>2011</year>
-      <track>2</track>
-      <genre>Instrumental</genre>
-      <duration>250</duration>
-    </metadata>
-  </music>
+  <musics>
+    <music id="4">
+      <metadata id="1">
+        <title>Run Run Run</title>
+        <artist>Phoenix</artist>
+        <album>Alphabetical</album>
+        <year>2011</year>
+        <track>1</track>
+        <genre>Instrumental</genre>
+        <duration>200</duration>
+      </metadata>
+    </music>
+    <music id="5">
+      <metadata id="2">
+        <title>Heart Skipped a Beat</title>
+        <artist>The xx</artist>
+        <album>xx</album>
+        <year>2011</year>
+        <track>2</track>
+        <genre>Instrumental</genre>
+        <duration>250</duration>
+      </metadata>
+    </music>
+  </musics>
   <logged>1</logged>
   <status>1</status>
 </root>
