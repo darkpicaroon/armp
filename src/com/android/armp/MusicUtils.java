@@ -27,6 +27,8 @@ import java.util.Arrays;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.android.armp.localized.ArmpApp;
 import com.android.armp.localized.MusicChannelView;
@@ -48,6 +50,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
@@ -888,16 +891,14 @@ public class MusicUtils {
 		}
 	}
 	
-	public static void playOneShot(Context context, Music music) {
+	public static void stopLocalized() {
 		try {
-			sService.openFile(music.getSource(), true);
-			//sService.play((long)1, music.getArtist(), music.getAlbum(), music.getTitle());
-			sService.play();
+			if(sService != null) {
+				sService.stop();
+			}			
 		} catch (RemoteException e) {
 			Log.e(TAG, e.getMessage());
-		} finally {
-			Intent intent = new Intent("com.android.armp.PLAYBACK_VIEWER").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			context.startActivity(intent);
+			e.printStackTrace();
 		}
 	}
 

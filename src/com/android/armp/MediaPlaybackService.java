@@ -362,7 +362,7 @@ public class MediaPlaybackService extends Service {
     };
 
     private void saveQueue(boolean full) {
-        if (mOneShot) {
+        if (mOneShot || mLocalisedMode) {
             return;
         }
         Editor ed = mPreferences.edit();
@@ -415,16 +415,22 @@ public class MediaPlaybackService extends Service {
         }
         ed.putInt("curpos", mPlayPos);
         if (mPlayer.isInitialized()) {
-            ed.putLong("seekpos", mPlayer.position());
+            ed.putLong("seekpos", mPlayer.position());            
         }
+        
+        Log.d(LOGTAG, "Seekposition: "+mPlayer.position());
         ed.putInt("repeatmode", mRepeatMode);
         ed.putInt("shufflemode", mShuffleMode);
         ed.commit();
+        Log.d(LOGTAG, "Saved queue!! with length: "+mPlayListLen+" and curpos: "+mPlayPos);
   
         //Log.i("@@@@ service", "saved state in " + (System.currentTimeMillis() - start) + " ms");
     }
 
     private void reloadQueue() {
+    	if(mLocalisedMode)
+    		return;
+    	
         String q = null;
         
         boolean newstyle = false;
@@ -466,8 +472,10 @@ public class MediaPlaybackService extends Service {
                 }
             }
             mPlayListLen = plen;
-
+            Log.d(LOGTAG, "Restored playlist length: "+plen);
             int pos = mPreferences.getInt("curpos", 0);
+            Log.d(LOGTAG, "Restored playlist curpos: "+pos);
+            
             if (pos < 0 || pos >= mPlayListLen) {
                 // The saved playlist is bogus, discard it
                 mPlayListLen = 0;
@@ -849,22 +857,24 @@ public class MediaPlaybackService extends Service {
             if (mShuffleMode == SHUFFLE_AUTO) {
                 mShuffleMode = SHUFFLE_NORMAL;
             }
-            if(localized != mLocalisedMode) {
-            	mLocalisedMode = localized;
-            	if(!mLocalisedMode) {
-            		Log.d(LOGTAG, "Switching localized mode off");
-            		mMusics = null;
-            		reloadQueue();
-            	}
-            	else {
-            		Log.d(LOGTAG, "Switching localized mode on");
-            		mMusics = MusicUtils.getCurrentLocalizedMusics();
-            		saveQueue(true);
-            	}            	
-            }
             long oldId = getAudioId();
             int listlength = list.length;
             boolean newlist = true;
+            
+            if(localized != mLocalisedMode) {
+            	if(mLocalisedMode) {
+            		Log.d(LOGTAG, "Switching localized mode off");
+            		mMusics = null;
+            	}
+            	else {
+            		Log.d(LOGTAG, "Switching localized mode on");
+            		//saveQueue(true);
+            		pause();
+            		mMusics = MusicUtils.getCurrentLocalizedMusics();
+            	}
+            	mLocalisedMode = localized;
+            }
+            
             if (mPlayListLen == listlength) {
                 // possible fast path: list might be the same
                 newlist = false;
@@ -1173,7 +1183,15 @@ public class MediaPlaybackService extends Service {
      * Stops playback.
      */
     public void stop() {
-        stop(true);
+    	if(mLocalisedMode) {
+    		mLocalisedMode = false;
+    		stop(false);
+    		reloadQueue();
+            play();
+            notifyChange(META_CHANGED);    		
+    	} else {
+    		stop(true);
+    	}        
     }
 
     /**
@@ -1768,16 +1786,19 @@ public class MediaPlaybackService extends Service {
             } catch (IOException ex) {
                 // TODO: notify the user why the file couldn't be opened
                 mIsInitialized = false;
+                Log.d(LOGTAG, "Is not initialized setDataSourceAsync() 1");
                 return;
             } catch (IllegalArgumentException ex) {
                 // TODO: notify the user why the file couldn't be opened
                 mIsInitialized = false;
+                Log.d(LOGTAG, "Is not initialized setDataSourceAsync() 2");
                 return;
             }
             mMediaPlayer.setOnCompletionListener(listener);
             mMediaPlayer.setOnErrorListener(errorListener);
             
             mIsInitialized = true;
+            Log.d(LOGTAG, "Is initialized setDataSourceAsync()");
         }
         
         public void setDataSource(String path) {
@@ -1794,16 +1815,19 @@ public class MediaPlaybackService extends Service {
             } catch (IOException ex) {
                 // TODO: notify the user why the file couldn't be opened
                 mIsInitialized = false;
+                Log.d(LOGTAG, "Is not initialized setDataSource() Illegal");
                 return;
             } catch (IllegalArgumentException ex) {
                 // TODO: notify the user why the file couldn't be opened
                 mIsInitialized = false;
+                Log.d(LOGTAG, "Is not initialized setDataSource() Illegal");
                 return;
             }
             mMediaPlayer.setOnCompletionListener(listener);
             mMediaPlayer.setOnErrorListener(errorListener);
             
             mIsInitialized = true;
+            Log.d(LOGTAG, "Is initialized setDataSource()");
         }
         
         public boolean isInitialized() {
@@ -1818,6 +1842,7 @@ public class MediaPlaybackService extends Service {
         public void stop() {
             mMediaPlayer.reset();
             mIsInitialized = false;
+            Log.d(LOGTAG, "Is not initialized stop()");
         }
 
         /**
@@ -1860,6 +1885,7 @@ public class MediaPlaybackService extends Service {
                 switch (what) {
                 case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
                     mIsInitialized = false;
+                    Log.d(LOGTAG, "Is not initialized ErrorListener()");
                     mMediaPlayer.release();
                     // Creating a new MediaPlayer and settings its wakemode does not
                     // require the media service, so it's OK to do this now, while the

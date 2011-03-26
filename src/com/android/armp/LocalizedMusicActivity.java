@@ -103,8 +103,12 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	 */
 	private static int mCurrSpotId;
 	private static int mCurrChanId;
-	private static ArrayList<Channel> mCurrChans;
-	private static ArrayList<Music> mCurrMusics;
+	private static ArrayList<Channel> mCurrChans = null;
+	private static Object mCurrChansLock = new Object();
+	private static ArrayList<Music> mCurrMusics = null;
+	private static Object mCurrMusicsLock = new Object();
+	private static ArrayList<Spot> mCurrSpots = null;
+	private static Object mCurrSpotsLock = new Object();
 	
 	/** 
 	 * Messenger to communicate with the service. 
@@ -140,17 +144,19 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	private OnSpotsReceivedListener mSpotsListener = new OnSpotsReceivedListener() {
 		public void onSpotsReceived(ArrayList<Spot> ms) {			
 			// First, refresh the spots display
-			refreshMusicSpots((ArrayList<Spot>) ms.clone());
+				mCurrSpots = ms;
+			
 			mHandler.sendEmptyMessage(GOT_SPOTS);
 			// Next, close the loading dialog
-			dismissProgress(mProgressSpot);	
+			//dismissProgress(mProgressSpot);	
 		}
 	};
 	
 	private OnChannelsReceivedListener mChanListener = new OnChannelsReceivedListener() {
 		public void onChannelsReceived(ArrayList<Channel> mc) {
 			// The view must be refreshed in the main thread
-			mCurrChans = (ArrayList<Channel>) mc.clone();
+				mCurrChans = mc;
+				
 			mHandler.sendEmptyMessage(GOT_CHANNELS);
 			
 			dismissProgress(mProgressChannel);
@@ -160,7 +166,8 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	private OnMusicsReceivedListener mMusicsListener = new OnMusicsReceivedListener() {
 		public void onMusicsReceived(ArrayList<Music> mi) {
 			// The view must be refreshed in the main thread
-			mCurrMusics = (ArrayList<Music>) mi.clone();
+				mCurrMusics = mi;
+			
 			mHandler.sendEmptyMessage(GOT_MUSICS);
 			
 			dismissProgress(mProgressMusic);
@@ -236,7 +243,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		
 		// Update the now playing bar
 		MusicUtils.setSpinnerState(this);
-		MusicUtils.updateNowPlaying(this);	
+		MusicUtils.updateNowPlaying(this);
 
 		// Bind the service (for background work and notifications)
 		doBindService();
@@ -250,23 +257,16 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	@Override
 	public void onResume() {
 		super.onResume();
-
 		// Update the now playing bar
 		MusicUtils.setSpinnerState(this);
 		MusicUtils.updateNowPlaying(this);
 		
 		mCurrView = MAP_VIEW;
-
-		// Enable location display
-		mLocation.enableMyLocation();
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-
-		// Disable location display
-		mLocation.disableMyLocation();
 	}
 
 	@Override
@@ -298,6 +298,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case GOT_SPOTS:
+				refreshMusicSpots();
 				mMapView.invalidate();
 			case GOT_CHANNELS:
 				displayMusicChannels();
@@ -322,34 +323,36 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		}
 	}
 
-	private void refreshMusicSpots(ArrayList<Spot> list) {
-		if (list != null && list.size() > 0) {
-			// First, clear the displayed overlays
-			mMapView.getOverlays().clear();
-			
-			// Display the spots
-			for (Spot ms : list) {
-				// Create bitmap
-				Bitmap bmp = BitmapFactory.decodeResource(
-						getResources(), R.drawable.spot_pin);
+	private void refreshMusicSpots() {
+			if (mCurrSpots != null && mCurrSpots.size() > 0) {
+				// First, clear the displayed overlays
+				mMapView.getOverlays().clear();
+				mSpotOverlays.clear();
 				
-				SpotOverlay moc = new SpotOverlay(ms, bmp);
-				moc.addListener(new SpotOverlayAdapter(ms) {
-					public void onTouchEvent(MotionEvent e, MapView mapView) {
-						mCurrSpotId = mSpot.getId();
-						Log.d(TAG, "Retrieving channels for spot #"+mCurrSpotId);						
-						getChannels(mCurrSpotId);
-					}
-				});
+				// Display the spots
+				for (Spot ms : mCurrSpots) {
+					// Create bitmap
+					Bitmap bmp = BitmapFactory.decodeResource(
+							getResources(), R.drawable.spot_pin);
+					
+					SpotOverlay moc = new SpotOverlay(ms, bmp);
+					moc.addListener(new SpotOverlayAdapter(ms) {
+						public void onTouchEvent(MotionEvent e, MapView mapView) {
+							mCurrSpotId = mSpot.getId();
+							Log.d(TAG, "Retrieving channels for spot #"+mCurrSpotId);						
+							getChannels(mCurrSpotId);
+						}
+					});
+					
+					
+					mMapView.getOverlays().add(moc);
+					mSpotOverlays.add(moc);
+				}
 				
-				
-				mMapView.getOverlays().add(moc);
-				mSpotOverlays.add(moc);
+				// Finaly, add the user's position
+				mMapView.getOverlays().add(mLocation);
 			}
-			
-			// Finaly, add the user's position
-			mMapView.getOverlays().add(mLocation);
-		}
+		
 	}
 	
 	@Override
@@ -380,8 +383,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	}
 
 	private void displayMusicChannels() {
-		if (mCurrChans != null && mCurrChans.size() > 0) {
-			if (mCurrSpotId != 0) {
+			if (mCurrSpotId != 0 && mCurrChans != null && mCurrChans.size() > 0) {				
 				for (Channel mc : mCurrChans) {
 					Log.d(TAG, "Music channel #" + mc.getId() + " - "
 								+ mc.getName());
@@ -397,20 +399,19 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 
 				mFlipper.showNext();
 				mCurrView = CHANNELS_VIEW;
-			}
-		}
+			}			
+		
 	}
 	
 	private void displayMusics() {
 		ListView lv = (ListView) findViewById(R.id.music_list_view);
-		
-		lv.setAdapter(new MusicAdapter(LocalizedMusicActivity.this,
+			lv.setAdapter(new MusicAdapter(LocalizedMusicActivity.this,
 					R.layout.localized_music_item, mCurrMusics)
-		);
+			);
 		
-		lv.setOnItemClickListener(mMusicClickedHandler);
+			lv.setOnItemClickListener(mMusicClickedHandler);
+			ArmpApp.setCurrentMusics(mCurrMusics);			
 		
-		ArmpApp.setCurrentMusics(mCurrMusics);
 		ArmpApp.setCurrentPosition(0);
 		MusicUtils.playLocalized(0);
 		MusicUtils.updateNowPlaying(LocalizedMusicActivity.this);
@@ -436,9 +437,11 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	private OnItemClickListener mMusicClickedHandler = new OnItemClickListener() {
 		public void onItemClick(AdapterView<?> arg0, View v, int position, long id) 
 		{
+			/*
 			ArmpApp.setCurrentPosition(position);
 			MusicUtils.playLocalized(position);
-			MusicUtils.updateNowPlaying(LocalizedMusicActivity.this);
+			MusicUtils.updateNowPlaying(LocalizedMusicActivity.this);*/
+			MusicUtils.stopLocalized();
 		}
 	};
 	
@@ -449,7 +452,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		public MusicAdapter(Context context, int textViewResourceId, 
 				ArrayList<Music> items) {
 			super(context, textViewResourceId, items);
-			this.items = items;
+			this.items = (ArrayList<Music>) items.clone();
 		}
 
 		@Override
@@ -482,7 +485,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
         public MusicChannelAdapter(Context context, int textViewResourceId, 
         							ArrayList<Channel> items) {
                 super(context, textViewResourceId, items);
-                this.items = items;
+                this.items = (ArrayList<Channel>) items.clone();
         }
 
         @Override
@@ -508,12 +511,12 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	}
 
 	private void getSpots(int zoom, GeoPoint p1, GeoPoint p2) {
-		if (mProgressSpot != null && mProgressSpot.isShowing()) {
+		/*if (mProgressSpot != null && mProgressSpot.isShowing()) {
 			return;
 		}
 
 		mProgressSpot = ProgressDialog.show(LocalizedMusicActivity.this, "",
-				"Retrieving spots...", true, false);
+				"Retrieving spots...", true, false);*/
 
 		theApp.getMusicSpots(zoom, p1, p2);
 	}

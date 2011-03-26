@@ -35,10 +35,11 @@ public class ArmpApp extends Application {
 	/**
 	 * Music spots buffer
 	 */
-	private ArrayList<Spot> mMusicSpots;
-	private ArrayList<Spot> mCloseMusicSpots;
-	private int mCurrSpot;
-	private int mCurrChan;
+	private static ArrayList<Spot> mMusicSpots;
+	private static ArrayList<Spot> mCloseMusicSpots;
+	private static Object mLock = new Object();
+	private static int mCurrSpot;
+	private static int mCurrChan;
 
 	private MusicSourceSolver mSourceSolver;
 
@@ -62,6 +63,7 @@ public class ArmpApp extends Application {
 	private OnMusicsReceivedListener mMusicsListener;
 	
 	private static ArrayList<Music> mCurrentMusics = null;
+	private static Object mCurrentMusicsLock = new Object();
 	private static int mCurrentPosition = -1;
 
 	@Override
@@ -107,7 +109,6 @@ public class ArmpApp extends Application {
 		Thread t = new Thread(new HttpGetRequest(SPOTS_REQ_T, url,
 				new SpotsXMLHandler()));
 		t.start();
-
 	}
 
 	public void updateMusicSpots(int zoomLvl, GeoPoint g1, GeoPoint g2) {
@@ -156,13 +157,19 @@ public class ArmpApp extends Application {
 	}
 
 	public Spot getMusicSpot(int spotId) {
-		if (mMusicSpots != null && mMusicSpots.size() > 0 && spotId > 0) {
-			for (Spot s : mMusicSpots) {
+		ArrayList<Spot> ms = null;
+		synchronized(mLock) {
+			ms = (ArrayList<Spot>) mMusicSpots.clone();
+		}
+		
+		if (ms != null && ms.size() > 0 && spotId > 0) {
+			for (Spot s : ms) {
 				if (s.getId() == spotId) {
 					return s;
 				}
 			}
-		}
+		}	
+		
 		return null;
 	}
 
@@ -183,11 +190,17 @@ public class ArmpApp extends Application {
 	}
 	
 	public static void setCurrentMusics(ArrayList<Music> musics) {
-		mCurrentMusics = (ArrayList<Music>) musics.clone();
+		synchronized(mCurrentMusicsLock) {
+			mCurrentMusics = (ArrayList<Music>) musics.clone();
+		}
 	}
 	
 	public static ArrayList<Music> getCurrentMusics() {
-		return mCurrentMusics;
+		ArrayList<Music> res = null;
+		synchronized(mCurrentMusicsLock) {
+			res = (ArrayList<Music>)mCurrentMusics.clone();
+		}
+		return res;
 	}
 	
 	public static void setCurrentPosition(int position) {
@@ -250,24 +263,26 @@ public class ArmpApp extends Application {
 				Object res = httpclient.execute(httpget,
 						new CommonResponseHandler<Object>(mXmlHandler));
 
-				// Send the answer to the listener
-				switch (mReqType) {
-				case SPOTS_REQ_T:
-					mMusicSpots = (ArrayList<Spot>) res;
-					mSpotsListener.onSpotsReceived((ArrayList<Spot>) res);
-					break;
-				case CHANNELS_REQ_T:
-					getMusicSpot(mCurrSpot).setChannels(
-							(ArrayList<Channel>) res);
-					mChanListener.onChannelsReceived((ArrayList<Channel>) res);
-					break;
-				case MUSICS_REQ_T:
-					getMusicChannel(mCurrSpot, mCurrChan).setMusics(
-							(ArrayList<Music>) res);
-					for (Music m : (ArrayList<Music>) res) {
-						Log.d(TAG, m.getTitle() + " source: " + m.getSource());
+				synchronized(mLock) {
+					// Send the answer to the listener
+					switch (mReqType) {
+					case SPOTS_REQ_T:
+						mMusicSpots = (ArrayList<Spot>) res;
+						mSpotsListener.onSpotsReceived((ArrayList<Spot>) res);
+						break;
+					case CHANNELS_REQ_T:
+						getMusicSpot(mCurrSpot).setChannels(
+								(ArrayList<Channel>) res);
+						mChanListener.onChannelsReceived((ArrayList<Channel>) res);
+						break;
+					case MUSICS_REQ_T:
+						getMusicChannel(mCurrSpot, mCurrChan).setMusics(
+								(ArrayList<Music>) res);
+						for (Music m : (ArrayList<Music>) res) {
+							Log.d(TAG, m.getTitle() + " source: " + m.getSource());
+						}
+						mMusicsListener.onMusicsReceived((ArrayList<Music>) res);
 					}
-					mMusicsListener.onMusicsReceived((ArrayList<Music>) res);
 				}
 
 			} catch (Exception e) {

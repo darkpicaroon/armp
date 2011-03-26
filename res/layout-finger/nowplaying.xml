@@ -16,14 +16,14 @@
 ** limitations under the License.
 */
 -->
-
+<!--android:background="@drawable/music_bottom_playback_bg"  -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/nowplaying"
     android:layout_width="match_parent"
     android:layout_height="64dip"
     android:focusable="true"
     android:visibility="gone"
-    android:background="@drawable/music_bottom_playback_bg"
+    android:background="@drawable/now_playing_bg"
     android:orientation="vertical">
 
     <LinearLayout
