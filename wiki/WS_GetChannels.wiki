@@ -35,7 +35,6 @@ The channel elements are the following:
 <tr><td>*name*</td><td>_string_</td><td>The name of the channel</td></tr>
 <tr><td>*user*</td><td>_string_</td><td>The name of the user who created the channel</td></tr>
 <tr><td>*genre*</td><td>_string_</td><td>The main genre of the channel</td></tr>
-<tr><td>*musics*</td><td>_int_</td><td>The count of musics in the channel</td></tr>
 <tr><td>*creation*</td><td>_int_</td><td>A unix timestamp date of the creation of the channel</td></tr>
 <tr><td>*update*</td><td>_int_</td><td>A unix timestamp date of the last update of the channel</td></tr>
 </table>
@@ -53,7 +52,6 @@ If the heavy mode is on, the _channel elements_ will also contain a tree identic
       <name>chan1</name>
       <user>Super User</user>
       <genre>None</genre>
-      <musics>0</musics>
       <creation>1300717041</creation>
       <update>1300717041</update>
     </channel>
@@ -61,7 +59,6 @@ If the heavy mode is on, the _channel elements_ will also contain a tree identic
       <name>chan2</name>
       <user>Super User</user>
       <genre>None</genre>
-      <musics>0</musics>
       <creation>1300717046</creation>
       <update>1300717046</update>
     </channel>
@@ -81,7 +78,6 @@ If the heavy mode is on, the _channel elements_ will also contain a tree identic
       <name>chan2</name>
       <user>Super User</user>
       <genre>None</genre>
-      <musics>2</musics>
       <creation>1301136007</creation>
       <update>1301136007</update>
       <musics>
