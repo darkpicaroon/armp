@@ -20,14 +20,15 @@ Mandatory parameters:
  * zoom = 0 ≤ _int_ ≤ 20
 
 Optional parameters:
- * _None_
+ * heavy = _int_ {0,1}
 
 == Response ==
 
 That WS returns a XML file with the following tree:
  * *root*
-  * {{{*}}} *spot* | id
-   * _spot elements_
+  * spots
+   * {{{*}}} *spot* | id
+    * _spot elements_
 
 The spot elements are the following:
 <table cellspacing="4" border="0">
@@ -41,47 +42,140 @@ The spot elements are the following:
 <tr><td>*update*</td><td>_int_</td><td>A unix timestamp date of the last update of the spot</td></tr>
 </table>
 
+If the heavy mode is on, the _spot elements_ will also contain a tree identical of those replied by the [WS_GetChannels Get Channels Web Service] with the same heavy option enabled.
 
 ==== Sample ====
+
+==== Heavy mode Off ====
 
 {{{
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <spot id="4">
-    <name>IUT</name>
-    <user>Super User</user>
-    <latitude>49.0995475230457</latitude>
-    <longitude>6.21734931382753</longitude>
-    <radius>150</radius>
-    <color>#7a00c8</color>
-    <creation>1300714653</creation>
-    <update>1300714653</update>
-  </spot>
-  <spot id="1">
-    <name>GTL</name>
-    <user>Super User</user>
-    <latitude>49.1020271699258</latitude>
-    <longitude>6.2151284447632</longitude>
-    <radius>150</radius>
-    <color>#7a00c8</color>
-    <creation>1300713451</creation>
-    <update>1300713451</update>
-  </spot>
-  <spot id="3">
-    <name>Stadium</name>
-    <user>Super User</user>
-    <latitude>49.1021255103074</latitude>
-    <longitude>6.21948435220338</longitude>
-    <radius>150</radius>
-    <color>#7a00c8</color>
-    <creation>1300714553</creation>
-    <update>1300714553</update>
-  </spot>
+  <spots>
+    <spot id="4">
+      <name>IUT</name>
+      <user>Super User</user>
+      <latitude>49.0995475230457</latitude>
+      <longitude>6.21734931382753</longitude>
+      <radius>150</radius>
+      <color>#7a00c8</color>
+      <creation>1300714653</creation>
+      <update>1300714653</update>
+    </spot>
+    <spot id="1">
+      <name>GTL</name>
+      <user>Super User</user>
+      <latitude>49.1020271699258</latitude>
+      <longitude>6.2151284447632</longitude>
+      <radius>150</radius>
+      <color>#7a00c8</color>
+      <creation>1300713451</creation>
+      <update>1300713451</update>
+    </spot>
+    <spot id="3">
+      <name>Stadium</name>
+      <user>Super User</user>
+      <latitude>49.1021255103074</latitude>
+      <longitude>6.21948435220338</longitude>
+      <radius>150</radius>
+      <color>#7a00c8</color>
+      <creation>1300714553</creation>
+      <update>1300714553</update>
+    </spot>
+  </spots>
   <logged>1</logged>
   <status>1</status>
 </root>
 }}}
 
+==== Heavy mode On ====
+
+{{{
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <spots>
+    <spot id="4">
+      <name>IUT</name>
+      <user>Super User</user>
+      <latitude>49.0995475230457</latitude>
+      <longitude>6.21734931382753</longitude>
+      <radius>150</radius>
+      <color>#7a00c8</color>
+      <creation>1300714653</creation>
+      <update>1300714653</update>
+      <channels>
+        <channel id="7" spotId="4">
+          <name>chan2</name>
+          <user>Super User</user>
+          <genre>None</genre>
+          <musics>1</musics>
+          <creation>1301136047</creation>
+          <update>1301136047</update>
+          <musics>
+            <music id="22">
+              <metadata id="22">
+                <title>Black Halo</title>
+                <artist>Kamelot</artist>
+                <album>Black Halo</album>
+                <year>2005</year>
+                <track>3</track>
+                <genre>Metal</genre>
+                <duration>185</duration>
+              </metadata>
+            </music>
+          </musics>
+        </channel>
+      </channels>
+    </spot>
+    <spot id="1">
+      <name>GTL</name>
+      <user>Super User</user>
+      <latitude>49.1020271699258</latitude>
+      <longitude>6.2151284447632</longitude>
+      <radius>150</radius>
+      <color>#7a00c8</color>
+      <creation>1300713451</creation>
+      <update>1300713451</update>
+      <channels>
+        <channel id="2" spotId="1">
+          <name>chan2</name>
+          <user>Super User</user>
+          <genre>None</genre>
+          <musics>2</musics>
+          <creation>1301136007</creation>
+          <update>1301136007</update>
+          <musics>
+            <music id="22">
+              <metadata id="22">
+                <title>Back in Black</title>
+                <artist>ACDC</artist>
+                <album>Back</album>
+                <year>1974</year>
+                <track>6</track>
+                <genre>Instrumental</genre>
+                <duration>210</duration>
+              </metadata>
+            </music>
+            <music id="23">
+              <metadata id="24">
+                <title>Jailbreak</title>
+                <artist>ACDC</artist>
+                <album>Jail</album>
+                <year>1976</year>
+                <track>1</track>
+                <genre>Instrumental</genre>
+                <duration>211</duration>
+              </metadata>
+            </music>
+          </musics>
+        </channel>
+      </channels>
+    </spot>
+  </spots>
+  <logged>1</logged>
+  <status>1</status>
+</root>
+}}}
 
 == See also ==
 
