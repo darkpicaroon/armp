@@ -108,7 +108,6 @@ If the heavy mode is on, the _spot elements_ will also contain a tree identical 
           <name>chan2</name>
           <user>Super User</user>
           <genre>None</genre>
-          <musics>1</musics>
           <creation>1301136047</creation>
           <update>1301136047</update>
           <musics>
@@ -141,7 +140,6 @@ If the heavy mode is on, the _spot elements_ will also contain a tree identical 
           <name>chan2</name>
           <user>Super User</user>
           <genre>None</genre>
-          <musics>2</musics>
           <creation>1301136007</creation>
           <update>1301136007</update>
           <musics>
