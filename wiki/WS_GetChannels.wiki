@@ -20,13 +20,15 @@ Mandatory parameters:
 Optional parameters:
  * start = _int_ > 0
  * limit = _int_ > 0
+ * heavy = _int_ {0,1}
 
 == Response ==
  
 That WS returns a XML file with the following tree:
  * *root*
-  * {{{*}}} *channel* | id | spotId
-   * _channel elements_
+  * channels
+   * {{{*}}} *channel* | id | spotId
+    * _channel elements_
 
 The channel elements are the following:
 <table cellspacing="4" border="0">
@@ -37,6 +39,8 @@ The channel elements are the following:
 <tr><td>*creation*</td><td>_int_</td><td>A unix timestamp date of the creation of the channel</td></tr>
 <tr><td>*update*</td><td>_int_</td><td>A unix timestamp date of the last update of the channel</td></tr>
 </table>
+
+If the heavy mode is on, the channel elements will also contain a tree identical of those replied by the [WS_GetMusics Get Musics Web Service] (except root).
 
 === Sample ===
 
