@@ -44,6 +44,7 @@ If the heavy mode is on, the channel elements will also contain a tree identical
 
 === Sample ===
 
+==== Heavy mode Off ===
 {{{
 <?xml version="1.0" encoding="utf-8"?>
 <root>
@@ -63,6 +64,50 @@ If the heavy mode is on, the channel elements will also contain a tree identical
     <creation>1300717046</creation>
     <update>1300717046</update>
   </channel>
+  <logged>1</logged>
+  <status>1</status>
+</root>
+}}}
+
+==== Heavy mode On ====
+
+{{{
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <channels>
+    <channel id="2" spotId="1">
+      <name>chan2</name>
+      <user>Super User</user>
+      <genre>None</genre>
+      <musics>2</musics>
+      <creation>1301136007</creation>
+      <update>1301136007</update>
+      <musics>
+        <music id="22">
+          <metadata id="22">
+            <title>Back in Black</title>
+            <artist>ACDC</artist>
+            <album>Back</album>
+            <year>1974</year>
+            <track>6</track>
+            <genre>Instrumental</genre>
+            <duration>210</duration>
+          </metadata>
+        </music>
+        <music id="23">
+          <metadata id="24">
+            <title>Jailbreak</title>
+            <artist>ACDC</artist>
+            <album>Jail</album>
+            <year>1976</year>
+            <track>1</track>
+            <genre>Instrumental</genre>
+            <duration>211</duration>
+          </metadata>
+        </music>
+      </musics>
+    </channel>
+  </channels>
   <logged>1</logged>
   <status>1</status>
 </root>
