@@ -1,8 +1,8 @@
 = Web Services Summary =
 
 || *Filename* || *Actions* || *Auth* || *Method* || *Mandatory parameters* || *Optional parameters* ||  ||
-|| getSpots.php || Provide all spots in a given area. || No || GET || <ul><li>latne = _double_</li><li>lngne = _double_</li><li>latsw = _double_</li><li>lngsw = _double_</li><li>zoom = _int_</li></ul> || || [WS_GetSpots More] ||
-|| getChannels.php || Provide channels for a specified spot. || Yes/No || GET || <ul><li>spotId = _int_</li></ul> || <ul><li>start = _int_</li><li>limit = _int_</li></ul> || [WS_GetChannels More] ||
+|| getSpots.php || Provide all spots in a given area. || No || GET || <ul><li>latne = _double_</li><li>lngne = _double_</li><li>latsw = _double_</li><li>lngsw = _double_</li><li>zoom = _int_</li></ul> || <ul><li>heavy = _int_</li></ul> || [WS_GetSpots More] ||
+|| getChannels.php || Provide channels for a specified spot. || Yes/No || GET || <ul><li>spotId = _int_</li></ul> || <ul><li>start = _int_</li><li>limit = _int_</li><li>heavy = _int_</li></ul> || [WS_GetChannels More] ||
 || getMusics.php || Provide musics for a specified channel. || Yes/No || GET || <ul><li>channelId = _int_</li></ul> || <ul><li>start = _int_</li><li>limit = _int_</li></ul> || [WS_GetMusics More] ||
 || getMessage.php || Obtains the message corresponding to a number. || No || GET || <ul><li>no = _int_</li></ul> || <ul><li>hl = _string_</li></ul> || [WS_GetMessage More] ||
 || loginUser.php || Creates a user or updates its last connection field in the database. Initializes the php session. || Yes/No || POST || <ul><li>udid = _string_</li><li>facebookId = _int_</li><li>facebookName = _string_</li></ul> || || [WS_LoginUser More] ||
