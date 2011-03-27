@@ -8,10 +8,12 @@ import java.util.List;
 import android.app.Activity;
 import android.app.LocalActivityManager;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -30,6 +32,9 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,14 +50,17 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.android.armp.MusicUtils.ServiceToken;
+import com.android.armp.facebook.SessionStore;
 import com.android.armp.localized.ArmpApp;
 import com.android.armp.localized.ArmpApp.OnChannelsReceivedListener;
 import com.android.armp.localized.ArmpApp.OnMusicsReceivedListener;
 import com.android.armp.localized.ArmpApp.OnSpotsReceivedListener;
 import com.android.armp.localized.LocalizedMusicService;
+import com.android.armp.localized.LocalizedPreferencesActivity;
 import com.android.armp.localized.MusicChannelView;
 import com.android.armp.localized.SmartMapView;
 import com.android.armp.localized.SmartMapView.OnAreaChangedListener;
@@ -68,6 +76,9 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 
+import com.facebook.android.*;
+import com.facebook.android.Facebook.*;
+
 public class LocalizedMusicActivity extends MapActivity implements ServiceConnection {
 	private final static String TAG = "LMA"; // Debug TAG
 	
@@ -75,7 +86,6 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	 * Music spots and spots overlays
 	 */
 	private List<Overlay> mSpotOverlays = new ArrayList<Overlay>();
-	private List<Spot> mMusicSpots;
 
 	/**
 	 * Map view references
@@ -101,14 +111,11 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	/**
 	 * Current spots browsing state
 	 */
-	private static int mCurrSpotId;
-	private static int mCurrChanId;
-	private static ArrayList<Channel> mCurrChans = null;
-	private static Object mCurrChansLock = new Object();
-	private static ArrayList<Music> mCurrMusics = null;
-	private static Object mCurrMusicsLock = new Object();
-	private static ArrayList<Spot> mCurrSpots = null;
-	private static Object mCurrSpotsLock = new Object();
+	private int mCurrSpotId;
+	private int mCurrChanId;
+	private ArrayList<Channel> mCurrChans = null;
+	private ArrayList<Music> mCurrMusics = null;
+	private ArrayList<Spot> mCurrSpots = null;
 	
 	/** 
 	 * Messenger to communicate with the service. 
@@ -123,9 +130,9 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	 */
 	private ServiceToken mToken;
 	
-	private static final int GOT_SPOTS = 0;
-	private static final int GOT_CHANNELS = 1;
-	private static final int GOT_MUSICS = 2;
+	private static final int GOT_SPOTS = 10;
+	private static final int GOT_CHANNELS = 11;
+	private static final int GOT_MUSICS = 12;
 
 	/**
 	 * View flipper handling
@@ -138,24 +145,25 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	
 	private static ArmpApp theApp;
 	
+	private static final String FB_APP_ID = "193388247366826";
+	private final Facebook mFacebook = new Facebook(FB_APP_ID);
+	
 	/**
 	 * Events listeners
 	 */
 	private OnSpotsReceivedListener mSpotsListener = new OnSpotsReceivedListener() {
 		public void onSpotsReceived(ArrayList<Spot> ms) {			
 			// First, refresh the spots display
-				mCurrSpots = ms;
+			mCurrSpots = ms;
 			
-			mHandler.sendEmptyMessage(GOT_SPOTS);
-			// Next, close the loading dialog
-			//dismissProgress(mProgressSpot);	
+			mHandler.sendEmptyMessage(GOT_SPOTS);	
 		}
 	};
 	
 	private OnChannelsReceivedListener mChanListener = new OnChannelsReceivedListener() {
 		public void onChannelsReceived(ArrayList<Channel> mc) {
 			// The view must be refreshed in the main thread
-				mCurrChans = mc;
+			mCurrChans = mc;
 				
 			mHandler.sendEmptyMessage(GOT_CHANNELS);
 			
@@ -166,7 +174,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	private OnMusicsReceivedListener mMusicsListener = new OnMusicsReceivedListener() {
 		public void onMusicsReceived(ArrayList<Music> mi) {
 			// The view must be refreshed in the main thread
-				mCurrMusics = mi;
+			mCurrMusics = mi;
 			
 			mHandler.sendEmptyMessage(GOT_MUSICS);
 			
@@ -179,6 +187,22 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 			getSpots(mMapView.getZoomLevel(), ne, sw);
 		}
 	};
+	
+	private void updateNowPlaying() {
+		MusicUtils.updateNowPlaying(this);
+	}
+	
+	private BroadcastReceiver mStatusListener = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(MediaPlaybackService.META_CHANGED)) {
+            	updateNowPlaying();                
+            } else if (action.equals(MediaPlaybackService.PLAYBACK_COMPLETE)) {               
+            } else if (action.equals(MediaPlaybackService.PLAYSTATE_CHANGED)) {
+            }
+        }
+    };
 	
 	private final int ANIM_DURATION = 500;
 	
@@ -251,7 +275,8 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		// Bind the mediaplayback service
 		mToken = MusicUtils.bindToService(this, this);
 		
-		//theApp.getMusicSpots(10, null, null);
+		if(SessionStore.restore(mFacebook, this))
+			Log.d(TAG, "Facebook token: "+mFacebook.getAccessToken());
 	}
 
 	@Override
@@ -262,6 +287,28 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		MusicUtils.updateNowPlaying(this);
 		
 		mCurrView = MAP_VIEW;
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		
+		mToken = MusicUtils.bindToService(this, this);
+        
+		IntentFilter f = new IntentFilter();
+        f.addAction(MediaPlaybackService.PLAYSTATE_CHANGED);
+        f.addAction(MediaPlaybackService.META_CHANGED);
+        f.addAction(MediaPlaybackService.PLAYBACK_COMPLETE);
+        registerReceiver(mStatusListener, new IntentFilter(f));
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		
+		unregisterReceiver(mStatusListener);
+		// Unbind the mediaplayback service
+		MusicUtils.unbindFromService(mToken);
 	}
 
 	@Override
@@ -278,6 +325,48 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		
 		// Unbind the mediaplayback service
 		MusicUtils.unbindFromService(mToken);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.localized_menu, menu);
+	    return true;
+	}
+	
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		switch(mCurrView) {
+		case MAP_VIEW:
+			menu.findItem(R.id.channels_specific).setVisible(false);
+			menu.findItem(R.id.mapview_specific).setVisible(true);
+			break;
+		case CHANNELS_VIEW:
+			menu.findItem(R.id.channels_specific).setVisible(true);
+			menu.findItem(R.id.mapview_specific).setVisible(false);
+			break;
+		case MUSICS_VIEW:
+			break;
+		default:
+			return super.onPrepareOptionsMenu(menu);
+		}
+		
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	    case R.id.localized_settings:
+	    	// Start the preferences activity
+	    	Intent i = new Intent(this, LocalizedPreferencesActivity.class);
+	    	i.putExtra("FB_APP_ID", FB_APP_ID);
+	    	startActivity(i);
+	        return true;
+	    default:
+	        return super.onOptionsItemSelected(item);
+	    }
 	}
 
 	@Override
@@ -297,6 +386,10 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
+			case LocalizedMusicService.MSG_ENTERED:
+				break;
+			case LocalizedMusicService.MSG_LEFT:
+				break;
 			case GOT_SPOTS:
 				refreshMusicSpots();
 				mMapView.invalidate();
@@ -349,7 +442,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 					mSpotOverlays.add(moc);
 				}
 				
-				// Finaly, add the user's position
+				// Finally, add the user's position
 				mMapView.getOverlays().add(mLocation);
 			}
 		
@@ -383,39 +476,35 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	}
 
 	private void displayMusicChannels() {
-			if (mCurrSpotId != 0 && mCurrChans != null && mCurrChans.size() > 0) {				
-				for (Channel mc : mCurrChans) {
-					Log.d(TAG, "Music channel #" + mc.getId() + " - "
-								+ mc.getName());
-				}
+		if (mCurrSpotId != 0 && mCurrChans != null && mCurrChans.size() > 0) {				
+			for (Channel mc : mCurrChans) {
+				Log.d(TAG, "Music channel #" + mc.getId() + " - "
+						+ mc.getName());
+			}
 
-				ListView lv = (ListView) this.findViewById(R.id.channel_list_view);
-				lv.setAdapter(
-						new MusicChannelAdapter(LocalizedMusicActivity.this,
-								R.layout.localized_music_channel_item, mCurrChans)
-				);
-				
-				lv.setOnItemClickListener(mChannelClickedHandler); 
+			ListView lv = (ListView) this.findViewById(R.id.channel_list_view);
+			lv.setAdapter(
+					new MusicChannelAdapter(LocalizedMusicActivity.this,
+							R.layout.localized_music_channel_item, mCurrChans)
+			);
 
-				mFlipper.showNext();
-				mCurrView = CHANNELS_VIEW;
-			}			
-		
+			lv.setOnItemClickListener(mChannelClickedHandler); 
+
+			mFlipper.showNext();
+			mCurrView = CHANNELS_VIEW;
+		}			
+
 	}
 	
 	private void displayMusics() {
 		ListView lv = (ListView) findViewById(R.id.music_list_view);
-			lv.setAdapter(new MusicAdapter(LocalizedMusicActivity.this,
+		lv.setAdapter(new MusicAdapter(LocalizedMusicActivity.this,
 					R.layout.localized_music_item, mCurrMusics)
-			);
+		);
 		
-			lv.setOnItemClickListener(mMusicClickedHandler);
-			ArmpApp.setCurrentMusics(mCurrMusics);			
+		// The the on click listener		
+		lv.setOnItemClickListener(mMusicClickedHandler);
 		
-		ArmpApp.setCurrentPosition(0);
-		MusicUtils.playLocalized(0);
-		MusicUtils.updateNowPlaying(LocalizedMusicActivity.this);
-
 		mFlipper.showNext();
 		mCurrView = MUSICS_VIEW;
 	}
@@ -424,24 +513,31 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	private OnItemClickListener mChannelClickedHandler = new OnItemClickListener() {
 	    public void onItemClick(AdapterView<?> parent, View v, int position, long id)
 	    {
-	    	Channel mc = theApp.getMusicSpot(mCurrSpotId).getChannels().get(position);
+	    	Channel mc = mCurrChans.get(position);
 	    	
 	    	if(mc != null) {
 	    		mCurrChanId = mc.getId();
 	    	    getMusics(mCurrChanId);
-	    	}
-	    	
+	    	}	    	
 	    }
 	};
 	
 	private OnItemClickListener mMusicClickedHandler = new OnItemClickListener() {
 		public void onItemClick(AdapterView<?> arg0, View v, int position, long id) 
 		{
-			/*
-			ArmpApp.setCurrentPosition(position);
-			MusicUtils.playLocalized(position);
-			MusicUtils.updateNowPlaying(LocalizedMusicActivity.this);*/
-			MusicUtils.stopLocalized();
+			if(LocalizedMusicService.getCurrentSpotId() == mCurrSpotId) {
+				if(mCurrMusics.get(position).isPlayable()) {
+					LocalizedMusicService.playMusic(mCurrChanId, position);
+				}
+				else {
+					Toast.makeText(LocalizedMusicActivity.this, R.string.not_playable,
+							Toast.LENGTH_SHORT).show();
+				}
+			}
+			else {
+				Toast.makeText(LocalizedMusicActivity.this, R.string.not_in_spot,
+								Toast.LENGTH_SHORT).show();
+			}
 		}
 	};
 	
@@ -541,6 +637,28 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 				"Retrieving musics...", true, false);
 
 		theApp.getMusicItems(mCurrSpotId, channelId);
+	}
+	
+	private Spot findSpot(int spotId) {		
+		if (mCurrSpots != null && mCurrSpots.size() > 0 && spotId > 0) {
+			for (Spot s : mCurrSpots) {
+				if (s.getId() == spotId) {
+					return s;
+				}
+			}
+		}		
+		return null;
+	}
+
+	private Channel findChannel(int channelId) {
+		if (mCurrChans != null && mCurrChans.size() > 0 && channelId > 0) {
+			for (Channel c : mCurrChans) {
+				if (c.getId() == channelId) {
+					return c;
+				}
+			}
+		}		
+		return null;
 	}
 
 	/**

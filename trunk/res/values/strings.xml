@@ -249,6 +249,8 @@
     <string name="mediapickerlabel">Armp</string>
     <!-- Activity label. This might show up in the activity-picker -->
     <string name="maplabel">Localized music</string>
+    <!-- Activity label. This might show up in the activity-picker -->
+    <string name="localizedprefslabel">Preferences</string>
 
     <!-- Shown as a transient message whenever a file fails to play -->
     <string name="playback_failed">Sorry, the player does not support this type of audio file.</string>
@@ -304,5 +306,19 @@
     <string name="widget_initial_text">Touch to select music.</string>
     <string name="unknown_genre">Unknown genre</string>
     <string name="localizedchan">Channels</string>
+    
+    <!-- Localized music strings -->
+    <string name="not_in_spot">You need to be in this spot to play its songs!</string>
+    <string name="not_playable">This music is not available locally nor online!</string>
+    
+    <!-- Localized menu strings -->
+    <string name="localized_settings">Settings</string>
+    
+    <!-- Localized preferences strings -->
+    <string name="prefs_authentication_cat">Authentication settings</string>
+    <string name="fb_login">Login with facebook</string>
+    <string name="fb_logout">Logout from facebook</string>
+    <string name="fb_login_desc">The experience is even greater when shared with friends!</string>
+    <string name="fb_logout_desc">Currently logged in as </string>
 </resources>
 

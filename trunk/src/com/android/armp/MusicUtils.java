@@ -31,6 +31,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.android.armp.localized.ArmpApp;
+import com.android.armp.localized.LocalizedMusicService;
 import com.android.armp.localized.MusicChannelView;
 import com.android.armp.model.Music;
 
@@ -676,7 +677,7 @@ public class MusicUtils {
 	}
 	
 	public static ArrayList<Music> getCurrentLocalizedMusics() {
-		return ArmpApp.getCurrentMusics();
+		return LocalizedMusicService.getCurrentMusics();
 	}
 
 	public static boolean isMediaScannerScanning(Context context) {
@@ -883,7 +884,7 @@ public class MusicUtils {
 	
 	public static void playLocalized(int position) {
 		try {
-			long [] list = new long[ArmpApp.getCurrentMusics().size()];
+			long [] list = new long[LocalizedMusicService.getCurrentMusics().size()];
 			sService.openLocalized(list, position);
 			sService.play();
 		} catch (RemoteException ex) {

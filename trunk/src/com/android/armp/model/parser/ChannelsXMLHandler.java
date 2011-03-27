@@ -80,7 +80,6 @@ public class ChannelsXMLHandler extends MyDefaultHandler {
 		} else if (localName.equals("update")) {
 			this.inLastUpdateTag = true;
 		}
-
 	}
 
 	/**
