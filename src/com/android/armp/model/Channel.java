@@ -14,7 +14,7 @@ public class Channel implements Serializable {
 	private int mCountOfMusics;
 	private int mCreationTime;
 	private int mLastUpdate;
-	private List<Music> mMusics;
+	private ArrayList<Music> mMusics;
 
 	public Channel(int id) {
 		this.mId = id;
@@ -94,11 +94,11 @@ public class Channel implements Serializable {
 		return mLastUpdate;
 	}
 
-	public void setMusics(List<Music> mMusics) {
+	public void setMusics(ArrayList<Music> mMusics) {
 		this.mMusics = mMusics;
 	}
 
-	public List<Music> getMusics() {
+	public ArrayList<Music> getMusics() {
 		return mMusics;
 	}
 

@@ -13,6 +13,7 @@ public class Music {
 	private int mYear;
 	private int mDuration;
 	private int mTrackNumber;
+	private boolean mIsPlayable;
 
 	public Music(int id) {
 		this.mId = id;
@@ -114,5 +115,13 @@ public class Music {
 
 	public int getTrackNumber() {
 		return this.mTrackNumber;
+	}
+	
+	public void setIsPlayable(boolean isPlayable) {
+		this.mIsPlayable = isPlayable;
+	}
+	
+	public boolean isPlayable() {
+		return this.mIsPlayable;
 	}
 }

@@ -83,8 +83,7 @@ public class MusicSourceSolver{
 		        where.toString(),
 		        keywords,
 		        MediaStore.Audio.Media.TITLE
-		);
-		
+		);		
 		
 		if(cursor.getCount() == 1) {
 			cursor.moveToFirst();
@@ -95,6 +94,10 @@ public class MusicSourceSolver{
 	        m.setArtistId(cursor.getLong(colIdx));
 	        colIdx = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
 	        m.setAlbumId(cursor.getLong(colIdx));
+	        m.setIsPlayable(true);
+		}
+		else {
+			m.setIsPlayable(false);
 		}
 		
 		Log.d(TAG, "Nb results for "+artist+": "+cursor.getCount());

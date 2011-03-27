@@ -157,6 +157,7 @@ public class MusicsXMLHandler extends MyDefaultHandler {
 			}
 			if (this.inSourceTag) {
 				mMusic.setSource(new String(ch, start, length));
+				mMusic.setIsPlayable(true);
 			}
 		}
 	}

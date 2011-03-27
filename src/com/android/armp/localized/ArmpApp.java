@@ -35,25 +35,23 @@ public class ArmpApp extends Application {
 	/**
 	 * Music spots buffer
 	 */
-	private static ArrayList<Spot> mMusicSpots;
 	private static ArrayList<Spot> mCloseMusicSpots;
 	private static Object mLock = new Object();
-	private static int mCurrSpot;
-	private static int mCurrChan;
 
 	private MusicSourceSolver mSourceSolver;
 
 	/**
 	 * Http requests parameters
 	 */
-	private static final String userAgent    = "";
-	private static final String rootUrl      = "http://fabienrenaud.com/armp/www/";
-	private static final String SPOTS_REQ    = rootUrl + "getSpots.php";
-	private static final String CHANNELS_REQ = rootUrl + "getChannels.php";
-	private static final String MUSICS_REQ   = rootUrl + "getMusics.php";
-	private static final int SPOTS_REQ_T     = 0;
-	private static final int CHANNELS_REQ_T  = 1;
-	private static final int MUSICS_REQ_T    = 2;
+	private static final String userAgent      = "";
+	private static final String rootUrl        = "http://fabienrenaud.com/armp/www/";
+	private static final String SPOTS_REQ      = rootUrl + "getSpots.php";
+	private static final String CHANNELS_REQ   = rootUrl + "getChannels.php";
+	private static final String MUSICS_REQ     = rootUrl + "getMusics.php";
+	private static final int SPOTS_REQ_T       = 0;
+	private static final int CHANNELS_REQ_T    = 1;
+	private static final int MUSICS_REQ_T      = 2;
+	private static final int CLOSE_SPOTS_REQ_T = 3;
 
 	/**
 	 * Response listeners
@@ -61,23 +59,12 @@ public class ArmpApp extends Application {
 	private OnSpotsReceivedListener mSpotsListener;
 	private OnChannelsReceivedListener mChanListener;
 	private OnMusicsReceivedListener mMusicsListener;
-	
-	private static ArrayList<Music> mCurrentMusics = null;
-	private static Object mCurrentMusicsLock = new Object();
-	private static int mCurrentPosition = -1;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 
 		mSourceSolver = MusicSourceSolver.getInstance(getApplicationContext());
-
-		// DEBUG
-		/*
-		 * MusicSpot s = new MusicSpot(1, 37.0625, -95.677068, 0.005f, new
-		 * Date()); mMusicSpots = new ArrayList<MusicSpot>();
-		 * mMusicSpots.add(s);
-		 */
 	}
 
 	/**
@@ -92,6 +79,19 @@ public class ArmpApp extends Application {
 	 *            The bottom right point of the area to look for spots
 	 */
 	public void getMusicSpots(int zoomLevel, GeoPoint ne, GeoPoint sw) {
+		getMusicSpots(zoomLevel, ne, sw, SPOTS_REQ_T);
+	}
+	
+	public void updateCloseMusicSpots(int zoomLevel, GeoPoint ne, GeoPoint sw) {
+		Log.d(TAG, "Updating closest spots...");
+		getMusicSpots(zoomLevel, ne, sw, CLOSE_SPOTS_REQ_T);
+	}
+	
+	public final ArrayList<Spot> getCloseMusicSpots() {
+		return mCloseMusicSpots;
+	}
+	
+	private void getMusicSpots(int zoomLevel, GeoPoint ne, GeoPoint sw, int reqType) {
 		double lat1 = (double) (ne.getLatitudeE6() / 1E6);
 		double lng1 = (double) (ne.getLongitudeE6() / 1E6);
 		double lat2 = (double) (sw.getLatitudeE6() / 1E6);
@@ -102,17 +102,12 @@ public class ArmpApp extends Application {
 		url += "lngne=" + lng1 + "&";
 		url += "latsw=" + lat2 + "&";
 		url += "lngsw=" + lng2 + "&";
-		url += "zoom="  + zoomLevel;
-
-		// mSpotsListener.onSpotsReceived(mMusicSpots);
-
-		Thread t = new Thread(new HttpGetRequest(SPOTS_REQ_T, url,
+		url += "zoom="  + zoomLevel + "&";
+		url += "heavy=" + ((reqType == SPOTS_REQ_T) ? 0 : 1);
+		
+		Thread t = new Thread(new HttpGetRequest(reqType, url,
 				new SpotsXMLHandler()));
 		t.start();
-	}
-
-	public void updateMusicSpots(int zoomLvl, GeoPoint g1, GeoPoint g2) {
-
 	}
 
 	/**
@@ -123,8 +118,6 @@ public class ArmpApp extends Application {
 	 *            The id of the spot
 	 */
 	public void getMusicChannels(int spotId) {
-		mCurrSpot = spotId;
-
 		String url = CHANNELS_REQ + "?";
 		url += "spotId=" + spotId;
 //		url += "start=0" + "&";
@@ -133,7 +126,7 @@ public class ArmpApp extends Application {
 				new ChannelsXMLHandler()));
 		t.start();
 	}
-
+	
 	/**
 	 * This method async returns the musics associated with a given channel of a
 	 * given spot, locally or from the server.
@@ -144,9 +137,6 @@ public class ArmpApp extends Application {
 	 *            The id of the channel
 	 */
 	public void getMusicItems(int spotId, int channelId) {
-		mCurrSpot = spotId;
-		mCurrChan = channelId;
-
 		String url = MUSICS_REQ + "?";
 		url += "channelId=" + channelId;
 //		url += "start=0" + "&";
@@ -156,10 +146,11 @@ public class ArmpApp extends Application {
 		t.start();
 	}
 
-	public Spot getMusicSpot(int spotId) {
+	/**
+	private Spot getMusicSpot(int spotId) {
 		ArrayList<Spot> ms = null;
 		synchronized(mLock) {
-			ms = (ArrayList<Spot>) mMusicSpots.clone();
+			ms = (ArrayList<Spot>) mCloseMusicSpots.clone();
 		}
 		
 		if (ms != null && ms.size() > 0 && spotId > 0) {
@@ -173,7 +164,7 @@ public class ArmpApp extends Application {
 		return null;
 	}
 
-	public Channel getMusicChannel(int spotId, int channelId) {
+	private Channel getMusicChannel(int spotId, int channelId) {
 		Spot ms = getMusicSpot(spotId);
 		if (ms != null) {
 			List<Channel> mcs = ms.getChannels();
@@ -188,28 +179,7 @@ public class ArmpApp extends Application {
 
 		return null;
 	}
-	
-	public static void setCurrentMusics(ArrayList<Music> musics) {
-		synchronized(mCurrentMusicsLock) {
-			mCurrentMusics = (ArrayList<Music>) musics.clone();
-		}
-	}
-	
-	public static ArrayList<Music> getCurrentMusics() {
-		ArrayList<Music> res = null;
-		synchronized(mCurrentMusicsLock) {
-			res = (ArrayList<Music>)mCurrentMusics.clone();
-		}
-		return res;
-	}
-	
-	public static void setCurrentPosition(int position) {
-		mCurrentPosition = position;
-	}
-	
-	public static int getCurrentPosition() {
-		return mCurrentPosition;
-	}
+	**/
 
 	/**
 	 * Callback interfaces and setters
@@ -267,21 +237,24 @@ public class ArmpApp extends Application {
 					// Send the answer to the listener
 					switch (mReqType) {
 					case SPOTS_REQ_T:
-						mMusicSpots = (ArrayList<Spot>) res;
-						mSpotsListener.onSpotsReceived((ArrayList<Spot>) res);
+						if(mSpotsListener != null) {							
+							mSpotsListener.onSpotsReceived((ArrayList<Spot>) res);
+						}						
 						break;
 					case CHANNELS_REQ_T:
-						getMusicSpot(mCurrSpot).setChannels(
-								(ArrayList<Channel>) res);
-						mChanListener.onChannelsReceived((ArrayList<Channel>) res);
+						if(mChanListener != null) {
+							mChanListener.onChannelsReceived((ArrayList<Channel>) res);
+						}						
 						break;
 					case MUSICS_REQ_T:
-						getMusicChannel(mCurrSpot, mCurrChan).setMusics(
-								(ArrayList<Music>) res);
-						for (Music m : (ArrayList<Music>) res) {
-							Log.d(TAG, m.getTitle() + " source: " + m.getSource());
+						if(mMusicsListener != null) {
+							mMusicsListener.onMusicsReceived((ArrayList<Music>) res);
 						}
-						mMusicsListener.onMusicsReceived((ArrayList<Music>) res);
+						break;
+					case CLOSE_SPOTS_REQ_T:
+						mCloseMusicSpots = (ArrayList<Spot>) res;
+						Log.d(TAG, "NbSpots : "+mCloseMusicSpots.size());
+						break;
 					}
 				}
 

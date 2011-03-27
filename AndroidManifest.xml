@@ -256,6 +256,8 @@
           android:label="@string/localizedchan"/>
         <service android:name="com.android.armp.localized.LocalizedMusicService"
         	android:exported="false" />
+        <activity android:name="com.android.armp.localized.LocalizedPreferencesActivity"
+        		android:label="@string/localizedprefslabel" />
 
         <receiver android:name="MediaAppWidgetProvider">
             <intent-filter>

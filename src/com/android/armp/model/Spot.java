@@ -15,7 +15,7 @@ public class Spot implements Serializable {
 	private String mColor;
 	private int mCreationTime;
 	private int mLastUpdate;
-	private List<Channel> mChannels;
+	private ArrayList<Channel> mChannels;
 
 	public Spot(int id) {
 		this.mId = id;
@@ -132,11 +132,11 @@ public class Spot implements Serializable {
 		return this.mLastUpdate;
 	}
 
-	public void setChannels(List<Channel> mChannels) {
+	public void setChannels(ArrayList<Channel> mChannels) {
 		this.mChannels = mChannels;
 	}
 
-	public List<Channel> getChannels() {
+	public ArrayList<Channel> getChannels() {
 		return mChannels;
 	}
 
