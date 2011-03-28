@@ -36,8 +36,9 @@ The spot elements are the following:
 <tr><td>*user*</td><td>_string_</td><td>The name of the user who created the spot</td></tr>
 <tr><td>*latitude*</td><td>_double_</td><td>The latitude of the spot</td></tr>
 <tr><td>*longitude*</td><td>_double_</td><td>The longitude of the spot</td></tr>
+<tr><td>*color*</td><td>_string_</td><td>An HTML color code for the color of the spot</td></tr>
 <tr><td>*radius*</td><td>_int_</td><td>The radius, in meters, of the spot</td></tr>
-<tr><td>*color*</td><td>_string_</td><td>A RGB code in hexadecimal.</td></tr>
+<tr><td>*picture*</td><td>_string_</td><td>The url of the picture of the spot.</td></tr>
 <tr><td>*creation*</td><td>_int_</td><td>A unix timestamp date of the creation of the spot</td></tr>
 <tr><td>*update*</td><td>_int_</td><td>A unix timestamp date of the last update of the spot</td></tr>
 </table>
@@ -57,8 +58,9 @@ If the heavy mode is on, the _spot elements_ will also contain a tree identical 
       <user>Super User</user>
       <latitude>49.0995475230457</latitude>
       <longitude>6.21734931382753</longitude>
-      <radius>150</radius>
       <color>7a00c8</color>
+      <radius>150</radius>
+      <picture>img/iut.jpeg</picture>
       <creation>1300714653</creation>
       <update>1300714653</update>
     </spot>
@@ -67,8 +69,9 @@ If the heavy mode is on, the _spot elements_ will also contain a tree identical 
       <user>Super User</user>
       <latitude>49.1020271699258</latitude>
       <longitude>6.2151284447632</longitude>
-      <radius>150</radius>
       <color>7a00c8</color>
+      <radius>150</radius>
+      <picture>img/gtl.jpg</picture>
       <creation>1300713451</creation>
       <update>1300713451</update>
     </spot>
@@ -77,8 +80,9 @@ If the heavy mode is on, the _spot elements_ will also contain a tree identical 
       <user>Super User</user>
       <latitude>49.1021255103074</latitude>
       <longitude>6.21948435220338</longitude>
-      <radius>150</radius>
       <color>7a00c8</color>
+      <radius>150</radius>
+      <picture>img/stadium.png</picture>
       <creation>1300714553</creation>
       <update>1300714553</update>
     </spot>
@@ -99,8 +103,9 @@ If the heavy mode is on, the _spot elements_ will also contain a tree identical 
       <user>Super User</user>
       <latitude>49.0995475230457</latitude>
       <longitude>6.21734931382753</longitude>
-      <radius>150</radius>
       <color>7a00c8</color>
+      <radius>150</radius>
+      <picture>img/spot19.jpeg</picture>
       <creation>1300714653</creation>
       <update>1300714653</update>
       <channels>
@@ -132,8 +137,9 @@ If the heavy mode is on, the _spot elements_ will also contain a tree identical 
       <user>Super User</user>
       <latitude>49.1020271699258</latitude>
       <longitude>6.2151284447632</longitude>
-      <radius>150</radius>
       <color>7a00c8</color>
+      <radius>150</radius>
+      <picture>img/spot1.png</picture>
       <creation>1300713451</creation>
       <update>1300713451</update>
       <channels>
