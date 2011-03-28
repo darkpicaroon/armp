@@ -13,10 +13,9 @@
 
 Mandatory parameters:
  * picture = _binary data_ The uploaded file.
- * name = _string_ The name of the spot.
 
 Optional parameters:
- * _None_
+ * name = _string_ The name of the spot.
 
 == Response ==
 
