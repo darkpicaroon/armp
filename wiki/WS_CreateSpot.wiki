@@ -15,8 +15,10 @@ Mandatory parameters:
  * lat = _double_ The latitude of the spot to create.
  * lng = _double_ The longitude of the spot to create.
  * name = _string_ The name of the spot.
+ * color = _string_ An RGB hexadecimal value corresponding to the color of the spot.
 
 Optional parameters:
+ * radius = _int_ The radius of the spot, in meters.
  * picture = _string_ The url to the picture.
 
 == Response ==
