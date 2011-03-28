@@ -6,7 +6,7 @@
  * Creation of spots, channels and musics from the Android
  * Like a channel from the Android
  * Record sounds/voice from the Android and associate it with a spot.
- * Listen to music samples from [http://www.mndigital.com/ MediaNet] if the user doesn't have the music on its smartphone.
+ * Listen to music samples from the iTunes API or napster if the user doesn't have the music on its smartphone.
  * Full operational Web UI to create spots, channels and to upload musics or music's metadata with a facebook account.
 
 === Resources ===
@@ -33,7 +33,7 @@
 || US32 || Change the icon bound to a music regarding its source and availability. || See the [US32_HowToDemo wiki page] || 48 || abarreir || ½ || - || http://fabienrenaud.com/armp/star-white.png ||
 || US57 || Update the database to be able to retrieve users that are _currently_ in a spot, to have a picture for a spot, to improve users' privacy. Then, put it online. || Download the [http://code.google.com/p/armp/downloads/detail?name=database.tar.xz&can=2&q=#makechanges archive of the ARMP database] and open the mwb file with MySQL Workbench or look at the attached database graph. || 47 || Fabien || 1 || ½ || http://fabienrenaud.com/armp/success.gif ||
 || US56 || Implement a Java applet to be able to upload easily multiple musics' metadatas throught the Web UI. || Go to [http://fabienrenaud.com/armp/www/adm/ the web UI] and try to add musics. || 46 || Fabien || 10 || 18 || http://fabienrenaud.com/armp/success.gif ||
-|| US58 || Improve facebook integration of the Web UI and create a real facebook login system for the standalone Web UI. || Go to [http://fabienrenaud.com/armp/www/adm/ the web UI] and login with a facebook account. || 45 || Fabien || 4 || 0 || http://fabienrenaud.com/armp/star-gold.png ||
+|| US58 || Improve facebook integration of the Web UI and create a real facebook login system for the standalone Web UI. || Go to [http://fabienrenaud.com/armp/www/adm/ the web UI] and login with a facebook account. || 45 || Fabien || 12 || 6 || http://fabienrenaud.com/armp/star-gold.png ||
 || US59 || Music playback based on the user location. || See the [US59_HowToDemo wiki page] || 44 || abarreir || 8 || 8 || http://fabienrenaud.com/armp/success.gif ||
 || US60 || Add a menu item and preference pane for facebook login. || See the [US60_HowToDemo wiki page] || 43 || abarreir || 3 || 2 || http://fabienrenaud.com/armp/success.gif ||
 
