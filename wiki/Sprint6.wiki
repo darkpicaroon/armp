@@ -39,8 +39,10 @@
 || US61 || Implementation of a RESTful WS creating a spot and a channel in the same time. || Read the [WS_CreateSC Create Spot and Channel WS page]. || 42 || Fabien || 1 || 1 || http://fabienrenaud.com/armp/success.gif ||
 || US62 || Implementation of a RESTful WS allowing to upload a picture for a spot. || Read the [WS_UploadPhoto Upload Photo WS page]. || 41 || Fabien || 1 || 1 || http://fabienrenaud.com/armp/success.gif ||
 || US63 || Implementation of RESTful WS to delete a spot, a channel or a music. || Read [WS_DeleteSpot Delete Spot WS page], [WS_DeleteChannel Delete Channel WS page] and [WS_DeleteMusic Delete Music WS page]. || 40 || Fabien || 1 || 1 || http://fabienrenaud.com/armp/success.gif ||
-
-|| US || ... || ... || xx || × || 0 || 0 || http://fabienrenaud.com/armp/star-white.png ||
+|| US64 || Study of the implementation of RTMP of android || || 39 || Mathieu || 4 || 2 || http://fabienrenaud.com/armp/warning.gif ||
+|| US65 || Studies of the iTunes and Napster API || Check [http://www.apple.com/itunes/affiliates/resources/documentation/itunes-store-web-service-search-api.html iTunes API] and [http://access.napster.com/docs/ Napster API]|| 38 || Mathieu || 2 || 1 || http://fabienrenaud.com/armp/success.gif ||
+|| US66 || Implementation of the iTunes request and playback of music preview || See the [US65_HowToDemo wiki page] || 37 || Mathieu || 6 || 5 || http://fabienrenaud.com/armp/success.gif ||
+|| US66 || Implementation of recording activity || || 36 || Mathieu || 4 || - || http://fabienrenaud.com/armp/star-gold.png ||
 
 === Links ===
 
