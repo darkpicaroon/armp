@@ -1,0 +1,26 @@
+= Delete Channel =
+
+== Actions ==
+
+ * Delete a channel.
+
+== Request ==
+<table cellspacing="4" border="0">
+ <tr><td>*URL*</td><td>[http://fabienrenaud.com/armp/www/deleteChannel.php]</td></tr>
+ <tr><td>*Method*</td><td>GET</td></tr>
+ <tr><td>*Authentication*</td><td>Required.</td></tr>
+</table>
+
+Mandatory parameters:
+ * id = _int_ > 0 The id of the spot to channel.
+
+Optional parameters:
+ * _None_
+
+== Response ==
+
+That WS returns the default XML response. [WS_DefaultResponse More...]
+
+== See also ==
+
+ * [WS_DefaultResponse Common/Default WS Response]Response]
