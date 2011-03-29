@@ -73,3 +73,7 @@ The Product Owner is in charge of "gardening" this table (he is often assisted b
 || US54 || Update the server's database and upload new WS and web site. || Run some tests on [WS_Description web services]. || 51 || 2 || [Sprint5 Sprint 5] || http://fabienrenaud.com/armp/success.gif ||
 || US55 || Update android objects and XML parsers to match changes of WS responses. || See [http://code.google.com/p/armp/source/detail?r=146 revision 146]. || 50 || 2 || [Sprint5 Sprint 5] || http://fabienrenaud.com/armp/success.gif ||
 || US56 || Implement a Java applet to be able to upload easily multiple musics' metadatas throught the Web UI. || _Not completely finished yet._ || 46 || 6 || [Sprint6 Sprint 6] || http://fabienrenaud.com/armp/warning.gif ||
+|| US64 || Study of the implementation of RTMP of android || _canceled_ || 39 || 4 || [Sprint6 Sprint 6] || http://fabienrenaud.com/armp/warning.gif ||
+|| US65 || Studies of the iTunes and Napster API || Check [http://www.apple.com/itunes/affiliates/resources/documentation/itunes-store-web-service-search-api.html iTunes API] and [http://access.napster.com/docs/ Napster API]|| 38 || 2 || 1 || http://fabienrenaud.com/armp/success.gif ||
+|| US66 || Implementation of the iTunes request and playback of music preview || See the [US65_HowToDemo wiki page] || 37 || 6 || [Sprint6 Sprint 6] || http://fabienrenaud.com/armp/success.gif ||
+|| US66 || Implementation of recording activity || || 36 || 4 || [Sprint6 Sprint 6] || http://fabienrenaud.com/armp/star-gold.png ||
