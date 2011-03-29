@@ -38,6 +38,7 @@
 || US60 || Add a menu item and preference pane for facebook login. || See the [US60_HowToDemo wiki page] || 43 || abarreir || 3 || 2 || http://fabienrenaud.com/armp/success.gif ||
 || US61 || Implementation of a RESTful WS creating a spot and a channel in the same time. || Read the [WS_CreateSC Create Spot and Channel WS page]. || 42 || Fabien || 1 || 1 || http://fabienrenaud.com/armp/success.gif ||
 || US62 || Implementation of a RESTful WS allowing to upload a picture for a spot. || Read the [WS_UploadPhoto Upload Photo WS page]. || 41 || Fabien || 1 || 1 || http://fabienrenaud.com/armp/success.gif ||
+|| U63 || Implementation of RESTful WS to delete a spot, a channel or a music. || Read [WS_DeleteSpot Delete Spot WS page], [WS_DeleteChannel Delete Channel WS page] and [WS_DeleteMusic Delete Music WS page]. || 40 || Fabien || 1 || 1 || http://fabienrenaud.com/armp/success.gif ||
 
 || US || ... || ... || xx || × || 0 || 0 || http://fabienrenaud.com/armp/star-white.png ||
 
