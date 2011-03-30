@@ -38,8 +38,6 @@ public class ArmpApp extends Application {
 	private static ArrayList<Spot> mCloseMusicSpots;
 	private static Object mLock = new Object();
 
-	private MusicSourceSolver mSourceSolver;
-
 	/**
 	 * Http requests parameters
 	 */
@@ -60,15 +58,8 @@ public class ArmpApp extends Application {
 	private OnChannelsReceivedListener mChanListener;
 	private OnMusicsReceivedListener mMusicsListener;
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-
-		mSourceSolver = MusicSourceSolver.getInstance(getApplicationContext());
-	}
-
 	/**
-	 * This method retrieves a set of spots queried by the activty, locally or
+	 * This method retrieves a set of spots queried by the activtiy, locally or
 	 * from the server, and returns it asynchronously through a callback method
 	 * 
 	 * @param zoomLvl
@@ -120,8 +111,8 @@ public class ArmpApp extends Application {
 	public void getMusicChannels(int spotId) {
 		String url = CHANNELS_REQ + "?";
 		url += "spotId=" + spotId;
-//		url += "start=0" + "&";
-//		url += "limit=10";
+		//url += "start=0" + "&";
+		//url += "limit=10";
 		Thread t = new Thread(new HttpGetRequest(CHANNELS_REQ_T, url,
 				new ChannelsXMLHandler()));
 		t.start();
@@ -139,47 +130,12 @@ public class ArmpApp extends Application {
 	public void getMusicItems(int spotId, int channelId) {
 		String url = MUSICS_REQ + "?";
 		url += "channelId=" + channelId;
-//		url += "start=0" + "&";
-//		url += "limit=10";
+		//url += "start=0" + "&";
+		//url += "limit=10";
 		Thread t = new Thread(new HttpGetRequest(MUSICS_REQ_T, url,
 				new MusicsXMLHandler()));
 		t.start();
 	}
-
-	/**
-	private Spot getMusicSpot(int spotId) {
-		ArrayList<Spot> ms = null;
-		synchronized(mLock) {
-			ms = (ArrayList<Spot>) mCloseMusicSpots.clone();
-		}
-		
-		if (ms != null && ms.size() > 0 && spotId > 0) {
-			for (Spot s : ms) {
-				if (s.getId() == spotId) {
-					return s;
-				}
-			}
-		}	
-		
-		return null;
-	}
-
-	private Channel getMusicChannel(int spotId, int channelId) {
-		Spot ms = getMusicSpot(spotId);
-		if (ms != null) {
-			List<Channel> mcs = ms.getChannels();
-			if (mcs != null && mcs.size() > 0 && channelId > 0) {
-				for (Channel c : mcs) {
-					if (c.getId() == channelId) {
-						return c;
-					}
-				}
-			}
-		}
-
-		return null;
-	}
-	**/
 
 	/**
 	 * Callback interfaces and setters
@@ -248,12 +204,12 @@ public class ArmpApp extends Application {
 						break;
 					case MUSICS_REQ_T:
 						if(mMusicsListener != null) {
-							mMusicsListener.onMusicsReceived((ArrayList<Music>) res);
+							mMusicsListener.onMusicsReceived((ArrayList<Music>) res);							
 						}
 						break;
 					case CLOSE_SPOTS_REQ_T:
+						// Update the buffer of close music spots
 						mCloseMusicSpots = (ArrayList<Spot>) res;
-						Log.d(TAG, "NbSpots : "+mCloseMusicSpots.size());
 						break;
 					}
 				}

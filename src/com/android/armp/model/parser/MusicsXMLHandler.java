@@ -28,7 +28,7 @@ public class MusicsXMLHandler extends MyDefaultHandler {
 	private boolean inSourceTag = false;
 	private boolean gotSourceTag = false;
 
-	private List<Music> mParsed = null;
+	private ArrayList<Music> mParsed = null;
 	private Music mMusic = null;
 
 	// ===========================================================
@@ -36,7 +36,7 @@ public class MusicsXMLHandler extends MyDefaultHandler {
 	// ===========================================================
 
 	@Override
-	public List<Music> getParsedData() {
+	public ArrayList<Music> getParsedData() {
 		return this.mParsed;
 	}
 

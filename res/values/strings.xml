@@ -313,6 +313,14 @@
     
     <!-- Localized menu strings -->
     <string name="localized_settings">Settings</string>
+    <string name="localized_add_spot">Create a new spot</string>
+    <string name="localized_add_channel">Add a channel</string>
+    <string name="localized_add_musics">Add musics</string>
+    
+    <!-- Localized dialogs strings -->
+    <string name="spot_name_label">Spot Name</string>
+    <string name="set_color_label">Spot Color</string>
+    <string name="next_step">Next</string>
     
     <!-- Localized preferences strings -->
     <string name="prefs_authentication_cat">Authentication settings</string>

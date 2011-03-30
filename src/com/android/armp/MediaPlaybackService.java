@@ -861,14 +861,19 @@ public class MediaPlaybackService extends Service {
             	if(mLocalisedMode) {
             		Log.d(LOGTAG, "Switching localized mode off");
             		mMusics = null;
+            		mLocalisedMode = localized;
             	}
             	else {
-            		Log.d(LOGTAG, "Switching localized mode on");
-            		pause();
             		mMusics = MusicUtils.getCurrentLocalizedMusics();
-            		mShuffleMode = SHUFFLE_NORMAL;
-            	}
-            	mLocalisedMode = localized;
+            		
+            		if(mMusics != null) {
+            			Log.d(LOGTAG, "Switching localized mode on");
+            			pause();
+            			mMusics = MusicUtils.getCurrentLocalizedMusics();
+                		mShuffleMode = SHUFFLE_NORMAL;
+                		mLocalisedMode = true;
+            		}            		
+            	}            	
             }
             
             if (mPlayListLen == listlength) {
@@ -969,14 +974,21 @@ public class MediaPlaybackService extends Service {
             stop(false);
             
             if(mLocalisedMode) {
-            	open(mMusics.get(mPlayPos).getSource(), false, true);
-            	// go to bookmark if needed
-                if (isPodcast()) {
-                    long bookmark = getBookmark();
-                    // Start playing a little bit before the bookmark,
-                    // so it's easier to get back in to the narrative.
-                    seek(bookmark - 5000);
-                }
+            	Log.d(LOGTAG, "Musics size: "+mMusics.size()+" - play pos"+mPlayPos);
+            	if(mMusics.get(mPlayPos).isPlayable()){
+            		// If the current music is playable, open it
+	            	open(mMusics.get(mPlayPos).getSource(), false, true);
+	            	// go to bookmark if needed
+	                if (isPodcast()) {
+	                    long bookmark = getBookmark();
+	                    // Start playing a little bit before the bookmark,
+	                    // so it's easier to get back in to the narrative.
+	                    seek(bookmark - 5000);
+	                }
+            	} else {
+            		// If the music is not playable, just play the next one
+            		next(true);
+            	}
             } 
             else {
             	String id = String.valueOf(mPlayList[mPlayPos]);
@@ -1161,10 +1173,13 @@ public class MediaPlaybackService extends Service {
             mPlayer.stop();
         }
         mFileToPlay = null;
-        if (mCursor != null) {
+        if (mCursor != null && !mLocalisedMode) {
             mCursor.close();
             mCursor = null;
         }
+        /*if(mLocalisedMode) {
+        	mMusics = null;
+        }*/
         if (remove_status_icon) {
             gotoIdleState();
         } else {
@@ -1180,8 +1195,8 @@ public class MediaPlaybackService extends Service {
      */
     public void stop() {
     	if(mLocalisedMode) {
+    		stop(true);
     		mLocalisedMode = false;
-    		stop(false);
     		reloadQueue();
             play();
             notifyChange(META_CHANGED);    		

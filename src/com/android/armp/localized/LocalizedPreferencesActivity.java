@@ -65,6 +65,8 @@ public class LocalizedPreferencesActivity extends PreferenceActivity {
         SessionEvents.addAuthListener(mSessionListener);
         SessionEvents.addLogoutListener(mSessionListener);
         
+        // If the session is valid, send a request to get the name of the user
+        // to display it in our view
         if (mFacebook.isSessionValid()) {
         	myPref.setTitle(R.string.fb_logout);
         	myPref.setSummary("");

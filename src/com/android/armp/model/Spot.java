@@ -12,7 +12,7 @@ public class Spot implements Serializable {
 	private double mLatitude;
 	private double mLongitude;
 	private int mRadius;
-	private String mColor;
+	private int mColor;
 	private int mCreationTime;
 	private int mLastUpdate;
 	private ArrayList<Channel> mChannels;
@@ -23,7 +23,7 @@ public class Spot implements Serializable {
 	}
 
 	public Spot(int id, String user, String name, double latitude,
-			double longitude, int radius, String color, int creationTime,
+			double longitude, int radius, int color, int creationTime,
 			int lastUpdate) {
 		this.mId = id;
 		setUser(user);
@@ -59,7 +59,7 @@ public class Spot implements Serializable {
 		mLatitude = new Double(fields[3]);
 		mLongitude = new Double(fields[4]);
 		mRadius = new Integer(fields[5]);
-		mColor = fields[6];
+		mColor = new Integer(fields[6]);
 		mCreationTime = new Integer(fields[7]);
 		mLastUpdate = new Integer(fields[8]);
 	}
@@ -108,11 +108,11 @@ public class Spot implements Serializable {
 		this.mRadius = radius;
 	}
 
-	public void setColor(String color) {
+	public void setColor(int color) {
 		this.mColor = color;
 	}
 
-	public String getColor() {
+	public int getColor() {
 		return this.mColor;
 	}
 

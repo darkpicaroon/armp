@@ -6,6 +6,7 @@ import java.util.List;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import android.graphics.Color;
 import android.util.Log;
 
 import com.android.armp.localized.MusicSourceSolver;
@@ -272,7 +273,8 @@ public class SpotsXMLHandler extends MyDefaultHandler {
 			} else if (this.inRadiusTag) {
 				mSpot.setRadius(Integer.parseInt(new String(ch, start, length)));
 			} else if (this.inColorTag) {
-				mSpot.setColor(new String(ch, start, length));
+				mSpot.setColor(Color.parseColor("#"+new String(ch, start, length)));
+				Log.d(TAG, "Color: "+mSpot.getColor());
 			} else if (this.inCreationTag) {
 				mSpot.setCreationTime(Integer.parseInt(new String(ch, start,
 						length)));
