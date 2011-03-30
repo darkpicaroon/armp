@@ -6,29 +6,35 @@ import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.LocalActivityManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -37,7 +43,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
@@ -46,6 +54,8 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
@@ -59,6 +69,7 @@ import com.android.armp.localized.ArmpApp;
 import com.android.armp.localized.ArmpApp.OnChannelsReceivedListener;
 import com.android.armp.localized.ArmpApp.OnMusicsReceivedListener;
 import com.android.armp.localized.ArmpApp.OnSpotsReceivedListener;
+import com.android.armp.localized.ColorPickerDialog;
 import com.android.armp.localized.LocalizedMusicService;
 import com.android.armp.localized.LocalizedPreferencesActivity;
 import com.android.armp.localized.MusicChannelView;
@@ -102,6 +113,12 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	private ProgressDialog mProgressMusic = null;
 	
 	/**
+	 * Dialogs for the creation of spots/channels
+	 */
+	private Dialog mAddSpotDialog = null;
+	private ColorPickerDialog mColorDialog = null;
+	
+	/**
 	 * Objects tags
 	 */
 	public static final String channelsTag = "com.android.armp.Channels";
@@ -143,55 +160,100 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	private static int mCurrView; // Used to load displayed view on resume
 	private ViewFlipper mFlipper;
 	
+	/**
+	 * Dialog ids
+	 */
+	private final static int DIALOG_CREATE_SPOT = 0;
+	private final static int DIALOG_CREATE_CHANNEL = 1;
+	private final static int DIALOG_SELECT_COLOR = 2;
+	
+	/**
+	 * Creation members
+	 */
+	private Spot mNewSpot = null;
+	private Channel mNewChannel = null;
+	private SpotOverlay mNewSpotOverlay = null;
+	
+	/**
+	 * Reference to the application context
+	 */
 	private static ArmpApp theApp;
 	
+	/**
+	 * Facebok variables
+	 */
 	private static final String FB_APP_ID = "193388247366826";
 	private final Facebook mFacebook = new Facebook(FB_APP_ID);
 	
 	/**
-	 * Events listeners
+	 * Event received sent by the application when spots are received after
+	 * an async request to the server.
 	 */
 	private OnSpotsReceivedListener mSpotsListener = new OnSpotsReceivedListener() {
 		public void onSpotsReceived(ArrayList<Spot> ms) {			
-			// First, refresh the spots display
+			// Save the currently displayed spot
 			mCurrSpots = ms;
 			
+			// Send a message to the activity to update the view (on the UI thread)
 			mHandler.sendEmptyMessage(GOT_SPOTS);	
 		}
 	};
 	
+	/**
+	 * Event received sent by the application when channels are received after
+	 * an async request to the server.
+	 */
 	private OnChannelsReceivedListener mChanListener = new OnChannelsReceivedListener() {
 		public void onChannelsReceived(ArrayList<Channel> mc) {
-			// The view must be refreshed in the main thread
+			// Save the currently displayed channels
 			mCurrChans = mc;
-				
+			
+			// Send a message to the activity to update the view (on the UI thread)
 			mHandler.sendEmptyMessage(GOT_CHANNELS);
 			
+			// Close the progress dialog
 			dismissProgress(mProgressChannel);
 		}		
 	};
 	
+	/**
+	 * Event received from the application when musics are received after
+	 * an async request to the server.
+	 */
 	private OnMusicsReceivedListener mMusicsListener = new OnMusicsReceivedListener() {
 		public void onMusicsReceived(ArrayList<Music> mi) {
-			// The view must be refreshed in the main thread
+			// Save the currently displayed musics
 			mCurrMusics = mi;
 			
+			// Send a message to the activity to update the view (on the UI thread)
 			mHandler.sendEmptyMessage(GOT_MUSICS);
 			
+			// Close the progress dialog
 			dismissProgress(mProgressMusic);
 		}
 	};
 	
+	/**
+	 * Event received from the SmartMapView telling the activity to update
+	 * the displayed spots
+	 */
 	private OnAreaChangedListener mMapAreaListener = new OnAreaChangedListener() {
 		public void onAreaChanged(GeoPoint ne, GeoPoint sw) {
+			// Call a helper function to retrieve the spots from the server
 			getSpots(mMapView.getZoomLevel(), ne, sw);
 		}
 	};
 	
-	private void updateNowPlaying() {
+	/**
+	 * Helper function to update the now playing widget from the UI thread
+	 */
+	private final void updateNowPlaying() {
 		MusicUtils.updateNowPlaying(this);
 	}
 	
+	/**
+	 * Listener listening to changes on the MediaPlaybackService
+	 */
 	private BroadcastReceiver mStatusListener = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -204,6 +266,9 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
         }
     };
 	
+    /**
+     * Transition animations between the views (map, channels, musics)
+     */
 	private final int ANIM_DURATION = 500;
 	
 	private Animation fadeInAnimation() {
@@ -272,11 +337,12 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		// Bind the service (for background work and notifications)
 		doBindService();
 		
-		// Bind the mediaplayback service
-		mToken = MusicUtils.bindToService(this, this);
-		
+		// Restore the facebook session if there is a valid one
 		if(SessionStore.restore(mFacebook, this))
 			Log.d(TAG, "Facebook token: "+mFacebook.getAccessToken());
+		
+		// Start tracing 
+	    // Debug.startMethodTracing("LocalizedMusic");	    
 	}
 
 	@Override
@@ -286,6 +352,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		MusicUtils.setSpinnerState(this);
 		MusicUtils.updateNowPlaying(this);
 		
+		// Update the currently displayed view
 		mCurrView = MAP_VIEW;
 	}
 	
@@ -293,8 +360,11 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	public void onStart() {
 		super.onStart();
 		
+		// Bind the activity to the MediaPlaybackService
 		mToken = MusicUtils.bindToService(this, this);
         
+		// Register intent receiver from the MediaPlaybackService
+		// on music playback state changed
 		IntentFilter f = new IntentFilter();
         f.addAction(MediaPlaybackService.PLAYSTATE_CHANGED);
         f.addAction(MediaPlaybackService.META_CHANGED);
@@ -307,9 +377,10 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		super.onStop();
 		
 		unregisterReceiver(mStatusListener);
+		
 		// Unbind the mediaplayback service
 		MusicUtils.unbindFromService(mToken);
-	}
+}
 
 	@Override
 	public void onPause() {
@@ -323,12 +394,13 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		// Unbind the service
 		doUnbindService();
 		
-		// Unbind the mediaplayback service
-		MusicUtils.unbindFromService(mToken);
+		// stop tracing
+	    //Debug.stopMethodTracing();	    
 	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflates and displays the menu view
 	    MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.localized_menu, menu);
 	    return true;
@@ -336,16 +408,25 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
+		/**
+		 * Set the menu view content regarding the currently displayed
+		 * view
+		 */
 		switch(mCurrView) {
 		case MAP_VIEW:
-			menu.findItem(R.id.channels_specific).setVisible(false);
-			menu.findItem(R.id.mapview_specific).setVisible(true);
+			menu.findItem(R.id.add_channel).setVisible(false);
+			menu.findItem(R.id.add_musics).setVisible(false);
+			menu.findItem(R.id.add_spot).setVisible(true);
 			break;
 		case CHANNELS_VIEW:
-			menu.findItem(R.id.channels_specific).setVisible(true);
-			menu.findItem(R.id.mapview_specific).setVisible(false);
+			menu.findItem(R.id.add_channel).setVisible(true);
+			menu.findItem(R.id.add_musics).setVisible(false);
+			menu.findItem(R.id.add_spot).setVisible(false);
 			break;
 		case MUSICS_VIEW:
+			menu.findItem(R.id.add_channel).setVisible(false);
+			menu.findItem(R.id.add_musics).setVisible(true);
+			menu.findItem(R.id.add_spot).setVisible(false);
 			break;
 		default:
 			return super.onPrepareOptionsMenu(menu);
@@ -361,34 +442,169 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	    case R.id.localized_settings:
 	    	// Start the preferences activity
 	    	Intent i = new Intent(this, LocalizedPreferencesActivity.class);
-	    	i.putExtra("FB_APP_ID", FB_APP_ID);
+	    	i.putExtra("FB_APP_ID", FB_APP_ID); // Pass the FB_ID as an argument
 	    	startActivity(i);
 	        return true;
+	    case R.id.add_spot:
+	    	//this.showDialog(DIALOG_CREATE_SPOT);
+	    	mNewSpot = new Spot(-1);
+	    	setMarkerDialog();
+	    	return true;
 	    default:
 	        return super.onOptionsItemSelected(item);
 	    }
 	}
+	
+	// TODO: Finish implementation of the spots/channels creation
+	protected Dialog onCreateDialog(int id) {
+	    Dialog dialog = null;
+	    switch(id) {
+	    case DIALOG_CREATE_SPOT:
+	    	mAddSpotDialog = dialog = addSpotDialog();
+	        break;
+	    case DIALOG_CREATE_CHANNEL:
+	        break;
+	    case DIALOG_SELECT_COLOR:
+	    	dialog = new ColorPickerDialog(this,
+	    			mColorListener, Color.BLUE);
+	    	break;
+	    default:
+	        dialog = null;
+	    }
+	    return dialog;
+	}
+	
+	/**
+	 * Handles events received from the ColorPickerDialog indicating the color
+	 * selected
+	 */
+	private ColorPickerDialog.OnColorChangedListener mColorListener = 
+		new ColorPickerDialog.OnColorChangedListener() {
+			public void colorChanged(int color) {
+				// Set the color of the spot being created
+				mNewSpot.setColor(color);
+				
+				// Update the color on the view
+				mAddSpotDialog.findViewById(R.id.color_preview).setBackgroundColor(color);
+				
+				// Go back to the spot creation dialog
+				LocalizedMusicActivity.this.showDialog(DIALOG_CREATE_SPOT);
+			}		
+	};
+	
+	/**
+	 * Handles the display of the spot being created, with drag n drop
+	 * around the map, and buttons to validate the creation, cancel the process
+	 * TODO: Finish the drag n drop on the SpotOverlay class
+	 * TODO: Close the button view on OK or cancel
+	 */
+	private void setMarkerDialog() {
+		LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(R.layout.ok_cancel_btn,
+		                               (ViewGroup)findViewById(R.id.footer_btn));
+		
+		// Add the buttons view
+		this.addContentView(layout, new ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT,
+										LayoutParams.WRAP_CONTENT));
+		
+		// Create bitmap
+		Bitmap bmp = BitmapFactory.decodeResource(
+				getResources(), R.drawable.spot_pin);
+		
+		// Set the initial position of the marker
+		mNewSpot.setLatitude(mLocation.getMyLocation().getLatitudeE6()/1E6);
+		mNewSpot.setLongitude(mLocation.getMyLocation().getLongitudeE6()/1E6);
+		mNewSpot.setRadius(100);
+		
+		// Create a spot overlay, with the draggable flag set at true
+		mNewSpotOverlay = new SpotOverlay(mNewSpot, bmp, true);
+		
+		// Set the click listener of the ok button
+		Button b = (Button)layout.findViewById(R.id.set_spot_position);
+		b.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				LocalizedMusicActivity.this.showDialog(DIALOG_CREATE_SPOT);	
+			}
+		});
+		
+		//TODO: Set the click listener of the cancel button?
+	}
+	
+	/**
+	 * Helper function creating the dialog to add information about a spot
+	 * @return The dialog "Add spot" dialog
+	 */
+	private Dialog addSpotDialog() {
+		AlertDialog.Builder builder;
+		AlertDialog alertDialog;
+
+		Context mContext = this;
+		LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(R.layout.create_spot_dialog,
+		                               (ViewGroup) findViewById(R.id.create_spot_dialog));
+		
+		builder = new AlertDialog.Builder(mContext);
+		
+		// Set the click listener of the color selection item
+		layout.findViewById(R.id.select_color).setOnClickListener(new OnClickListener() {
+			public void onClick(View arg0) {
+				// Display the color picker dialog
+				LocalizedMusicActivity.this.showDialog(DIALOG_SELECT_COLOR);
+			}			
+		});
+		/**
+		 * Set the dialog title, the cancel button handler, the next 
+		 * button handler and the cancel listener
+		 */
+		builder.setView(layout)
+			   .setTitle(R.string.localized_add_spot)
+			   .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+				    public void onClick(DialogInterface dialog, int item) {
+				        mNewSpot = null;
+				    }
+				}).setPositiveButton(R.string.next_step, new DialogInterface.OnClickListener() {
+				    public void onClick(DialogInterface dialog, int item) {
+				    	EditText e = (EditText)findViewById(R.id.spot_name_value);
+						mNewSpot.setName(e.getEditableText().toString());
+				    }
+				}).setOnCancelListener(new DialogInterface.OnCancelListener() {					
+					public void onCancel(DialogInterface dialog) {
+						mNewSpot = null;
+					}
+				});
+		
+		alertDialog = builder.create();
+		
+		return alertDialog;
+	}
 
 	@Override
 	protected boolean isRouteDisplayed() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	
+	/**
+	 * Static method used to restore the view
+	 * @return The id of the current view (map,channels or musics)
+	 */
 	public static int getCurrentView() {
 		return mCurrView;
 	}
 
 	/**
-	 * Handler of incoming messages from the content provider
+	 * Handler of incoming messages from the Service
 	 */
 	private class IncomingHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case LocalizedMusicService.MSG_ENTERED:
+				Toast.makeText(LocalizedMusicActivity.this, "Entered spot #"+msg.arg1,
+						Toast.LENGTH_SHORT).show();
 				break;
 			case LocalizedMusicService.MSG_LEFT:
+				Toast.makeText(LocalizedMusicActivity.this, "Exited spot #"+msg.arg1,
+						Toast.LENGTH_SHORT).show();
 				break;
 			case GOT_SPOTS:
 				refreshMusicSpots();
@@ -415,36 +631,44 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 			theProgress.dismiss();
 		}
 	}
-
+	
+	/**
+	 * Refresh the display of the music spots
+	 */
 	private void refreshMusicSpots() {
-			if (mCurrSpots != null && mCurrSpots.size() > 0) {
-				// First, clear the displayed overlays
-				mMapView.getOverlays().clear();
-				mSpotOverlays.clear();
-				
-				// Display the spots
-				for (Spot ms : mCurrSpots) {
-					// Create bitmap
-					Bitmap bmp = BitmapFactory.decodeResource(
-							getResources(), R.drawable.spot_pin);
-					
-					SpotOverlay moc = new SpotOverlay(ms, bmp);
-					moc.addListener(new SpotOverlayAdapter(ms) {
-						public void onTouchEvent(MotionEvent e, MapView mapView) {
-							mCurrSpotId = mSpot.getId();
-							Log.d(TAG, "Retrieving channels for spot #"+mCurrSpotId);						
-							getChannels(mCurrSpotId);
-						}
-					});
-					
-					
-					mMapView.getOverlays().add(moc);
-					mSpotOverlays.add(moc);
-				}
-				
-				// Finally, add the user's position
-				mMapView.getOverlays().add(mLocation);
+		if (mCurrSpots != null && mCurrSpots.size() > 0) {
+			// First, clear the displayed overlays
+			mMapView.getOverlays().clear();
+			mSpotOverlays.clear();
+
+			// Display the spots
+			for (Spot ms : mCurrSpots) {
+				// Create bitmap
+				Bitmap bmp = BitmapFactory.decodeResource(
+						getResources(), R.drawable.spot_pin);
+
+				SpotOverlay moc = new SpotOverlay(ms, bmp, false);
+				moc.addListener(new SpotOverlayAdapter(ms) {
+					public void onTouchEvent(MotionEvent e, MapView mapView) {
+						mCurrSpotId = mSpot.getId();
+						//Log.d(TAG, "Retrieving channels for spot #"+mCurrSpotId);						
+						getChannels(mCurrSpotId);
+					}
+				});
+
+				// Add the spot to the view
+				mMapView.getOverlays().add(moc);
+				mSpotOverlays.add(moc);
 			}
+
+			// If the user is creating a spot, display it
+			if(mNewSpotOverlay != null) {
+				mMapView.getOverlays().add(mNewSpotOverlay);
+			}
+
+			// Finally, add the user's position
+			mMapView.getOverlays().add(mLocation);
+		}
 		
 	}
 	
@@ -474,14 +698,14 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	    }
 	    return super.onKeyDown(keyCode, event);
 	}
-
+	
+	/**
+	 * Helper function displaying the music channels view, typically
+	 * when the activity receives the result of an async request to the server
+	 */
 	private void displayMusicChannels() {
 		if (mCurrSpotId != 0 && mCurrChans != null && mCurrChans.size() > 0) {				
-			for (Channel mc : mCurrChans) {
-				Log.d(TAG, "Music channel #" + mc.getId() + " - "
-						+ mc.getName());
-			}
-
+			// Set the content of the channels list view
 			ListView lv = (ListView) this.findViewById(R.id.channel_list_view);
 			lv.setAdapter(
 					new MusicChannelAdapter(LocalizedMusicActivity.this,
@@ -489,42 +713,60 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 			);
 
 			lv.setOnItemClickListener(mChannelClickedHandler); 
-
+			
+			// Go from the map view to the channels view
 			mFlipper.showNext();
 			mCurrView = CHANNELS_VIEW;
+			
+			/*for (Channel mc : mCurrChans) {
+			Log.d(TAG, "Music channel #" + mc.getId() + " - "
+					+ mc.getName());
+			}*/
 		}			
 
 	}
 	
+	/**
+	 * Helper function displaying the musics view, typically when the activity
+	 * receives the result of an async request to the server
+	 */
 	private void displayMusics() {
+		// Set the content of the musics view
 		ListView lv = (ListView) findViewById(R.id.music_list_view);
 		lv.setAdapter(new MusicAdapter(LocalizedMusicActivity.this,
 					R.layout.localized_music_item, mCurrMusics)
 		);
 		
-		// The the on click listener		
 		lv.setOnItemClickListener(mMusicClickedHandler);
 		
+		// Go from the channels view to the musics view
 		mFlipper.showNext();
 		mCurrView = MUSICS_VIEW;
 	}
 	
-	// Create a message handling object as an anonymous class.
+	/**
+	 *  Listens to clicks on a channel list item
+	 */
 	private OnItemClickListener mChannelClickedHandler = new OnItemClickListener() {
 	    public void onItemClick(AdapterView<?> parent, View v, int position, long id)
 	    {
 	    	Channel mc = mCurrChans.get(position);
 	    	
 	    	if(mc != null) {
+	    		// Retrieve the musics from the clicked channel
 	    		mCurrChanId = mc.getId();
 	    	    getMusics(mCurrChanId);
 	    	}	    	
 	    }
 	};
 	
+	/**
+	 * Listens to clicks on a music list item
+	 */
 	private OnItemClickListener mMusicClickedHandler = new OnItemClickListener() {
 		public void onItemClick(AdapterView<?> arg0, View v, int position, long id) 
 		{
+			// If we are on the spot of the music, play it if we can
 			if(LocalizedMusicService.getCurrentSpotId() == mCurrSpotId) {
 				if(mCurrMusics.get(position).isPlayable()) {
 					LocalizedMusicService.playMusic(mCurrChanId, position);
@@ -541,40 +783,11 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		}
 	};
 	
-	private class MusicAdapter extends ArrayAdapter<Music> {
-
-		private ArrayList<Music> items;
-
-		public MusicAdapter(Context context, int textViewResourceId, 
-				ArrayList<Music> items) {
-			super(context, textViewResourceId, items);
-			this.items = (ArrayList<Music>) items.clone();
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View v = convertView;
-			if (v == null) {
-				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				v = vi.inflate(R.layout.localized_music_item, null);
-			}
-			Music mc = items.get(position);
-			if (mc != null) {
-				TextView tt = (TextView) v.findViewById(R.id.music_item_line1);
-				TextView bt = (TextView) v.findViewById(R.id.music_item_line2);
-				if (tt != null) {
-					tt.setText(mc.getTitle());  
-					tt.setVisibility(TextView.VISIBLE);
-				}
-				if(bt != null){                        	
-					bt.setText(mc.getArtist());
-				}
-			}
-			return v;
-		}
-	}	
-	
-	
+	/**
+	 * View adapter for the display of channels
+	 * @author abarreir
+	 *
+	 */
 	private class MusicChannelAdapter extends ArrayAdapter<Channel> {
         private ArrayList<Channel> items;
 
@@ -605,18 +818,57 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
                 return v;
        	}
 	}
+	
+	/**
+	 * View adapter for the display of musics
+	 * @author abarreir
+	 */
+	private class MusicAdapter extends ArrayAdapter<Music> {
+		private ArrayList<Music> items;
 
-	private void getSpots(int zoom, GeoPoint p1, GeoPoint p2) {
-		/*if (mProgressSpot != null && mProgressSpot.isShowing()) {
-			return;
+		public MusicAdapter(Context context, int textViewResourceId, 
+				ArrayList<Music> items) {
+			super(context, textViewResourceId, items);
+			this.items = (ArrayList<Music>) items.clone();
 		}
 
-		mProgressSpot = ProgressDialog.show(LocalizedMusicActivity.this, "",
-				"Retrieving spots...", true, false);*/
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View v = convertView;
+			if (v == null) {
+				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				v = vi.inflate(R.layout.localized_music_item, null);
+			}
+			Music mc = items.get(position);
+			if (mc != null) {
+				TextView tt = (TextView) v.findViewById(R.id.music_item_line1);
+				TextView bt = (TextView) v.findViewById(R.id.music_item_line2);
+				if (tt != null) {
+					tt.setText(mc.getTitle());  
+					tt.setVisibility(TextView.VISIBLE);
+				}
+				if(bt != null){                        	
+					bt.setText(mc.getArtist());
+				}
+			}
+			return v;
+		}
+	}	
 
+	/**
+	 * Helper function to retrieve spots from the content provider
+	 * @param zoom The zoom level of the map
+	 * @param p1 The NE point delimiting the displayed map area
+	 * @param p2 The SW point delimiting the displayed map area
+	 */
+	private void getSpots(int zoom, GeoPoint p1, GeoPoint p2) {
 		theApp.getMusicSpots(zoom, p1, p2);
 	}
 
+	/**
+	 * Helper function to retrieve channels from the content provider
+	 * @param spotId The id of the spot we want to retrieve the channels
+	 */
 	private void getChannels(int spotId) {
 		if (mProgressChannel != null && mProgressChannel.isShowing()) {
 			return;
@@ -624,10 +876,15 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		// Show dialog
 		mProgressChannel = ProgressDialog.show(LocalizedMusicActivity.this, "",
 				"Retrieving channels...", true, false);
-
+		
+		// Retrieve the channels from the content provider
 		theApp.getMusicChannels(spotId);
 	}
 
+	/**
+	 * Helper function to retrieve musics from the content provider
+	 * @param channelId The id of the channel we want to retrive the musics
+	 */
 	private void getMusics(int channelId) {
 		if (mProgressMusic != null && mProgressMusic.isShowing()) {
 			return;
@@ -635,34 +892,13 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		// Show dialog
 		mProgressMusic = ProgressDialog.show(LocalizedMusicActivity.this, "",
 				"Retrieving musics...", true, false);
-
+		
+		// Retrieve the musics from the content provider
 		theApp.getMusicItems(mCurrSpotId, channelId);
-	}
-	
-	private Spot findSpot(int spotId) {		
-		if (mCurrSpots != null && mCurrSpots.size() > 0 && spotId > 0) {
-			for (Spot s : mCurrSpots) {
-				if (s.getId() == spotId) {
-					return s;
-				}
-			}
-		}		
-		return null;
-	}
-
-	private Channel findChannel(int channelId) {
-		if (mCurrChans != null && mCurrChans.size() > 0 && channelId > 0) {
-			for (Channel c : mCurrChans) {
-				if (c.getId() == channelId) {
-					return c;
-				}
-			}
-		}		
-		return null;
 	}
 
 	/**
-	 * Class for interacting with the main interface of the service.
+	 * Class for interacting with the main interface of the background service.
 	 */
 	private ServiceConnection mConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
@@ -680,8 +916,6 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		}
 
 		public void onServiceDisconnected(ComponentName className) {
-			mService = null;
-			
 			// Unregister the activity as the service client
 			Message msg = Message.obtain(null, LocalizedMusicService.MSG_UREGISTER);
 			msg.replyTo = mMessenger;
@@ -690,7 +924,9 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 				mService.send(msg);
 			} catch (Exception e) {
 				Log.e(TAG, e.getMessage());
-			}		
+			}
+			
+			mService = null;
 		}
 	};
 

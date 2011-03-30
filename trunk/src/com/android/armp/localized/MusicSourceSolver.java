@@ -60,7 +60,7 @@ public class MusicSourceSolver{
 		String title = m.getTitle();
 		String album = m.getAlbum();
 		
-		Log.d(TAG, "Solving music source: "+title+" - "+artist+" - "+album);
+		//Log.d(TAG, "Solving music source: "+title+" - "+artist+" - "+album);
 		
 		// The content provider uri to look into
 		Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
@@ -175,10 +175,10 @@ public class MusicSourceSolver{
 					httpclient.close();
 				}
 			}
-			m.setIsPlayable(false);
+			//m.setIsPlayable(false);
 		}
 		
-		Log.d(TAG, "Nb results for "+artist+": "+cursor.getCount());
+		//Log.d(TAG, "Nb results for "+artist+": "+cursor.getCount());
 		cursor.close();
 	}
 	

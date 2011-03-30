@@ -3,11 +3,15 @@
     <item android:id="@+id/localized_settings"
           android:icon="@drawable/ic_loc_menu_preferences"
           android:title="@string/localized_settings" />
-    <item android:id="@+id/mapview_specific"
-          android:icon="@drawable/ic_loc_menu_preferences"
-          android:title="Map view specific item" />
-    <item android:id="@+id/channels_specific"
-          android:icon="@drawable/ic_loc_menu_preferences"
-          android:title="Channel specific item" 
+    <item android:id="@+id/add_spot"
+          android:icon="@drawable/ic_menu_add"
+          android:title="@string/localized_add_spot" />
+    <item android:id="@+id/add_channel"
+          android:icon="@drawable/ic_menu_add"
+          android:title="@string/localized_add_channel" 
+          android:visible="false"/>
+    <item android:id="@+id/add_musics"
+          android:icon="@drawable/ic_menu_add"
+          android:title="@string/localized_add_musics" 
           android:visible="false"/>
 </menu>
