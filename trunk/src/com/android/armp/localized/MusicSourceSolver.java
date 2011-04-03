@@ -1,8 +1,13 @@
 package com.android.armp.localized;
 
 import java.text.Collator;
+import java.util.ArrayList;
 
+//import com.android.armp.localized.ArmpApp.CommonResponseHandler;
+import com.android.armp.model.Channel;
 import com.android.armp.model.Music;
+import com.android.armp.model.Spot;
+import com.android.armp.model.parser.MyDefaultHandler;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -60,7 +65,7 @@ public class MusicSourceSolver{
 		String title = m.getTitle();
 		String album = m.getAlbum();
 		
-		//Log.d(TAG, "Solving music source: "+title+" - "+artist+" - "+album);
+//		Log.d(TAG, "Solving music source: "+title+" - "+artist+" - "+album);
 		
 		// The content provider uri to look into
 		Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
@@ -73,7 +78,7 @@ public class MusicSourceSolver{
         String [] keywords = new String[searchWords.length];
         Collator col = Collator.getInstance();
         col.setStrength(Collator.PRIMARY);
-        
+     
         for (int i = 0; i < searchWords.length; i++) {
             String key = MediaStore.Audio.keyFor(searchWords[i]);
             key = key.replace("\\", "\\\\");
@@ -81,6 +86,7 @@ public class MusicSourceSolver{
             key = key.replace("_", "\\_");
             keywords[i] = '%' + key + '%';
         }
+
         for (int i = 0; i < searchWords.length; i++) {
             where.append(" AND ");
             where.append(MediaStore.Audio.Media.ARTIST_KEY + "||");
@@ -96,7 +102,6 @@ public class MusicSourceSolver{
 		        keywords,
 		        MediaStore.Audio.Media.TITLE
 		);		
-		
 		if(cursor.getCount() == 1) {
 			cursor.moveToFirst();
 			int colIdx = cursor.getColumnIndex(MediaStore.Audio.Media._ID);
@@ -109,73 +114,12 @@ public class MusicSourceSolver{
 	        m.setIsPlayable(true);
 		}
 		else {
+			Log.i(TAG, "in else");
 			// get Music preview from iTunes
 			if (cursor.getCount() == 0) {
-				// iTunes sample request
-				// http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch?term=jack+johnson
-
-				String iTunesUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch?entity=musicTrack&media=music&limit=3&term=";
-
-				Log.d(TAG, "Url for iTunes = " + iTunesUrl);
-
-				String term = artist+"+"+title;
-				String previewUrl = "null";
-				AndroidHttpClient httpclient = null;
-				try {
-					Log.i(TAG, "params before sanitization : " + artist + title);
-					term = term.replace(' ', '+');
-					term = term.replace('-', '+');
-					Log.i(TAG, "params after sanitization : " + term);
-					
-					httpclient = AndroidHttpClient.newInstance("");
-					HttpGet httpget = new HttpGet(iTunesUrl + term);
-					HttpResponse res = httpclient.execute(httpget);
-
-					HttpEntity httpentity = res.getEntity();
-					if (httpentity != null) {
-						// A Simple JSON Response Read
-						InputStream instream = httpentity.getContent();
-						String result = convertStreamToString(instream);
-						JSONObject json = new JSONObject(result);
-
-						// A Simple JSONObject Creation
-						int countresult = json.getInt("resultCount");
-						if (countresult == 0) {
-							Log.d(TAG, "no result found on iTunes for " + artist);
-						} else {
-							Log.d(TAG, "there is " + countresult
-									+ " on iTunes for " + artist);
-							JSONArray results = new JSONArray();
-							results = json.getJSONArray("results");
-							int n = results.length();
-							for (int i = 0; i < n; i++) {
-								JSONObject j = results.getJSONObject(i);
-								previewUrl = (j.getString("previewUrl").contains(
-										"mzstatic") && previewUrl == "null") ? previewUrl = j
-										.getString("previewUrl") : previewUrl;
-							}
-							if (previewUrl != "null") {
-								Log.d(TAG, " WANTING TO PLAY : " + previewUrl);
-								m.setSource(previewUrl);
-								m.setIsPlayable(true);
-							}
-							else{
-								Log.d(TAG, " No preview found : ");
-								m.setIsPlayable(false);
-							}
-						}
-
-						// Closing the input stream will trigger connection release
-						instream.close();
-					}
-
-				} catch (Exception e) {
-					Log.d(TAG, e.toString());
-				} finally {
-					httpclient.close();
-				}
+				Thread t = new Thread(new HttpPreviewRequest(artist, title, m));
+				t.start();
 			}
-			//m.setIsPlayable(false);
 		}
 		
 		//Log.d(TAG, "Nb results for "+artist+": "+cursor.getCount());
@@ -183,6 +127,86 @@ public class MusicSourceSolver{
 	}
 	
 	
+	
+	
+	/**
+	 * HTTP ITUNES REQUEST FUNCTIONS
+	 */
+	private static class HttpPreviewRequest implements Runnable {
+		private String artist;
+		private String title;
+		private Music m;
+		
+		public HttpPreviewRequest(String artist, String title, Music m) {
+			this.artist = artist;
+			this.title = title;
+			this.m = m;
+		}
+
+		@SuppressWarnings("unchecked")
+		public void run() {
+			AndroidHttpClient httpclient = null;
+			
+			String previewUrl = "null";
+			String term = this.artist+"+"+this.title;
+			String iTunesUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch?entity=musicTrack&media=music&limit=3&term=";
+			
+			try {
+				Log.i(TAG, "params before sanitization : " + artist + title);
+				term = term.replace(' ', '+');
+				term = term.replace('-', '+');
+				term = term.replace('\'', '+');
+				Log.i(TAG, "params after sanitization : " + term);
+				
+				httpclient = AndroidHttpClient.newInstance("");
+				HttpGet httpget = new HttpGet(iTunesUrl + term);
+				HttpResponse res = httpclient.execute(httpget);
+
+				HttpEntity httpentity = res.getEntity();
+				if (httpentity != null) {
+					// A Simple JSON Response Read
+					InputStream instream = httpentity.getContent();
+					String result = convertStreamToString(instream);
+					JSONObject json = new JSONObject(result);
+
+					// A Simple JSONObject Creation
+					int countresult = json.getInt("resultCount");
+					if (countresult == 0) {
+						Log.d(TAG, "no result found on iTunes for " + artist);
+						m.setIsPlayable(false);
+					} else {
+						Log.d(TAG, "there is " + countresult
+								+ " on iTunes for " + artist);
+						JSONArray results = new JSONArray();
+						results = json.getJSONArray("results");
+						int n = results.length();
+						for (int i = 0; i < n; i++) {
+							JSONObject j = results.getJSONObject(i);
+							previewUrl = (j.getString("previewUrl").contains(
+									"mzstatic") && previewUrl == "null") ? previewUrl = j
+									.getString("previewUrl") : previewUrl;
+						}
+						if (previewUrl != "null") {
+							Log.d(TAG, " WANTING TO PLAY : " + previewUrl);
+							m.setSource(previewUrl);
+							m.setIsPlayable(true);
+						}
+						else{
+							Log.d(TAG, " No preview found : ");
+							m.setIsPlayable(false);
+						}
+					}
+
+					// Closing the input stream will trigger connection release
+					instream.close();
+				}
+			} catch (Exception e) {
+				Log.d(TAG, e.toString());
+			} finally {
+				httpclient.close();
+			}
+		}
+	}
 	private static String convertStreamToString(InputStream is) {
 		/*
 		 * To convert the InputStream to String we use the
@@ -210,3 +234,5 @@ public class MusicSourceSolver{
 		return sb.toString();
 	}
 }
+
+
