@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.parsers.SAXParser;
@@ -13,6 +14,10 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -46,10 +51,12 @@ public class ArmpApp extends Application {
 	private static final String SPOTS_REQ      = rootUrl + "getSpots.php";
 	private static final String CHANNELS_REQ   = rootUrl + "getChannels.php";
 	private static final String MUSICS_REQ     = rootUrl + "getMusics.php";
+	private static final String CHANNEL_ADD    = rootUrl + "createChannel.php";
 	private static final int SPOTS_REQ_T       = 0;
 	private static final int CHANNELS_REQ_T    = 1;
 	private static final int MUSICS_REQ_T      = 2;
 	private static final int CLOSE_SPOTS_REQ_T = 3;
+	private static final int CHANNEL_ADD_REQ_T = 4;
 
 	/**
 	 * Response listeners
@@ -116,6 +123,23 @@ public class ArmpApp extends Application {
 		Thread t = new Thread(new HttpGetRequest(CHANNELS_REQ_T, url,
 				new ChannelsXMLHandler()));
 		t.start();
+	}
+	
+	/**
+	 * This method async add the previously submitted channel on the server
+	 * @param c the channel to save
+	 */
+	public void saveMusicChannel(Channel c){
+		String name = c.getName();
+		int spotId = c.getSpotId();
+		String url = CHANNEL_ADD;
+		
+		HttpParams params = new BasicHttpParams();
+		params.setIntParameter("spotId", spotId);
+		params.setParameter("name", name);
+		Thread t = new Thread(new HttpPostRequest(url, CHANNEL_ADD_REQ_T, params, new ChannelsXMLHandler()));
+		t.start();
+		
 	}
 	
 	/**
@@ -227,6 +251,50 @@ public class ArmpApp extends Application {
 		}
 	}
 
+	/**
+	 * HTTP POST REQUESTS FUNCTIONS
+	 */
+	private class HttpPostRequest implements Runnable {
+		private String mUrl;
+		private HttpParams params;
+		private int mReqType;
+		private MyDefaultHandler mXmlHandler;
+
+		public HttpPostRequest(String url, int req, HttpParams params, MyDefaultHandler xmlHandler) {
+			this.mUrl = url;
+			this.mReqType = req;
+			this.params = params;
+			this.mXmlHandler = xmlHandler;
+		}
+
+		@SuppressWarnings("unchecked")
+		public void run() {
+			AndroidHttpClient httpclient = null;
+			try {
+				httpclient = AndroidHttpClient.newInstance(userAgent);
+
+				Log.d(TAG, "Sending request: " + mUrl);
+				HttpPost httppost = new HttpPost(mUrl);
+				httppost.setParams(params);
+				
+				Object res = httpclient.execute(httppost,
+						new CommonResponseHandler<Object>(mXmlHandler));
+				Log.d(TAG, "response = " + res.toString());
+
+			} catch (Exception e) {
+				String msg = e != null && e.getMessage() != null ? e
+						.getMessage() : "Fatal error!";
+				Log.e(TAG, msg);
+				e.printStackTrace();
+			} finally {
+				if (httpclient != null) {
+					httpclient.close();
+					Log.d(TAG, "Request over: " + mUrl);
+				}
+			}
+		}
+	}
+	
 	private class CommonResponseHandler<T> implements ResponseHandler<T> {
 		private MyDefaultHandler mXmlHandler;
 
@@ -279,4 +347,6 @@ public class ArmpApp extends Application {
 			return res;
 		}
 	};
+	
+	
 }

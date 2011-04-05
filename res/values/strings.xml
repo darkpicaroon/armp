@@ -315,11 +315,17 @@
     <string name="localized_settings">Settings</string>
     <string name="localized_add_spot">Create a new spot</string>
     <string name="localized_add_channel">Add a channel</string>
+    <string name="localized_add_picture">Add a picture</string>
     <string name="localized_add_musics">Add musics</string>
+    <string name="discovery_mode">Discovery Mode</string>
     
     <!-- Localized dialogs strings -->
     <string name="spot_name_label">Spot Name</string>
+    <string name="channel_name_label">Spot Name</string>
     <string name="set_color_label">Spot Color</string>
+    <string name="set_picture_label">Spot Picture</string>
+    <string name="take_picture_label">Take Picture</string>
+    <string name="upload_picture_label">Upload Picture</string>
     <string name="next_step">Next</string>
     
     <!-- Localized preferences strings -->

@@ -14,4 +14,7 @@
           android:icon="@drawable/ic_menu_add"
           android:title="@string/localized_add_musics" 
           android:visible="false"/>
+    <item android:id="@+id/discovery_mode"
+          android:title="@string/discovery_mode" 
+          android:visible="false"/>
 </menu>

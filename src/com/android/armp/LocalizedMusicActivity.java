@@ -1,5 +1,6 @@
 package com.android.armp;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,17 +24,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.hardware.Camera;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Debug;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.text.Editable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -46,7 +50,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewManager;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -56,8 +62,10 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -116,6 +124,8 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	 * Dialogs for the creation of spots/channels
 	 */
 	private Dialog mAddSpotDialog = null;
+	private Dialog mAddPictureDialog = null;
+	private Dialog mAddChannelDialog = null;
 	private ColorPickerDialog mColorDialog = null;
 	
 	/**
@@ -166,6 +176,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	private final static int DIALOG_CREATE_SPOT = 0;
 	private final static int DIALOG_CREATE_CHANNEL = 1;
 	private final static int DIALOG_SELECT_COLOR = 2;
+	private final static int DIALOG_SELECT_PICTURE = 3;
 	
 	/**
 	 * Creation members
@@ -184,6 +195,11 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	 */
 	private static final String FB_APP_ID = "193388247366826";
 	private final Facebook mFacebook = new Facebook(FB_APP_ID);
+	
+	/**
+	 * Discovery Mode option
+	 */
+	private static boolean discoveryMode = false;
 	
 	/**
 	 * Event received sent by the application when spots are received after
@@ -417,6 +433,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 			menu.findItem(R.id.add_channel).setVisible(false);
 			menu.findItem(R.id.add_musics).setVisible(false);
 			menu.findItem(R.id.add_spot).setVisible(true);
+			menu.findItem(R.id.discovery_mode).setVisible(true);
 			break;
 		case CHANNELS_VIEW:
 			menu.findItem(R.id.add_channel).setVisible(true);
@@ -447,8 +464,20 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	        return true;
 	    case R.id.add_spot:
 	    	//this.showDialog(DIALOG_CREATE_SPOT);
+	    	Log.d(TAG, "Create SPOT");
 	    	mNewSpot = new Spot(-1);
 	    	setMarkerDialog();
+	    	return true;
+	    case R.id.add_channel:
+	    	//this.showDialog(DIALOG_CREATE_SPOT);
+	    	Log.d(TAG, "Create CHANNEL");
+	    	mNewChannel = new Channel(-1);
+	    	LocalizedMusicActivity.this.showDialog(DIALOG_CREATE_CHANNEL);
+	    	return true;
+	    case R.id.discovery_mode:
+	    	discoveryMode = (discoveryMode) ? false : true;
+	    	String debug = (discoveryMode) ? "on" : "off";
+	    	Log.d(TAG, "discoveryMode = " + debug);
 	    	return true;
 	    default:
 	        return super.onOptionsItemSelected(item);
@@ -463,10 +492,14 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	    	mAddSpotDialog = dialog = addSpotDialog();
 	        break;
 	    case DIALOG_CREATE_CHANNEL:
+	    	mAddChannelDialog = dialog = addChannelDialog();
 	        break;
 	    case DIALOG_SELECT_COLOR:
 	    	dialog = new ColorPickerDialog(this,
 	    			mColorListener, Color.BLUE);
+	    	break;
+	    case DIALOG_SELECT_PICTURE:
+	    	mAddPictureDialog = dialog = addPictureDialog();
 	    	break;
 	    default:
 	        dialog = null;
@@ -499,18 +532,28 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	 * TODO: Close the button view on OK or cancel
 	 */
 	private void setMarkerDialog() {
-		LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
-		View layout = inflater.inflate(R.layout.ok_cancel_btn,
-		                               (ViewGroup)findViewById(R.id.footer_btn));
+		View layout = this.findViewById(R.id.footer_btn);
+		if(layout == null){
+			Log.d(TAG, "footer_btn est null!");
+			LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
+			layout = inflater.inflate(R.layout.ok_cancel_btn,
+			                               (ViewGroup)findViewById(R.id.footer_btn));
+			
+			// Add the buttons view
+			this.addContentView(layout, new ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT,
+											LayoutParams.WRAP_CONTENT));
+		}else{
+			layout.setVisibility(View.VISIBLE);
+		}
 		
-		// Add the buttons view
-		this.addContentView(layout, new ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT,
-										LayoutParams.WRAP_CONTENT));
 		
 		// Create bitmap
 		Bitmap bmp = BitmapFactory.decodeResource(
 				getResources(), R.drawable.spot_pin);
-		
+		Log.d(TAG, "before set lat and long");
+		// fake position for debugging purposes
+//		mNewSpot.setLatitude(49.10223849249091);
+//		mNewSpot.setLongitude(6.232860658932102);
 		// Set the initial position of the marker
 		mNewSpot.setLatitude(mLocation.getMyLocation().getLatitudeE6()/1E6);
 		mNewSpot.setLongitude(mLocation.getMyLocation().getLongitudeE6()/1E6);
@@ -528,6 +571,13 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		});
 		
 		//TODO: Set the click listener of the cancel button?
+		Button c = (Button)layout.findViewById(R.id.cancel_spot_creation);
+		c.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				View parentView = (View) v.getParent();
+				parentView.setVisibility(View.GONE);
+			}
+		});
 	}
 	
 	/**
@@ -552,6 +602,13 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 				LocalizedMusicActivity.this.showDialog(DIALOG_SELECT_COLOR);
 			}			
 		});
+		
+		// Set the click listener of the picture selection item
+		layout.findViewById(R.id.select_picture).setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				LocalizedMusicActivity.this.showDialog(DIALOG_SELECT_PICTURE);
+			}			
+		});
 		/**
 		 * Set the dialog title, the cancel button handler, the next 
 		 * button handler and the cancel listener
@@ -564,12 +621,151 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 				    }
 				}).setPositiveButton(R.string.next_step, new DialogInterface.OnClickListener() {
 				    public void onClick(DialogInterface dialog, int item) {
-				    	EditText e = (EditText)findViewById(R.id.spot_name_value);
+				    	// Null pointer !!!!
+				    	EditText e = (EditText)findViewById(R.id.channel_name_value);
 						mNewSpot.setName(e.getEditableText().toString());
 				    }
 				}).setOnCancelListener(new DialogInterface.OnCancelListener() {					
 					public void onCancel(DialogInterface dialog) {
 						mNewSpot = null;
+					}
+				});
+		
+		alertDialog = builder.create();
+		
+		return alertDialog;
+	}
+	
+	/**
+	 * Helper function creating the dialog to add a picture to a spot
+	 * @return The dialog "Add picture" dialog
+	 */
+	private Dialog addPictureDialog() {
+		AlertDialog.Builder builder;
+		AlertDialog alertDialog;
+
+		Context mContext = this;
+		LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(R.layout.add_picture_dialog,
+		                               (ViewGroup) findViewById(R.id.add_picture_dialog));
+		
+		builder = new AlertDialog.Builder(mContext); 
+		
+		// Set the click listener of the picture selection item
+		layout.findViewById(R.id.take_picture).setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				Log.d(TAG, "clicked on take_picture");
+				Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+				Uri pictureTakenUri = Uri.fromFile(new File
+						(Environment.getExternalStorageDirectory(), "spot_picture_" + String.valueOf
+						(System.currentTimeMillis()) + ".jpg"));
+				Log.d(TAG, "URI for file = "+pictureTakenUri.toString());
+				cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, pictureTakenUri);
+						
+				startActivityForResult(cameraIntent, 0); 
+			}			
+		});
+		/**
+		 * Set the dialog title, the cancel button handler, the next 
+		 * button handler and the cancel listener
+		 */
+		builder.setView(layout)
+			   .setTitle(R.string.localized_add_picture)
+			   .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+				    public void onClick(DialogInterface dialog, int item) {
+				        mNewSpot = null;
+				    }
+				}).setPositiveButton(R.string.next_step, new DialogInterface.OnClickListener() {
+				    public void onClick(DialogInterface dialog, int item) {
+				    	//
+				    }
+				}).setOnCancelListener(new DialogInterface.OnCancelListener() {					
+					public void onCancel(DialogInterface dialog) {
+						// TODO
+					}
+				});
+		
+		alertDialog = builder.create();
+		
+		return alertDialog;
+	}
+	
+	/**
+	 * Catches the result back from the camera activity
+	 */
+	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+		
+		Log.d(TAG, "onActivityResult");
+		
+		// Get result from the camera activity
+		if (requestCode == 0){
+			Log.d(TAG, "requestCode is OK " + requestCode);
+			Log.d(TAG, "the resultCode is = " + resultCode);
+			if (resultCode == Activity.RESULT_OK) {
+				Log.d(TAG, "the resultCode is OK = " + resultCode);
+				Bundle extras = data.getExtras();
+				Bitmap pic = (Bitmap) extras.get("data");
+				 if (pic != null) {
+					 // Display the picture in the preview_preview icon
+                     ImageView img = (ImageView) this.findViewById(R.id.picture_preview);
+                     if (img != null){
+                    	 Log.d(TAG, "image taken different from null");
+                    	 img.setImageBitmap(pic);
+                    	 img.invalidate();
+                     } else {
+                    	 Log.d(TAG, "image is null !!");
+                     }
+                 }
+			} else{
+				Log.d(TAG, "the resultCode is NOT OK = " + resultCode);
+			}
+//			View v = (View) data;
+		}
+	}
+	
+	/**
+	 * Helper function creating the dialog to add a new channel to a spot
+	 * @return The dialog "Add channel" dialog
+	 */
+	private Dialog addChannelDialog() {
+		Log.d(TAG, "addchanneldialog()");
+		AlertDialog.Builder builder;
+		AlertDialog alertDialog;
+
+		Context mContext = this;
+		LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(R.layout.create_channel_dialog,
+		                               (ViewGroup) findViewById(R.id.create_channel_dialog)); 
+		
+		builder = new AlertDialog.Builder(mContext); 
+		
+		/**
+		 * Set the dialog title, the cancel button handler, the next 
+		 * button handler and the cancel listener
+		 */
+		builder.setView(layout)
+			   .setTitle(R.string.localized_add_channel)
+			   .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+				    public void onClick(DialogInterface dialog, int item) {
+				        mNewChannel = null;
+				    }
+				}).setPositiveButton(R.string.next_step, new DialogInterface.OnClickListener() {
+				    public void onClick(DialogInterface dialog, int item) {
+				    	// Null pointer !!!!
+//				    	EditText e = (EditText)findViewById(R.id.channel_name_value);
+//						String channelName = e.getEditableText().toString()
+//				    	Log.d(TAG, "channel name set to: " + e.getText().toString());
+				    	
+				    	// As EditText e is at null set manually a name to complete form test
+				    	String channelName = "NewChannelFromAndroid";
+				    	mNewChannel.setName(channelName);
+				    	mNewChannel.setSpotId(mCurrSpotId);
+				    	LocalizedMusicActivity.this.saveChannel(mNewChannel);
+				    }
+				}).setOnCancelListener(new DialogInterface.OnCancelListener() {					
+					public void onCancel(DialogInterface dialog) {
+						// TODO
+						mNewChannel = null;
 					}
 				});
 		
@@ -850,6 +1046,11 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 				if(bt != null){                        	
 					bt.setText(mc.getArtist());
 				}
+				// set icon image
+				if(mc.getSource().contains("http")){
+					ImageView iv = (ImageView) v.findViewById(R.id.music_icon);
+					iv.setImageResource(R.drawable.itunes_music);
+				}
 			}
 			return v;
 		}
@@ -879,6 +1080,19 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		
 		// Retrieve the channels from the content provider
 		theApp.getMusicChannels(spotId);
+	}
+	
+	/**
+	 * Helper function to save a channel from the content provider
+	 * @param spotId The id of the spot we want to retrieve the channels
+	 */
+	private void saveChannel(Channel c) {
+		// Show dialog
+		mProgressChannel = ProgressDialog.show(LocalizedMusicActivity.this, "",
+				"Saving Channel...", true, false);
+		
+		// Retrieve the channels from the content provider
+		theApp.saveMusicChannel(c);
 	}
 
 	/**

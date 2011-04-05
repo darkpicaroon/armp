@@ -2,6 +2,8 @@ package com.android.armp.localized;
 
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 //import com.android.armp.localized.ArmpApp.CommonResponseHandler;
 import com.android.armp.model.Channel;
@@ -23,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -35,6 +38,9 @@ public class MusicSourceSolver{
 	private static ContentResolver mContentResolver;
 	
 	private static MusicSourceSolver mInstance = null;
+	
+	// thread pool to manage iTunes queries.
+	private static ExecutorService pool = Executors.newFixedThreadPool(10);
 	
 	/** These are the columns in the music cursor that we are interested in. */
     static final String[] CURSOR_COLS = new String[] {
@@ -112,17 +118,18 @@ public class MusicSourceSolver{
 	        colIdx = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
 	        m.setAlbumId(cursor.getLong(colIdx));
 	        m.setIsPlayable(true);
-		}
-		else {
-			Log.i(TAG, "in else");
-			// get Music preview from iTunes
+		} else {
+			Log.i(TAG, "Track not found on local device, trying iTunes");
 			if (cursor.getCount() == 0) {
-				Thread t = new Thread(new HttpPreviewRequest(artist, title, m));
-				t.start();
+				try{
+					pool.execute(new HttpPreviewRequest(artist, title, m));
+				} catch(Exception e){
+					Log.d(TAG, "Exception while launching new thread in pool.");
+				}
+				
 			}
 		}
-		
-		//Log.d(TAG, "Nb results for "+artist+": "+cursor.getCount());
+		Log.d(TAG, "Nb results for "+artist+": "+cursor.getCount());
 		cursor.close();
 	}
 	
@@ -164,75 +171,74 @@ public class MusicSourceSolver{
 
 				HttpEntity httpentity = res.getEntity();
 				if (httpentity != null) {
-					// A Simple JSON Response Read
 					InputStream instream = httpentity.getContent();
 					String result = convertStreamToString(instream);
 					JSONObject json = new JSONObject(result);
-
-					// A Simple JSONObject Creation
+					
 					int countresult = json.getInt("resultCount");
 					if (countresult == 0) {
-						Log.d(TAG, "no result found on iTunes for " + artist);
+						Log.d(TAG, "no result found on iTunes for: " + artist + " " + title);
 						m.setIsPlayable(false);
 					} else {
-						Log.d(TAG, "there is " + countresult
-								+ " on iTunes for " + artist);
+						Log.d(TAG, "there is/are " + countresult
+								+ " on iTunes for " + artist + " " + title);
 						JSONArray results = new JSONArray();
 						results = json.getJSONArray("results");
-						int n = results.length();
-						for (int i = 0; i < n; i++) {
+						
+						for (int i = 0; i < results.length(); i++) {
 							JSONObject j = results.getJSONObject(i);
 							previewUrl = (j.getString("previewUrl").contains(
 									"mzstatic") && previewUrl == "null") ? previewUrl = j
 									.getString("previewUrl") : previewUrl;
 						}
+						
 						if (previewUrl != "null") {
-							Log.d(TAG, " WANTING TO PLAY : " + previewUrl);
+							Log.d(TAG, " Found a preview on iTunes at: " + previewUrl);
 							m.setSource(previewUrl);
 							m.setIsPlayable(true);
-						}
-						else{
-							Log.d(TAG, " No preview found : ");
+						} else{
+							Log.d(TAG, " No preview found on iTunes!");
 							m.setIsPlayable(false);
 						}
 					}
-
-					// Closing the input stream will trigger connection release
 					instream.close();
 				}
 			} catch (Exception e) {
 				Log.d(TAG, e.toString());
 			} finally {
-				httpclient.close();
+				if(httpclient != null)
+					httpclient.close();
 			}
 		}
-	}
-	private static String convertStreamToString(InputStream is) {
-		/*
-		 * To convert the InputStream to String we use the
-		 * BufferedReader.readLine() method. We iterate until the BufferedReader
-		 * return null which means there's no more data to read. Each line will
-		 * appended to a StringBuilder and returned as String.
-		 */
-		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-		StringBuilder sb = new StringBuilder();
-
-		String line = null;
-		try {
-			while ((line = reader.readLine()) != null) {
-				sb.append(line + "\n");
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
+	
+		private static String convertStreamToString(InputStream is) {
+			/*
+			 * To convert the InputStream to String we use the
+			 * BufferedReader.readLine() method. We iterate until the BufferedReader
+			 * return null which means there's no more data to read. Each line will
+			 * appended to a StringBuilder and returned as String.
+			 */
+			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+			StringBuilder sb = new StringBuilder();
+	
+			String line = null;
 			try {
-				is.close();
+				while ((line = reader.readLine()) != null) {
+					sb.append(line + "\n");
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
+			} finally {
+				try {
+					is.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
+			return sb.toString();
 		}
-		return sb.toString();
 	}
+	
 }
 
 
