@@ -2,9 +2,17 @@ package com.android.armp;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.http.Header;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.HeaderGroup;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -14,6 +22,7 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,6 +37,7 @@ import android.hardware.Camera;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.net.http.AndroidHttpClient;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Environment;
@@ -37,6 +47,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.provider.MediaStore.Images.ImageColumns;
 import android.text.Editable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -57,9 +68,12 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -200,6 +214,11 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	 * Discovery Mode option
 	 */
 	private static boolean discoveryMode = false;
+	
+	// variables for activity response (Camera & Gallery)
+	private final static int TAKE_PICTURE = 0;
+	private final static int PICK_IMAGE = 1;
+	private static Bitmap currentImage;
 	
 	/**
 	 * Event received sent by the application when spots are received after
@@ -359,6 +378,8 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		
 		// Start tracing 
 	    // Debug.startMethodTracing("LocalizedMusic");	    
+		
+			
 	}
 
 	@Override
@@ -439,11 +460,13 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 			menu.findItem(R.id.add_channel).setVisible(true);
 			menu.findItem(R.id.add_musics).setVisible(false);
 			menu.findItem(R.id.add_spot).setVisible(false);
+			menu.findItem(R.id.discovery_mode).setVisible(false);
 			break;
 		case MUSICS_VIEW:
 			menu.findItem(R.id.add_channel).setVisible(false);
 			menu.findItem(R.id.add_musics).setVisible(true);
 			menu.findItem(R.id.add_spot).setVisible(false);
+			menu.findItem(R.id.discovery_mode).setVisible(false);
 			break;
 		default:
 			return super.onPrepareOptionsMenu(menu);
@@ -561,11 +584,16 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		
 		// Create a spot overlay, with the draggable flag set at true
 		mNewSpotOverlay = new SpotOverlay(mNewSpot, bmp, true);
+		mMapView.getOverlays().add(mNewSpotOverlay);
+		mSpotOverlays.add(mNewSpotOverlay);
+//		Log.d(TAG, "Added the new spot to the map: " + mNewSpot.toString());
 		
 		// Set the click listener of the ok button
 		Button b = (Button)layout.findViewById(R.id.set_spot_position);
 		b.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+				mNewSpot = mNewSpotOverlay.getSpot();
+				Log.d(TAG, "About to complete form: " + mNewSpot.toString());
 				LocalizedMusicActivity.this.showDialog(DIALOG_CREATE_SPOT);	
 			}
 		});
@@ -622,7 +650,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 				}).setPositiveButton(R.string.next_step, new DialogInterface.OnClickListener() {
 				    public void onClick(DialogInterface dialog, int item) {
 				    	// Null pointer !!!!
-				    	EditText e = (EditText)findViewById(R.id.channel_name_value);
+				    	EditText e = (EditText)mAddSpotDialog.findViewById(R.id.spot_name_value);
 						mNewSpot.setName(e.getEditableText().toString());
 				    }
 				}).setOnCancelListener(new DialogInterface.OnCancelListener() {					
@@ -651,18 +679,30 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		
 		builder = new AlertDialog.Builder(mContext); 
 		
-		// Set the click listener of the picture selection item
+		// Set the click listener of the 'take picture' item
 		layout.findViewById(R.id.take_picture).setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				Log.d(TAG, "clicked on take_picture");
+				SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyyMMddHHmmssSS");
+		        String date = timeStampFormat.format(new Date());
+		        String filepath = Environment.getExternalStorageDirectory() + "spot_"+ date +".jpg";
+		        ContentValues values = new ContentValues();
+		        values.put(MediaStore.Images.Media.TITLE, filepath);
+		        Uri imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 				Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-				Uri pictureTakenUri = Uri.fromFile(new File
-						(Environment.getExternalStorageDirectory(), "spot_picture_" + String.valueOf
-						(System.currentTimeMillis()) + ".jpg"));
-				Log.d(TAG, "URI for file = "+pictureTakenUri.toString());
-				cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, pictureTakenUri);
+				Log.d(TAG, "URI for file = "+imageUri.toString());
+				cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
 						
-				startActivityForResult(cameraIntent, 0); 
+				startActivityForResult(cameraIntent, TAKE_PICTURE); 
+			}			
+		});
+		
+		// Set the click listener of the 'upload picture' item
+		layout.findViewById(R.id.upload_picture).setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+				photoPickerIntent.setType("image/*");
+				startActivityForResult(photoPickerIntent, PICK_IMAGE);
 			}			
 		});
 		/**
@@ -673,11 +713,9 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 			   .setTitle(R.string.localized_add_picture)
 			   .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
 				    public void onClick(DialogInterface dialog, int item) {
-				        mNewSpot = null;
 				    }
 				}).setPositiveButton(R.string.next_step, new DialogInterface.OnClickListener() {
 				    public void onClick(DialogInterface dialog, int item) {
-				    	//
 				    }
 				}).setOnCancelListener(new DialogInterface.OnCancelListener() {					
 					public void onCancel(DialogInterface dialog) {
@@ -697,29 +735,46 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		
 		Log.d(TAG, "onActivityResult");
 		
-		// Get result from the camera activity
-		if (requestCode == 0){
-			Log.d(TAG, "requestCode is OK " + requestCode);
-			Log.d(TAG, "the resultCode is = " + resultCode);
+		switch (requestCode) {
+		case PICK_IMAGE:
+			Uri _uri = data.getData();
+			Log.d(TAG, "L'URI est : " + _uri);
+			if (_uri != null) {
+	            Cursor cursor = getContentResolver().query(_uri, new String[] { android.provider.MediaStore.Images.ImageColumns.DATA }, null, null, null);
+	            cursor.moveToFirst();
+	            String imageFilePath = cursor.getString(0);
+	            Log.d(TAG, "Le FILEPATH de l'image est : " + imageFilePath);
+	            ImageView img1 = (ImageView) mAddPictureDialog.findViewById(R.id.gallery_picture_preview);
+	            ImageView img2 = (ImageView) mAddSpotDialog.findViewById(R.id.picture_preview);
+	            Bitmap myBitmap = BitmapFactory.decodeFile(imageFilePath);
+	            img1.setImageBitmap(myBitmap);
+	            img2.setImageBitmap(myBitmap);
+	            cursor.close();
+	            Log.d(TAG, "image selected is:" + imageFilePath);
+	        }
+			
+			break;
+		case TAKE_PICTURE:
 			if (resultCode == Activity.RESULT_OK) {
 				Log.d(TAG, "the resultCode is OK = " + resultCode);
-				Bundle extras = data.getExtras();
-				Bitmap pic = (Bitmap) extras.get("data");
-				 if (pic != null) {
-					 // Display the picture in the preview_preview icon
-                     ImageView img = (ImageView) this.findViewById(R.id.picture_preview);
-                     if (img != null){
-                    	 Log.d(TAG, "image taken different from null");
-                    	 img.setImageBitmap(pic);
-                    	 img.invalidate();
-                     } else {
-                    	 Log.d(TAG, "image is null !!");
-                     }
-                 }
-			} else{
-				Log.d(TAG, "the resultCode is NOT OK = " + resultCode);
-			}
-//			View v = (View) data;
+				Uri uri = data.getData();
+//				String extras = data.getDataString();
+//				Bitmap pic = (Bitmap) extras.get("data");
+				Log.d(TAG,"le type du retour est = " +uri);
+//				 if (pic != null) {
+//					 // Display the picture in the preview_preview icon
+//                     ImageView img1 = (ImageView)  mAddPictureDialog.findViewById(R.id.camera_picture_preview);
+//                     ImageView img2 = (ImageView)  mAddSpotDialog.findViewById(R.id.picture_preview);
+//                    	 img1.setImageBitmap(pic);
+//                    	 img2.setImageBitmap(pic);
+//                 } else {
+//                	 Log.d(TAG, "image is null !!");
+//                 }
+				}
+			break;
+
+		default:
+			break;
 		}
 	}
 	
@@ -939,6 +994,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		mFlipper.showNext();
 		mCurrView = MUSICS_VIEW;
 	}
+
 	
 	/**
 	 *  Listens to clicks on a channel list item
@@ -1055,6 +1111,35 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 			return v;
 		}
 	}	
+	
+	 private class ImagesAdapter extends ArrayAdapter<String>{
+		 private ArrayList<String> items;
+
+		 public ImagesAdapter(Context context, int textViewResourceId, 
+					ArrayList<String> items) {
+				super(context, textViewResourceId, items);
+				this.items = (ArrayList<String>) items;
+		}
+		 
+		 public View getView(int position, View convertView, ViewGroup parent) {
+			 BitmapFactory.Options options = new BitmapFactory.Options();
+			 options.inSampleSize = 2;
+			 View v = convertView;
+             if (v == null) {
+                 LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                 v = vi.inflate(R.layout.localized_images_item, null);
+             }
+             String filepath = items.get(position);
+             Bitmap bm = BitmapFactory.decodeFile(filepath, options);
+             if (bm != null) {
+                     ImageView tt = (ImageView) v.findViewById(R.id.jpgview);
+                     if (tt != null) {
+                           tt.setImageBitmap(bm);;                     
+                     }
+             }
+             return v;
+	 }
+	 }
 
 	/**
 	 * Helper function to retrieve spots from the content provider

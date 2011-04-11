@@ -17,6 +17,7 @@ import android.graphics.drawable.shapes.Shape;
 import android.location.Location;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.webkit.WebView.HitTestResult;
 
 import com.android.armp.R;
 import com.android.armp.model.Spot;
@@ -38,6 +39,8 @@ public class SpotOverlay extends Overlay {
 	private CustomShapeDrawable mShapeDrawable;
 	private boolean mDraggable = false;
 	
+	private boolean dragging = false;
+	
 	private List<SpotOverlayAdapter> listeners = new ArrayList<SpotOverlayAdapter>();
 
 	public SpotOverlay(Spot spot, Bitmap bmp, boolean draggable) {
@@ -51,11 +54,13 @@ public class SpotOverlay extends Overlay {
 
 	@Override
 	public void draw(Canvas canvas, MapView mapView, boolean shadow) {
+		Log.d(TAG, "DRAWING THE SPOT");
 		super.draw(canvas, mapView, shadow);
 		Point left = new Point();
 		Point bottom = new Point();
 		
-		if(!mDraggable) {
+		// TO DISPLAY BOTH CASES 
+		if(!mDraggable || mDraggable) {
 			// Transform real coordinates and distances to points and pixels
 			GeoPoint g1 = Spatial.getLocationAt(getGeoPoint(), (int)mSpot.getRadius(), -Math.PI/2);//Math.toRadians(180));
 			GeoPoint g2 = Spatial.getLocationAt(getGeoPoint(), (int)mSpot.getRadius(), Math.PI);//Math.toRadians(90));
@@ -86,7 +91,8 @@ public class SpotOverlay extends Overlay {
 					left.y-mBmp.getHeight(), null);
 		} else {
 			mShapeDrawable.setStrokeColour(Color.argb(255, 255, 255, 255));
-			mShapeDrawable.setFillColour(Color.argb(80, 0, 40, 255));
+			if(dragging){mShapeDrawable.setFillColour(Color.argb(80, 0, 255, 40));}
+			else{mShapeDrawable.setFillColour(Color.argb(80, 0, 40, 255));}
 			mShapeDrawable.draw(canvas);
 		}
 	}
@@ -95,7 +101,9 @@ public class SpotOverlay extends Overlay {
 	private int yDragImageOffset=0;
 	private int xDragTouchOffset=0;
 	private int yDragTouchOffset=0;
+	
 	private boolean inDrag = false;
+	
 
 	@Override
 	public boolean onTouchEvent(MotionEvent e, MapView mapView) {
@@ -103,43 +111,45 @@ public class SpotOverlay extends Overlay {
 			final int action = e.getAction();
 			final int x = (int)e.getX();
 			final int y = (int)e.getY();
-			boolean result = false;
-
+			
+			GeoPoint pt1 = mapView.getProjection().fromPixels(x-xDragTouchOffset, y-yDragTouchOffset);
+			GeoPoint pt2 = this.getGeoPoint();
+			float[] res = {0.0f};
+			Location.distanceBetween(pt1.getLatitudeE6()/1E6, 
+									 pt1.getLongitudeE6()/1E6, 
+									 pt2.getLatitudeE6()/1E6, 
+									 pt2.getLongitudeE6()/1E6, 
+									 res
+									 );
+			double dist = (res[0]*1E4)/mapView.getLatitudeSpan();
+			
 			if (action==MotionEvent.ACTION_DOWN) {
-				inDrag = true;
-				/*result=true;
-				inDrag=item;
-				items.remove(inDrag);
-				populate();
-
-				xDragTouchOffset=0;
-				yDragTouchOffset=0;
-
-				setDragImagePosition(x, y);
-				dragImage.setVisibility(View.VISIBLE);
-
-				xDragTouchOffset=x-p.x;
-				yDragTouchOffset=y-p.y;*/
-
+				Log.d(TAG,"in ACTION_DOWN");
+				if(dist < mSpot.getRadius()){
+					inDrag = true; 
+					mapView.setKeepScreenOn(false);
+				}
 			}
 			else if (action==MotionEvent.ACTION_MOVE && inDrag) {
-				mLeft = x;
-				mBottom = y;
-				/*setDragImagePosition(x, y);
-				result=true*/
+				Log.d(TAG,"in ACTION_MOVE");
+				this.dragging = true;
+				mapView.getOverlays().remove(this);
+				GeoPoint pt=mapView.getProjection().fromPixels(x-xDragTouchOffset, y-yDragTouchOffset);
+				// setting the spot new coordinates
+				mSpot.setLatitude(pt.getLatitudeE6()/1E6);
+				mSpot.setLongitude(pt.getLongitudeE6()/1E6);
+				mapView.getOverlays().add(this);
 			}
 			else if (action==MotionEvent.ACTION_UP && inDrag) {
+				Log.d(TAG,"in ACTION_UP");
+				this.dragging = false;
+				GeoPoint pt=mapView.getProjection().fromPixels(x-xDragTouchOffset, y-yDragTouchOffset);
+				// setting the spot new coordinates
+				mSpot.setLatitude(pt.getLatitudeE6()/1E6);
+				mSpot.setLongitude(pt.getLongitudeE6()/1E6);
+				mShapeDrawable = new CustomShapeDrawable(new OvalShape());
+				
 				inDrag = false;
-				/*dragImage.setVisibility(View.GONE);
-
-				GeoPoint pt=map.getProjection().fromPixels(x-xDragTouchOffset, y-yDragTouchOffset);
-				OverlayItem toDrop=new OverlayItem(pt, inDrag.getTitle(), inDrag.getSnippet());
-
-				items.add(toDrop);
-				populate();
-
-				inDrag=null;
-				result=true;*/
 			}
 		} else {
 			if (e.getAction() == MotionEvent.ACTION_DOWN)
@@ -152,6 +162,11 @@ public class SpotOverlay extends Overlay {
 			}
 		}
 		return super.onTouchEvent(e, mapView);
+	}
+	
+
+	public Spot getSpot(){
+		return this.mSpot;
 	}
 
 	private boolean clickedIn(MotionEvent e) {
