@@ -12,7 +12,7 @@
 === Resources ===
 
  * Start day: 3/23/2011
- * End day: 4/5/2011
+ * End day: 4/12/2011
 
 === Backlog ===
 
