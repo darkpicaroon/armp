@@ -48,12 +48,13 @@ public class ArmpApp extends Application {
 	 * Http requests parameters
 	 */
 	private static final String userAgent      = "";
-	private static final String rootUrl        = "http://fabienrenaud.com/armp/www/";
+	private static final String rootUrl        = "http://www.fabienrenaud.com/armp/www/";
 	private static final String SPOTS_REQ      = rootUrl + "getSpots.php";
 	private static final String CHANNELS_REQ   = rootUrl + "getChannels.php";
 	private static final String MUSICS_REQ     = rootUrl + "getMusics.php";
 	private static final String SPOT_ADD       = rootUrl + "createSpot.php";
 	private static final String CHANNEL_ADD    = rootUrl + "createChannel.php";
+	private static final String SPOT_CHANNEL_ADD    = rootUrl + "createSC.php";
 	private static final int SPOTS_REQ_T       = 0;
 	private static final int CHANNELS_REQ_T    = 1;
 	private static final int MUSICS_REQ_T      = 2;
@@ -373,7 +374,5 @@ public class ArmpApp extends Application {
 
 			return res;
 		}
-	};
-	
-	
+	}
 }
