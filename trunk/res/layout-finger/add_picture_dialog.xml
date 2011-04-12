@@ -11,14 +11,19 @@
     			  android:layout_width="fill_parent"
     			  android:layout_height="wrap_content" >
 	               
+    <ImageView android:id="@+id/camera_picture_preview"
+     			android:src="@drawable/app_music" 
+    			android:layout_width="30dp"
+    			android:layout_height="30dp"
+    			android:layout_marginRight="10dp"/>
+  
 	    <TextView android:id="@+id/take_picture"
 	              android:layout_width="wrap_content"
-	              android:layout_height="fill_parent"
-	              android:layout_marginRight="10dp"
+	              android:layout_height="wrap_content"
 	              android:layout_gravity="center"
 	              android:text="@string/take_picture_label"
 	              android:textColor="#FFF"
-	              android:textSize="15sp" />
+	              android:textSize="20sp"  />
 	              
     </LinearLayout>
     
@@ -29,6 +34,13 @@
     			  android:layout_marginTop="15dp"
     			  android:layout_marginBottom="15dp">
 	               
+	               
+    	<ImageView android:id="@+id/gallery_picture_preview"
+     			android:src="@drawable/app_music" 
+    			android:layout_width="30dp"
+    			android:layout_height="30dp"
+    			android:layout_marginRight="10dp"/>
+  
 	    <TextView android:id="@+id/upload_picture"
 	              android:layout_width="wrap_content"
 	              android:layout_height="wrap_content"
@@ -37,5 +49,4 @@
 	              android:textColor="#FFF"
 	              android:textSize="20sp"  />
     </LinearLayout>
-  
 </LinearLayout>
