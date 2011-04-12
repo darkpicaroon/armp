@@ -25,6 +25,7 @@ import android.app.Application;
 import android.net.http.AndroidHttpClient;
 import android.util.Log;
 
+import com.android.armp.LocalizedMusicActivity;
 import com.android.armp.model.Channel;
 import com.android.armp.model.Music;
 import com.android.armp.model.Spot;
@@ -51,12 +52,14 @@ public class ArmpApp extends Application {
 	private static final String SPOTS_REQ      = rootUrl + "getSpots.php";
 	private static final String CHANNELS_REQ   = rootUrl + "getChannels.php";
 	private static final String MUSICS_REQ     = rootUrl + "getMusics.php";
+	private static final String SPOT_ADD       = rootUrl + "createSpot.php";
 	private static final String CHANNEL_ADD    = rootUrl + "createChannel.php";
 	private static final int SPOTS_REQ_T       = 0;
 	private static final int CHANNELS_REQ_T    = 1;
 	private static final int MUSICS_REQ_T      = 2;
 	private static final int CLOSE_SPOTS_REQ_T = 3;
 	private static final int CHANNEL_ADD_REQ_T = 4;
+	private static final int SPOT_ADD_REQ_T    = 5;
 
 	/**
 	 * Response listeners
@@ -138,6 +141,30 @@ public class ArmpApp extends Application {
 		params.setIntParameter("spotId", spotId);
 		params.setParameter("name", name);
 		Thread t = new Thread(new HttpPostRequest(url, CHANNEL_ADD_REQ_T, params, new ChannelsXMLHandler()));
+		t.start();
+		
+	}
+	
+	/**
+	 * This method async add the previously submitted channel on the server
+	 * @param c the channel to save
+	 */
+	public void saveMusicSpot(Spot s){
+		double lat = s.getLatitude();
+		double lng = s.getLongitude();
+		String name = s.getName();
+		int color = s.getColor();
+		float radius = s.getRadius();
+		String url = SPOT_ADD;
+		
+		HttpParams params = new BasicHttpParams();
+		
+		params.setDoubleParameter("lat", lat);
+		params.setDoubleParameter("lng", lng);
+		params.setParameter("name", name);
+		params.setIntParameter("color", color);
+		params.setDoubleParameter("radius", radius);
+		Thread t = new Thread(new HttpPostRequest(url, SPOT_ADD_REQ_T, params, new SpotsXMLHandler()));
 		t.start();
 		
 	}
@@ -279,7 +306,7 @@ public class ArmpApp extends Application {
 				
 				Object res = httpclient.execute(httppost,
 						new CommonResponseHandler<Object>(mXmlHandler));
-				Log.d(TAG, "response = " + res.toString());
+//				Log.d(TAG, "response = " + res.toString());
 
 			} catch (Exception e) {
 				String msg = e != null && e.getMessage() != null ? e
