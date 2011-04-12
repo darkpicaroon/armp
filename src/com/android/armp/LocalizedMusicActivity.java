@@ -198,6 +198,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 	private Spot mNewSpot = null;
 	private Channel mNewChannel = null;
 	private SpotOverlay mNewSpotOverlay = null;
+//	private mNewSpotColor = null;
 	
 	/**
 	 * Reference to the application context
@@ -575,11 +576,11 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 				getResources(), R.drawable.spot_pin);
 		Log.d(TAG, "before set lat and long");
 		// fake position for debugging purposes
-//		mNewSpot.setLatitude(49.10223849249091);
-//		mNewSpot.setLongitude(6.232860658932102);
+		mNewSpot.setLatitude(49.10223849249091);
+		mNewSpot.setLongitude(6.232860658932102);
 		// Set the initial position of the marker
-		mNewSpot.setLatitude(mLocation.getMyLocation().getLatitudeE6()/1E6);
-		mNewSpot.setLongitude(mLocation.getMyLocation().getLongitudeE6()/1E6);
+//		mNewSpot.setLatitude(mLocation.getMyLocation().getLatitudeE6()/1E6);
+//		mNewSpot.setLongitude(mLocation.getMyLocation().getLongitudeE6()/1E6);
 		mNewSpot.setRadius(100);
 		
 		// Create a spot overlay, with the draggable flag set at true
@@ -652,6 +653,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 				    	// Null pointer !!!!
 				    	EditText e = (EditText)mAddSpotDialog.findViewById(R.id.spot_name_value);
 						mNewSpot.setName(e.getEditableText().toString());
+						saveSpot(mNewSpot);
 				    }
 				}).setOnCancelListener(new DialogInterface.OnCancelListener() {					
 					public void onCancel(DialogInterface dialog) {
@@ -1112,34 +1114,6 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		}
 	}	
 	
-	 private class ImagesAdapter extends ArrayAdapter<String>{
-		 private ArrayList<String> items;
-
-		 public ImagesAdapter(Context context, int textViewResourceId, 
-					ArrayList<String> items) {
-				super(context, textViewResourceId, items);
-				this.items = (ArrayList<String>) items;
-		}
-		 
-		 public View getView(int position, View convertView, ViewGroup parent) {
-			 BitmapFactory.Options options = new BitmapFactory.Options();
-			 options.inSampleSize = 2;
-			 View v = convertView;
-             if (v == null) {
-                 LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                 v = vi.inflate(R.layout.localized_images_item, null);
-             }
-             String filepath = items.get(position);
-             Bitmap bm = BitmapFactory.decodeFile(filepath, options);
-             if (bm != null) {
-                     ImageView tt = (ImageView) v.findViewById(R.id.jpgview);
-                     if (tt != null) {
-                           tt.setImageBitmap(bm);;                     
-                     }
-             }
-             return v;
-	 }
-	 }
 
 	/**
 	 * Helper function to retrieve spots from the content provider
@@ -1178,6 +1152,19 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		
 		// Retrieve the channels from the content provider
 		theApp.saveMusicChannel(c);
+	}
+	
+	/**
+	 * Helper function to save a channel from the content provider
+	 * @param spotId The id of the spot we want to retrieve the channels
+	 */
+	private void saveSpot(Spot s) {
+		// Show dialog
+		mProgressSpot = ProgressDialog.show(LocalizedMusicActivity.this, "",
+				"Saving Spot...", true, false);
+		
+		// Retrieve the channels from the content provider
+		theApp.saveMusicSpot(s);
 	}
 
 	/**
