@@ -14,7 +14,6 @@ public class ChannelsXMLHandler extends MyDefaultHandler {
 	// Fields
 	// ===========================================================
 
-	private boolean inRootTag = false;
 	private boolean inChannelTag = false;
 	private boolean inNameTag = false;
 	private boolean inUserTag = false;

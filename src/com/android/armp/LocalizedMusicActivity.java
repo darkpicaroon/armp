@@ -377,6 +377,7 @@ public class LocalizedMusicActivity extends MapActivity implements ServiceConnec
 		if(SessionStore.restore(mFacebook, this))
 			Log.d(TAG, "Facebook token: "+mFacebook.getAccessToken());
 		
+		theApp.setFacebook(mFacebook);
 		// Start tracing 
 	    // Debug.startMethodTracing("LocalizedMusic");	    
 		

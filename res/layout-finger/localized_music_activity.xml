@@ -20,7 +20,7 @@
 	        android:layout_height="match_parent"
 	        android:layout_weight="1"
 	        android:clickable="true"        
-	        android:apiKey="0gyttNRjv44C-YlDo7Ok26dmNKzeas_SECuN8RA"
+	        android:apiKey="0QfQVQVtmYQnZXSKvRXzFfyi3Bx-QezTWM2cr-A"
 	    />
 	    <!-- android:apiKey="06A1dckQYkmMgtwfy1exJLG90TwS5ngIvBL4Xew" --><!-- abarreir -->
     	<!-- android:apiKey="0QfQVQVtmYQnZXSKvRXzFfyi3Bx-QezTWM2cr-A" --><!-- fabien -->

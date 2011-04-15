@@ -15,7 +15,6 @@ public class MusicsXMLHandler extends MyDefaultHandler {
 	// Fields
 	// ===========================================================
 
-	private boolean inRootTag = false;
 	private boolean inMusicTag = false;
 	private boolean inMetadataTag = false;
 	private boolean inTitleTag = false;
