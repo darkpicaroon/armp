@@ -1,6 +1,7 @@
 package com.android.armp.localized;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -9,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -23,9 +23,9 @@ import android.util.Log;
 import com.android.armp.MediaPlaybackService;
 import com.android.armp.MusicUtils;
 import com.android.armp.MusicUtils.ServiceToken;
+import com.android.armp.model.Channel;
 import com.android.armp.model.Music;
 import com.android.armp.model.Spot;
-import com.android.armp.model.Channel;
 import com.google.android.maps.GeoPoint;
 
 public class LocalizedMusicService extends Service implements LocationListener, ServiceConnection {
@@ -188,7 +188,7 @@ public class LocalizedMusicService extends Service implements LocationListener, 
 	 * @return The id of the entered spot if any, -1 otherwise
 	 */
 	private int hasEnteredSpot(Location currLoc) {
-		ArrayList<Spot> mSpots = theApp.getCloseMusicSpots();
+		List<Spot> mSpots = theApp.getCloseMusicSpots();
 		
 		if(mSpots == null)
 			return -1;
@@ -216,7 +216,7 @@ public class LocalizedMusicService extends Service implements LocationListener, 
 	 * @return True if we left a spot, false otherwise
 	 */	
 	private boolean hasExitedSpot(Location currLoc) {
-		ArrayList<Spot> mSpots = theApp.getCloseMusicSpots();
+		List<Spot> mSpots = theApp.getCloseMusicSpots();
 		
 		if(mSpots == null) {
 			return false;
@@ -240,7 +240,7 @@ public class LocalizedMusicService extends Service implements LocationListener, 
 	 * @param spots The list of spots to search in
 	 * @return The spot if found, null otherwise
 	 */
-	private final static Spot findSpot(int spotId, ArrayList<Spot> spots) {		
+	private final static Spot findSpot(int spotId, List<Spot> spots) {		
 		if (spots != null && spots.size() > 0 && spotId > 0) {
 			for (Spot s : spots) {
 				if (s.getId() == spotId) {

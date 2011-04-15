@@ -20,8 +20,6 @@ public class SpotsXMLHandler extends MyDefaultHandler {
 	// ===========================================================
 	// Fields
 	// ===========================================================
-
-	private boolean inRootTag = false;
 	
 	/**
 	 * Spots fields
