@@ -41,34 +41,37 @@ import com.google.android.maps.GeoPoint;
 public class ArmpApp extends Application {
 	private static final String TAG = "ArmpApp"; // DEBUG TAG
 
+	public static final String facebookApplicationId = "193388247366826";
+
 	/**
 	 * Music spots buffer
 	 */
 	private List<HttpHeader> cookies = new ArrayList<HttpHeader>();
 	private static List<Spot> mCloseMusicSpots;
 	private static Object mLock = new Object();
-	
-	private Facebook mFacebook;
+
+	private static final Facebook mFacebook = new Facebook(
+			facebookApplicationId);
 
 	/**
 	 * Http requests parameters
 	 */
-	private static final String userAgent      = "";
-	private static final String rootUrl        = "http://www.fabienrenaud.com/armp/www/";
-	private static final String SPOTS_REQ      = rootUrl + "getSpots.php";
-	private static final String CHANNELS_REQ   = rootUrl + "getChannels.php";
-	private static final String MUSICS_REQ     = rootUrl + "getMusics.php";
-	private static final String LOGIN_REQ      = rootUrl + "loginUser.php";
-	private static final String SPOT_ADD       = rootUrl + "createSpot.php";
-	private static final String CHANNEL_ADD    = rootUrl + "createChannel.php";
-	private static final String SPOT_CHANNEL_ADD    = rootUrl + "createSC.php";
-	private static final int SPOTS_REQ_T       = 0;
-	private static final int CHANNELS_REQ_T    = 1;
-	private static final int MUSICS_REQ_T      = 2;
+	private static final String userAgent = "";
+	private static final String rootUrl = "http://www.fabienrenaud.com/armp/www/";
+	private static final String SPOTS_REQ = rootUrl + "getSpots.php";
+	private static final String CHANNELS_REQ = rootUrl + "getChannels.php";
+	private static final String MUSICS_REQ = rootUrl + "getMusics.php";
+	private static final String LOGIN_REQ = rootUrl + "loginUser.php";
+	private static final String SPOT_ADD = rootUrl + "createSpot.php";
+	private static final String CHANNEL_ADD = rootUrl + "createChannel.php";
+	private static final String SPOT_CHANNEL_ADD = rootUrl + "createSC.php";
+	private static final int SPOTS_REQ_T = 0;
+	private static final int CHANNELS_REQ_T = 1;
+	private static final int MUSICS_REQ_T = 2;
 	private static final int CLOSE_SPOTS_REQ_T = 3;
 	private static final int CHANNEL_ADD_REQ_T = 4;
-	private static final int SPOT_ADD_REQ_T    = 5;
-	private static final int LOGIN_REQ_T       = 6;
+	private static final int SPOT_ADD_REQ_T = 5;
+	private static final int LOGIN_REQ_T = 6;
 
 	/**
 	 * Response listeners
@@ -76,6 +79,10 @@ public class ArmpApp extends Application {
 	private OnSpotsReceivedListener mSpotsListener;
 	private OnChannelsReceivedListener mChanListener;
 	private OnMusicsReceivedListener mMusicsListener;
+
+	public Facebook getFacebook() {
+		return mFacebook;
+	}
 
 	/**
 	 * This method retrieves a set of spots queried by the activtiy, locally or
@@ -91,22 +98,18 @@ public class ArmpApp extends Application {
 	public void getMusicSpots(int zoomLevel, GeoPoint ne, GeoPoint sw) {
 		getMusicSpots(zoomLevel, ne, sw, SPOTS_REQ_T);
 	}
-	
+
 	public void updateCloseMusicSpots(int zoomLevel, GeoPoint ne, GeoPoint sw) {
 		Log.d(TAG, "Updating closest spots...");
 		getMusicSpots(zoomLevel, ne, sw, CLOSE_SPOTS_REQ_T);
 	}
-	
+
 	public final List<Spot> getCloseMusicSpots() {
 		return mCloseMusicSpots;
 	}
-	
-	public void setFacebook(Facebook facebook) {
-		this.mFacebook = facebook;
-		updateFacebookCookie();
-	}
-	
-	private void getMusicSpots(int zoomLevel, GeoPoint ne, GeoPoint sw, int reqType) {
+
+	private void getMusicSpots(int zoomLevel, GeoPoint ne, GeoPoint sw,
+			int reqType) {
 		double lat1 = (double) (ne.getLatitudeE6() / 1E6);
 		double lng1 = (double) (ne.getLongitudeE6() / 1E6);
 		double lat2 = (double) (sw.getLatitudeE6() / 1E6);
@@ -117,9 +120,9 @@ public class ArmpApp extends Application {
 		url += "lngne=" + lng1 + "&";
 		url += "latsw=" + lat2 + "&";
 		url += "lngsw=" + lng2 + "&";
-		url += "zoom="  + zoomLevel + "&";
-		url += "heavy=" + ((reqType == SPOTS_REQ_T) ? 0 : 1);		
-		
+		url += "zoom=" + zoomLevel + "&";
+		url += "heavy=" + ((reqType == SPOTS_REQ_T) ? 0 : 1);
+
 		Thread t = new Thread(new HttpGetRequest(reqType, url,
 				new SpotsXMLHandler()));
 		t.start();
@@ -135,65 +138,72 @@ public class ArmpApp extends Application {
 	public void getMusicChannels(int spotId) {
 		String url = CHANNELS_REQ + "?";
 		url += "spotId=" + spotId;
-		//url += "start=0" + "&";
-		//url += "limit=10";
+		// url += "start=0" + "&";
+		// url += "limit=10";
 		Thread t = new Thread(new HttpGetRequest(CHANNELS_REQ_T, url,
 				new ChannelsXMLHandler()));
 		t.start();
 	}
-	
-	public void loginUser() {
+
+	private void loginUser() {
 		if (mFacebook == null || !mFacebook.isSessionValid())
 			return;
-		
+
 		HttpParams params = new BasicHttpParams();
-		
+
 		params.setParameter("pseudo", "");
-		Thread t = new Thread(new HttpPostRequest(LOGIN_REQ_T, LOGIN_REQ, params, new MyDefaultHandler()));
+		Thread t = new Thread(new HttpPostRequest(LOGIN_REQ_T, LOGIN_REQ,
+				params, new MyDefaultHandler()));
 		t.start();
 	}
-	
+
 	/**
 	 * This method async add the previously submitted channel on the server
-	 * @param c the channel to save
+	 * 
+	 * @param c
+	 *            the channel to save
 	 */
-	public void saveMusicChannel(Channel c){
+	public void saveMusicChannel(Channel c) {
 		String name = c.getName();
 		int spotId = c.getSpotId();
 		String url = CHANNEL_ADD;
-		
+
 		HttpParams params = new BasicHttpParams();
 		params.setIntParameter("spotId", spotId);
 		params.setParameter("name", name);
-		Thread t = new Thread(new HttpPostRequest(CHANNEL_ADD_REQ_T, url, params, new ChannelsXMLHandler()));
+		Thread t = new Thread(new HttpPostRequest(CHANNEL_ADD_REQ_T, url,
+				params, new ChannelsXMLHandler()));
 		t.start();
-		
+
 	}
-	
+
 	/**
 	 * This method async add the previously submitted channel on the server
-	 * @param c the channel to save
+	 * 
+	 * @param c
+	 *            the channel to save
 	 */
-	public void saveMusicSpot(Spot s){
+	public void saveMusicSpot(Spot s) {
 		double lat = s.getLatitude();
 		double lng = s.getLongitude();
 		String name = s.getName();
 		int color = s.getColor();
 		float radius = s.getRadius();
 		String url = SPOT_ADD;
-		
+
 		HttpParams params = new BasicHttpParams();
-		
+
 		params.setDoubleParameter("lat", lat);
 		params.setDoubleParameter("lng", lng);
 		params.setParameter("name", name);
 		params.setIntParameter("color", color);
 		params.setDoubleParameter("radius", radius);
-		Thread t = new Thread(new HttpPostRequest(SPOT_ADD_REQ_T, url, params, new SpotsXMLHandler()));
+		Thread t = new Thread(new HttpPostRequest(SPOT_ADD_REQ_T, url, params,
+				new SpotsXMLHandler()));
 		t.start();
-		
+
 	}
-	
+
 	/**
 	 * This method async returns the musics associated with a given channel of a
 	 * given spot, locally or from the server.
@@ -206,8 +216,8 @@ public class ArmpApp extends Application {
 	public void getMusicItems(int spotId, int channelId) {
 		String url = MUSICS_REQ + "?";
 		url += "channelId=" + channelId;
-		//url += "start=0" + "&";
-		//url += "limit=10";
+		// url += "start=0" + "&";
+		// url += "limit=10";
 		Thread t = new Thread(new HttpGetRequest(MUSICS_REQ_T, url,
 				new MusicsXMLHandler()));
 		t.start();
@@ -239,25 +249,25 @@ public class ArmpApp extends Application {
 	public void setOnMusicsReceivedListener(OnMusicsReceivedListener l) {
 		this.mMusicsListener = l;
 	}
-	
+
 	public void updateFacebookCookie() {
-		if (mFacebook == null || !mFacebook.isSessionValid())
-			return;
-		
 		String name = "fbs_" + mFacebook.getAppId();
-		
-		String payload = "access_token=" + mFacebook.getAccessToken();
-		payload += "expires=" + mFacebook.getAccessExpires();
-		payload += "e922ce02199db7799b613cbdb14c1e7e"; 
-			
-		String value = "access_token=" + mFacebook.getAccessToken();
-		value += "&expires=" + mFacebook.getAccessExpires();
-		value += "&sig=" + md5(payload);
-		
-		updateCookie(name, value);
-		loginUser();
+		if (mFacebook == null || !mFacebook.isSessionValid()) {
+			removeCookie(name);
+		} else {
+			String payload = "access_token=" + mFacebook.getAccessToken();
+			payload += "expires=" + mFacebook.getAccessExpires();
+			payload += "e922ce02199db7799b613cbdb14c1e7e";
+
+			String value = "access_token=" + mFacebook.getAccessToken();
+			value += "&expires=" + mFacebook.getAccessExpires();
+			value += "&sig=" + md5(payload);
+
+			updateCookie(name, value);
+			loginUser();
+		}
 	}
-	
+
 	private void saveCookies(HttpResponse r) {
 		Header[] headers = r.getHeaders("Set-Cookie");
 		for (Header h : headers) {
@@ -270,7 +280,7 @@ public class ArmpApp extends Application {
 			}
 		}
 	}
-	
+
 	private void updateCookie(String name, String value) {
 		HttpHeader co = getCookie(name);
 		if (co == null)
@@ -278,7 +288,18 @@ public class ArmpApp extends Application {
 		else
 			co.setValue(value);
 	}
-	
+
+	private boolean removeCookie(String name) {
+		String n = name.toLowerCase();
+		for (int i = 0; i < cookies.size(); i++) {
+			if (cookies.get(i).getName().toLowerCase().equals(n)) {
+				cookies.remove(i);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private HttpHeader getCookie(String name) {
 		String n = name.toLowerCase();
 		for (HttpHeader c : cookies)
@@ -286,8 +307,8 @@ public class ArmpApp extends Application {
 				return c;
 		return null;
 	}
-	
-	private void setCookies(HttpRequest r) {
+
+	private void setHeaders(HttpRequest r) {
 		StringBuilder sb = new StringBuilder();
 		for (HttpHeader c : cookies) {
 			if (sb.length() > 0)
@@ -299,24 +320,25 @@ public class ArmpApp extends Application {
 			r.addHeader("Cookie", sb.toString());
 		}
 	}
-	
+
 	private String md5(String s) {
-	    try {
-	        // Create MD5 Hash
-	        MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
-	        digest.update(s.getBytes());
-	        byte messageDigest[] = digest.digest();
-	        
-	        // Create Hex String
-	        StringBuffer hexString = new StringBuffer();
-	        for (int i=0; i<messageDigest.length; i++)
-	            hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
-	        return hexString.toString();
-	        
-	    } catch (NoSuchAlgorithmException e) {
-	        e.printStackTrace();
-	    }
-	    return "";
+		try {
+			// Create MD5 Hash
+			MessageDigest digest = java.security.MessageDigest
+					.getInstance("MD5");
+			digest.update(s.getBytes());
+			byte messageDigest[] = digest.digest();
+
+			// Create Hex String
+			StringBuffer hexString = new StringBuffer();
+			for (int i = 0; i < messageDigest.length; i++)
+				hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
+			return hexString.toString();
+
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		return "";
 	}
 
 	/**
@@ -338,31 +360,34 @@ public class ArmpApp extends Application {
 			AndroidHttpClient httpclient = null;
 			try {
 				httpclient = AndroidHttpClient.newInstance(userAgent);
-				
+
 				Log.d(TAG, "Sending request: " + mUrl);
 				HttpGet httpget = new HttpGet(mUrl);
-				setCookies(httpget);
-				
+				setHeaders(httpget);
+
 				HttpResponse response = httpclient.execute(httpget);
 				Object res = mXmlHandler.handleResponse(response);
 				saveCookies(response);
 
-				synchronized(mLock) {
+				synchronized (mLock) {
 					// Send the answer to the listener
 					switch (mReqType) {
 					case SPOTS_REQ_T:
-						if(mSpotsListener != null) {							
-							mSpotsListener.onSpotsReceived((ArrayList<Spot>) res);
-						}						
+						if (mSpotsListener != null) {
+							mSpotsListener
+									.onSpotsReceived((ArrayList<Spot>) res);
+						}
 						break;
 					case CHANNELS_REQ_T:
-						if(mChanListener != null) {
-							mChanListener.onChannelsReceived((ArrayList<Channel>) res);
-						}						
+						if (mChanListener != null) {
+							mChanListener
+									.onChannelsReceived((ArrayList<Channel>) res);
+						}
 						break;
 					case MUSICS_REQ_T:
-						if(mMusicsListener != null) {
-							mMusicsListener.onMusicsReceived((ArrayList<Music>) res);							
+						if (mMusicsListener != null) {
+							mMusicsListener
+									.onMusicsReceived((ArrayList<Music>) res);
 						}
 						break;
 					case CLOSE_SPOTS_REQ_T:
@@ -394,30 +419,30 @@ public class ArmpApp extends Application {
 		private int mReqType;
 		private CommonResponseHandler<Object> mXmlHandler;
 
-		public HttpPostRequest(int req, String url, HttpParams params, MyDefaultHandler xmlHandler) {
+		public HttpPostRequest(int req, String url, HttpParams params,
+				MyDefaultHandler xmlHandler) {
 			this.mUrl = url;
 			this.mReqType = req;
 			this.params = params;
 			this.mXmlHandler = new CommonResponseHandler<Object>(xmlHandler);
 		}
 
-		@SuppressWarnings("unchecked")
 		public void run() {
 			AndroidHttpClient httpclient = null;
 			try {
 				httpclient = AndroidHttpClient.newInstance(userAgent);
-				
+
 				Log.d(TAG, "Sending request: " + mUrl);
 				HttpPost httppost = new HttpPost(mUrl);
 				httppost.setParams(params);
-				setCookies(httppost);
-				
+				setHeaders(httppost);
+
 				HttpResponse response = httpclient.execute(httppost);
 				Object res = mXmlHandler.handleResponse(response);
 				saveCookies(response);
 				Log.d("LOG", "POST request");
-				
-				synchronized(mLock) {
+
+				synchronized (mLock) {
 					switch (mReqType) {
 					case LOGIN_REQ_T:
 						Object[] arr = (Object[]) res;
@@ -439,7 +464,7 @@ public class ArmpApp extends Application {
 			}
 		}
 	}
-	
+
 	private class CommonResponseHandler<T> implements ResponseHandler<T> {
 		private MyDefaultHandler mXmlHandler;
 
@@ -476,7 +501,7 @@ public class ArmpApp extends Application {
 
 				/* Create a new ContentHandler and apply it to the XML-Reader */
 				xr.setContentHandler(mXmlHandler);
-				
+
 				Log.d(TAG, result);
 
 				/* Parse the xml-data from our string */
