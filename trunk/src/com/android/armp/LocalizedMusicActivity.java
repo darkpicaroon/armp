@@ -11,6 +11,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -453,16 +454,10 @@ public class LocalizedMusicActivity extends MapActivity implements
 			startActivity(new Intent(this, LocalizedPreferencesActivity.class));
 			return true;
 		case R.id.add_spot:
-			// this.showDialog(DIALOG_CREATE_SPOT);
 			Log.d(TAG, "Create SPOT");
 			mNewSpot = new Spot(-1);
-			setMarkerDialog();
-			return true;
-		case R.id.add_channel:
-			// this.showDialog(DIALOG_CREATE_SPOT);
-			Log.d(TAG, "Create CHANNEL");
 			mNewChannel = new Channel(-1);
-			LocalizedMusicActivity.this.showDialog(DIALOG_CREATE_CHANNEL);
+			setMarkerDialog();
 			return true;
 		case R.id.discovery_mode:
 			discoveryMode = (discoveryMode) ? false : true;
@@ -617,21 +612,22 @@ public class LocalizedMusicActivity extends MapActivity implements
 				.setNegativeButton(R.string.cancel,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int item) {
+								mNewChannel = null;
 								mNewSpot = null;
 							}
 						})
 				.setPositiveButton(R.string.next_step,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int item) {
-								// Null pointer !!!!
 								EditText e = (EditText) mAddSpotDialog
 										.findViewById(R.id.spot_name_value);
 								mNewSpot.setName(e.getEditableText().toString());
-								saveSpot(mNewSpot);
+								LocalizedMusicActivity.this.showDialog(DIALOG_CREATE_CHANNEL);
 							}
 						})
 				.setOnCancelListener(new DialogInterface.OnCancelListener() {
 					public void onCancel(DialogInterface dialog) {
+						mNewChannel = null;
 						mNewSpot = null;
 					}
 				});
@@ -736,22 +732,25 @@ public class LocalizedMusicActivity extends MapActivity implements
 			Uri _uri = data.getData();
 			Log.d(TAG, "L'URI est : " + _uri);
 			if (_uri != null) {
-				Cursor cursor = getContentResolver()
-						.query(_uri,
-								new String[] { android.provider.MediaStore.Images.ImageColumns.DATA },
-								null, null, null);
-				cursor.moveToFirst();
-				String imageFilePath = cursor.getString(0);
-				Log.d(TAG, "Le FILEPATH de l'image est : " + imageFilePath);
-				ImageView img1 = (ImageView) mAddPictureDialog
-						.findViewById(R.id.gallery_picture_preview);
-				ImageView img2 = (ImageView) mAddSpotDialog
-						.findViewById(R.id.picture_preview);
-				Bitmap myBitmap = BitmapFactory.decodeFile(imageFilePath);
-				img1.setImageBitmap(myBitmap);
-				img2.setImageBitmap(myBitmap);
-				cursor.close();
-				Log.d(TAG, "image selected is:" + imageFilePath);
+				ContentResolver resolver = getContentResolver();
+				if (resolver != null) {
+					Cursor cursor = resolver
+							.query(_uri,
+									new String[] { android.provider.MediaStore.Images.ImageColumns.DATA },
+									null, null, null);
+					cursor.moveToFirst();
+					String imageFilePath = cursor.getString(0);
+					Log.d(TAG, "Le FILEPATH de l'image est : " + imageFilePath);
+					ImageView img1 = (ImageView) mAddPictureDialog
+							.findViewById(R.id.gallery_picture_preview);
+					ImageView img2 = (ImageView) mAddSpotDialog
+							.findViewById(R.id.picture_preview);
+					Bitmap myBitmap = BitmapFactory.decodeFile(imageFilePath);
+					img1.setImageBitmap(myBitmap);
+					img2.setImageBitmap(myBitmap);
+					cursor.close();
+					Log.d(TAG, "image selected is:" + imageFilePath);
+				}
 			}
 
 			break;
@@ -805,38 +804,16 @@ public class LocalizedMusicActivity extends MapActivity implements
 		 */
 		builder.setView(layout)
 				.setTitle(R.string.localized_add_channel)
-				.setNegativeButton(R.string.cancel,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int item) {
-								mNewChannel = null;
-							}
-						})
 				.setPositiveButton(R.string.next_step,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int item) {
-								// Null pointer !!!!
-								// EditText e =
-								// (EditText)findViewById(R.id.channel_name_value);
-								// String channelName =
-								// e.getEditableText().toString()
-								// Log.d(TAG, "channel name set to: " +
-								// e.getText().toString());
-
-								// As EditText e is at null set manually a name
-								// to complete form test
-								String channelName = "NewChannelFromAndroid";
-								mNewChannel.setName(channelName);
-								mNewChannel.setSpotId(mCurrSpotId);
-								LocalizedMusicActivity.this
-										.saveChannel(mNewChannel);
-							}
-						})
-				.setOnCancelListener(new DialogInterface.OnCancelListener() {
-					public void onCancel(DialogInterface dialog) {
-						// TODO
-						mNewChannel = null;
-					}
-				});
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int item) {
+							EditText e = (EditText) mAddChannelDialog.findViewById(R.id.channel_name_value);
+							String channelName = e.getEditableText().toString();
+							mNewChannel.setName(channelName);
+							LocalizedMusicActivity.this.saveSpotAndChannel(
+									mNewSpot, mNewChannel);
+						}
+					});
 
 		alertDialog = builder.create();
 
@@ -1119,7 +1096,7 @@ public class LocalizedMusicActivity extends MapActivity implements
 					bt.setText(mc.getArtist());
 				}
 				// set icon image
-				if (mc.getSource().contains("http")) {
+				if (mc.getSource() != null && mc.getSource().contains("http")) {
 					ImageView iv = (ImageView) v.findViewById(R.id.music_icon);
 					iv.setImageResource(R.drawable.itunes_music);
 				}
@@ -1166,28 +1143,13 @@ public class LocalizedMusicActivity extends MapActivity implements
 	 * @param spotId
 	 *            The id of the spot we want to retrieve the channels
 	 */
-	private void saveChannel(Channel c) {
+	private void saveSpotAndChannel(Spot s, Channel c) {
 		// Show dialog
 		mProgressChannel = ProgressDialog.show(LocalizedMusicActivity.this, "",
-				"Saving Channel...", true, false);
+				"Saving the Spot...", true, false);
 
 		// Retrieve the channels from the content provider
-		theApp.saveMusicChannel(c);
-	}
-
-	/**
-	 * Helper function to save a channel from the content provider
-	 * 
-	 * @param spotId
-	 *            The id of the spot we want to retrieve the channels
-	 */
-	private void saveSpot(Spot s) {
-		// Show dialog
-		mProgressSpot = ProgressDialog.show(LocalizedMusicActivity.this, "",
-				"Saving Spot...", true, false);
-
-		// Retrieve the channels from the content provider
-		theApp.saveMusicSpot(s);
+		theApp.saveSpotAndChannel(s, c);
 	}
 
 	/**

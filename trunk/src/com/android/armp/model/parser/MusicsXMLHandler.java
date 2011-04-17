@@ -1,13 +1,15 @@
 package com.android.armp.model.parser;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import android.util.Log;
+
 import com.android.armp.localized.MusicSourceSolver;
 import com.android.armp.model.Music;
+import com.android.armp.model.ObjectResponse;
 
 public class MusicsXMLHandler extends MyDefaultHandler {
 
@@ -35,8 +37,10 @@ public class MusicsXMLHandler extends MyDefaultHandler {
 	// ===========================================================
 
 	@Override
-	public ArrayList<Music> getParsedData() {
-		return this.mParsed;
+	public ObjectResponse getParsedData() {
+		ObjectResponse r = super.getParsedData();
+		r.setObject(this.mParsed);
+		return r;
 	}
 
 	// ===========================================================
@@ -59,9 +63,8 @@ public class MusicsXMLHandler extends MyDefaultHandler {
 	@Override
 	public void startElement(String namespaceURI, String localName,
 			String qName, Attributes atts) throws SAXException {
-		if (localName.equals("root")) {
-			this.inRootTag = true;
-		} else if (localName.equals("music")) {
+		super.startElement(namespaceURI, localName, qName, atts);
+		if (localName.equals("music")) {
 			this.inMusicTag = true;
 			String attr = atts.getValue("id");
 			if (attr != null) {
@@ -98,9 +101,8 @@ public class MusicsXMLHandler extends MyDefaultHandler {
 	@Override
 	public void endElement(String namespaceURI, String localName, String qName)
 			throws SAXException {
-		if (localName.equals("root")) {
-			this.inRootTag = false;
-		} else if (localName.equals("music")) {
+		super.endElement(namespaceURI, localName, qName);
+		if (localName.equals("music")) {
 			this.inMusicTag = false;
 			if (!this.gotSourceTag) {
 				MusicSourceSolver.solveMusicSource(mMusic);
@@ -133,6 +135,7 @@ public class MusicsXMLHandler extends MyDefaultHandler {
 	 */
 	@Override
 	public void characters(char ch[], int start, int length) {
+		super.characters(ch, start, length);
 		if (this.inRootTag && this.inMusicTag) {
 			if (this.inMetadataTag) {
 				if (this.inTitleTag) {

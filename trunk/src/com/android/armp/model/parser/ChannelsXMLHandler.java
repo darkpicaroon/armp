@@ -7,6 +7,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import com.android.armp.model.Channel;
+import com.android.armp.model.ObjectResponse;
 
 public class ChannelsXMLHandler extends MyDefaultHandler {
 
@@ -30,8 +31,10 @@ public class ChannelsXMLHandler extends MyDefaultHandler {
 	// ===========================================================
 
 	@Override
-	public List<Channel> getParsedData() {
-		return this.mParsed;
+	public ObjectResponse getParsedData() {
+		ObjectResponse r = super.getParsedData();
+		r.setObject(this.mParsed);
+		return r;
 	}
 
 	// ===========================================================
@@ -54,9 +57,8 @@ public class ChannelsXMLHandler extends MyDefaultHandler {
 	@Override
 	public void startElement(String namespaceURI, String localName,
 			String qName, Attributes atts) throws SAXException {
-		if (localName.equals("root")) {
-			this.inRootTag = true;
-		} else if (localName.equals("channel")) {
+		super.startElement(namespaceURI, localName, qName, atts);
+		if (localName.equals("channel")) {
 			this.inChannelTag = true;
 			String id = atts.getValue("id");
 			String sid = atts.getValue("spotId");
@@ -87,9 +89,8 @@ public class ChannelsXMLHandler extends MyDefaultHandler {
 	@Override
 	public void endElement(String namespaceURI, String localName, String qName)
 			throws SAXException {
-		if (localName.equals("root")) {
-			this.inRootTag = false;
-		} else if (localName.equals("channel")) {
+		super.endElement(namespaceURI, localName, qName);
+		if (localName.equals("channel")) {
 			this.inChannelTag = false;
 			mParsed.add(mChannel);
 		} else if (localName.equals("name")) {
@@ -112,6 +113,7 @@ public class ChannelsXMLHandler extends MyDefaultHandler {
 	 */
 	@Override
 	public void characters(char ch[], int start, int length) {
+		super.characters(ch, start, length);
 		if (this.inRootTag && this.inChannelTag) {
 			if (this.inNameTag) {
 				mChannel.setName(new String(ch, start, length));

@@ -48,7 +48,6 @@ public class SpotOverlay extends Overlay {
 
 	@Override
 	public void draw(Canvas canvas, MapView mapView, boolean shadow) {
-		Log.d(TAG, "DRAWING THE SPOT");
 		super.draw(canvas, mapView, shadow);
 		Point left = new Point();
 		Point bottom = new Point();

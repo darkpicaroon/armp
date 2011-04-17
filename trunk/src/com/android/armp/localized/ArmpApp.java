@@ -1,9 +1,15 @@
 package com.android.armp.localized;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -15,11 +21,12 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
+import org.apache.http.message.BasicNameValuePair;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -30,8 +37,10 @@ import android.util.Log;
 import com.android.armp.model.Channel;
 import com.android.armp.model.HttpHeader;
 import com.android.armp.model.Music;
+import com.android.armp.model.ObjectResponse;
 import com.android.armp.model.Spot;
 import com.android.armp.model.parser.ChannelsXMLHandler;
+import com.android.armp.model.parser.MessageXMLHandler;
 import com.android.armp.model.parser.MusicsXMLHandler;
 import com.android.armp.model.parser.MyDefaultHandler;
 import com.android.armp.model.parser.SpotsXMLHandler;
@@ -52,6 +61,7 @@ public class ArmpApp extends Application {
 
 	private static final Facebook mFacebook = new Facebook(
 			facebookApplicationId);
+	private static int connectionAttempt = 0;
 
 	/**
 	 * Http requests parameters
@@ -62,16 +72,15 @@ public class ArmpApp extends Application {
 	private static final String CHANNELS_REQ = rootUrl + "getChannels.php";
 	private static final String MUSICS_REQ = rootUrl + "getMusics.php";
 	private static final String LOGIN_REQ = rootUrl + "loginUser.php";
-	private static final String SPOT_ADD = rootUrl + "createSpot.php";
-	private static final String CHANNEL_ADD = rootUrl + "createChannel.php";
 	private static final String SPOT_CHANNEL_ADD = rootUrl + "createSC.php";
+	private static final String PHOTO_UPLOAD = rootUrl + "uploadPhoto.php";
 	private static final int SPOTS_REQ_T = 0;
 	private static final int CHANNELS_REQ_T = 1;
 	private static final int MUSICS_REQ_T = 2;
 	private static final int CLOSE_SPOTS_REQ_T = 3;
-	private static final int CHANNEL_ADD_REQ_T = 4;
-	private static final int SPOT_ADD_REQ_T = 5;
-	private static final int LOGIN_REQ_T = 6;
+	private static final int LOGIN_REQ_T = 4;
+	private static final int SPOT_CHANNEL_ADD_REQ_T = 5;
+	private static final int PHOTO_UPLOAD_REQ_T = 6;
 
 	/**
 	 * Response listeners
@@ -149,12 +158,14 @@ public class ArmpApp extends Application {
 		if (mFacebook == null || !mFacebook.isSessionValid())
 			return;
 
-		HttpParams params = new BasicHttpParams();
-
-		params.setParameter("pseudo", "");
-		Thread t = new Thread(new HttpPostRequest(LOGIN_REQ_T, LOGIN_REQ,
-				params, new MyDefaultHandler()));
-		t.start();
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("pseudo", ""));
+		if (connectionAttempt < 2) {
+			connectionAttempt++;
+			Thread t = new Thread(new HttpPostRequest(LOGIN_REQ_T, LOGIN_REQ,
+					params, new MyDefaultHandler()));
+			t.start();
+		}
 	}
 
 	/**
@@ -163,45 +174,30 @@ public class ArmpApp extends Application {
 	 * @param c
 	 *            the channel to save
 	 */
-	public void saveMusicChannel(Channel c) {
-		String name = c.getName();
-		int spotId = c.getSpotId();
-		String url = CHANNEL_ADD;
+	public void saveSpotAndChannel(Spot s, Channel c) {
+		// dec ARGB to hex RGB
+		String color = String.format("%1$x", s.getColor()).substring(2);
+		String radius = String.format("%1$d", Math.round(s.getRadius()));
 
-		HttpParams params = new BasicHttpParams();
-		params.setIntParameter("spotId", spotId);
-		params.setParameter("name", name);
-		Thread t = new Thread(new HttpPostRequest(CHANNEL_ADD_REQ_T, url,
-				params, new ChannelsXMLHandler()));
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("lat", String.format("%1$f",
+				s.getLatitude())));
+		params.add(new BasicNameValuePair("lng", String.format("%1$f",
+				s.getLongitude())));
+		params.add(new BasicNameValuePair("spotName", s.getName()));
+		params.add(new BasicNameValuePair("color", color));
+		params.add(new BasicNameValuePair("channelName", c.getName()));
+		params.add(new BasicNameValuePair("radius", radius));
+		params.add(new BasicNameValuePair("picture", ""));
+		Thread t = new Thread(new HttpPostRequest(SPOT_CHANNEL_ADD_REQ_T,
+				SPOT_CHANNEL_ADD, params, new SpotsXMLHandler()));
 		t.start();
-
 	}
 
-	/**
-	 * This method async add the previously submitted channel on the server
-	 * 
-	 * @param c
-	 *            the channel to save
-	 */
-	public void saveMusicSpot(Spot s) {
-		double lat = s.getLatitude();
-		double lng = s.getLongitude();
-		String name = s.getName();
-		int color = s.getColor();
-		float radius = s.getRadius();
-		String url = SPOT_ADD;
-
-		HttpParams params = new BasicHttpParams();
-
-		params.setDoubleParameter("lat", lat);
-		params.setDoubleParameter("lng", lng);
-		params.setParameter("name", name);
-		params.setIntParameter("color", color);
-		params.setDoubleParameter("radius", radius);
-		Thread t = new Thread(new HttpPostRequest(SPOT_ADD_REQ_T, url, params,
-				new SpotsXMLHandler()));
+	public void uploadPhoto(String absolutePath) {
+		Thread t = new Thread(new HttpSendFile(PHOTO_UPLOAD_REQ_T,
+				PHOTO_UPLOAD, absolutePath, new MessageXMLHandler()));
 		t.start();
-
 	}
 
 	/**
@@ -269,13 +265,15 @@ public class ArmpApp extends Application {
 	}
 
 	private void saveCookies(HttpResponse r) {
-		Header[] headers = r.getHeaders("Set-Cookie");
-		for (Header h : headers) {
-			String[] cc = h.getValue().split(";");
-			for (String c : cc) {
-				String[] nv = c.split("=");
-				if (nv.length == 2) {
-					updateCookie(nv[0], nv[1]);
+		synchronized (cookies) {
+			Header[] headers = r.getHeaders("Set-Cookie");
+			for (Header h : headers) {
+				String[] cc = h.getValue().split(";");
+				for (String c : cc) {
+					String[] nv = c.split("=");
+					if (nv.length == 2) {
+						updateCookie(nv[0], nv[1]);
+					}
 				}
 			}
 		}
@@ -309,15 +307,16 @@ public class ArmpApp extends Application {
 	}
 
 	private void setHeaders(HttpRequest r) {
-		StringBuilder sb = new StringBuilder();
-		for (HttpHeader c : cookies) {
-			if (sb.length() > 0)
-				sb.append("; ");
-			sb.append(c.getName() + "=" + c.getValue());
-		}
-		if (sb.length() > 0) {
-			Log.d("REQ", "Cookie:" + sb.toString());
-			r.addHeader("Cookie", sb.toString());
+		synchronized (cookies) {
+			StringBuilder sb = new StringBuilder();
+			for (HttpHeader c : cookies) {
+				if (sb.length() > 0)
+					sb.append("; ");
+				sb.append(c.getName() + "=" + c.getValue());
+			}
+			if (sb.length() > 0) {
+				r.addHeader("Cookie", sb.toString());
+			}
 		}
 	}
 
@@ -336,23 +335,21 @@ public class ArmpApp extends Application {
 			return hexString.toString();
 
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage());
 		}
 		return "";
 	}
 
-	/**
-	 * HTTP REQUESTS FUNCTIONS
-	 */
 	private class HttpGetRequest implements Runnable {
-		private String mUrl;
-		private CommonResponseHandler<Object> mXmlHandler;
 		private int mReqType;
+		private String mUrl;
+		private CommonResponseHandler<ObjectResponse> mXmlHandler;
 
 		public HttpGetRequest(int req, String url, MyDefaultHandler xmlHandler) {
 			this.mUrl = url;
 			this.mReqType = req;
-			this.mXmlHandler = new CommonResponseHandler<Object>(xmlHandler);
+			this.mXmlHandler = new CommonResponseHandler<ObjectResponse>(
+					xmlHandler);
 		}
 
 		@SuppressWarnings("unchecked")
@@ -366,7 +363,7 @@ public class ArmpApp extends Application {
 				setHeaders(httpget);
 
 				HttpResponse response = httpclient.execute(httpget);
-				Object res = mXmlHandler.handleResponse(response);
+				ObjectResponse res = mXmlHandler.handleResponse(response);
 				saveCookies(response);
 
 				synchronized (mLock) {
@@ -375,24 +372,27 @@ public class ArmpApp extends Application {
 					case SPOTS_REQ_T:
 						if (mSpotsListener != null) {
 							mSpotsListener
-									.onSpotsReceived((ArrayList<Spot>) res);
+									.onSpotsReceived((ArrayList<Spot>) res
+											.getObject());
 						}
 						break;
 					case CHANNELS_REQ_T:
 						if (mChanListener != null) {
 							mChanListener
-									.onChannelsReceived((ArrayList<Channel>) res);
+									.onChannelsReceived((ArrayList<Channel>) res
+											.getObject());
 						}
 						break;
 					case MUSICS_REQ_T:
 						if (mMusicsListener != null) {
 							mMusicsListener
-									.onMusicsReceived((ArrayList<Music>) res);
+									.onMusicsReceived((ArrayList<Music>) res
+											.getObject());
 						}
 						break;
 					case CLOSE_SPOTS_REQ_T:
 						// Update the buffer of close music spots
-						mCloseMusicSpots = (ArrayList<Spot>) res;
+						mCloseMusicSpots = (ArrayList<Spot>) res.getObject();
 						break;
 					}
 				}
@@ -410,21 +410,19 @@ public class ArmpApp extends Application {
 		}
 	}
 
-	/**
-	 * HTTP POST REQUESTS FUNCTIONS
-	 */
 	private class HttpPostRequest implements Runnable {
 		private String mUrl;
-		private HttpParams params;
+		private List<NameValuePair> params;
 		private int mReqType;
-		private CommonResponseHandler<Object> mXmlHandler;
+		private CommonResponseHandler<ObjectResponse> mXmlHandler;
 
-		public HttpPostRequest(int req, String url, HttpParams params,
+		public HttpPostRequest(int req, String url, List<NameValuePair> params,
 				MyDefaultHandler xmlHandler) {
 			this.mUrl = url;
 			this.mReqType = req;
 			this.params = params;
-			this.mXmlHandler = new CommonResponseHandler<Object>(xmlHandler);
+			this.mXmlHandler = new CommonResponseHandler<ObjectResponse>(
+					xmlHandler);
 		}
 
 		public void run() {
@@ -434,20 +432,23 @@ public class ArmpApp extends Application {
 
 				Log.d(TAG, "Sending request: " + mUrl);
 				HttpPost httppost = new HttpPost(mUrl);
-				httppost.setParams(params);
 				setHeaders(httppost);
+				if (params != null) {
+					httppost.setEntity(new UrlEncodedFormEntity(params));
+				}
 
 				HttpResponse response = httpclient.execute(httppost);
-				Object res = mXmlHandler.handleResponse(response);
+				ObjectResponse res = mXmlHandler.handleResponse(response);
 				saveCookies(response);
-				Log.d("LOG", "POST request");
 
 				synchronized (mLock) {
 					switch (mReqType) {
 					case LOGIN_REQ_T:
-						Object[] arr = (Object[]) res;
-						Log.d("LOGIN", "Status: " + arr[0]);
-						Log.d("LOGIN", "Logged: " + arr[1]);
+						if (res.isLogged()) {
+							connectionAttempt = 0;
+						} else {
+							loginUser();
+						}
 						break;
 					}
 				}
@@ -465,6 +466,132 @@ public class ArmpApp extends Application {
 		}
 	}
 
+	private class HttpSendFile implements Runnable {
+
+		private int mReqType;
+		private String mUrl;
+		private String mFilename;
+		private MyDefaultHandler mXmlHandler;
+
+		public HttpSendFile(int req, String url, String filename,
+				MyDefaultHandler xmlHandler) {
+			this.mReqType = req;
+			this.mUrl = url;
+			this.mFilename = filename; // absolute path
+			this.mXmlHandler = xmlHandler;
+		}
+
+		@Override
+		public void run() {
+			HttpURLConnection connection = null;
+			DataOutputStream outputStream = null;
+			DataInputStream inputStream = null;
+
+			String lineEnd = "\r\n";
+			String twoHyphens = "--";
+			String boundary = "*****";
+
+			int bytesRead, bytesAvailable, bufferSize;
+			byte[] buffer;
+			int maxBufferSize = 1 * 1024 * 1024;
+
+			try {
+				FileInputStream fileInputStream = new FileInputStream(new File(
+						mFilename));
+
+				URL url = new URL(mUrl);
+				connection = (HttpURLConnection) url.openConnection();
+
+				// Allow Inputs & Outputs
+				connection.setDoInput(true);
+				connection.setDoOutput(true);
+				connection.setUseCaches(false);
+
+				// Enable POST method
+				connection.setRequestMethod("POST");
+
+				connection.setRequestProperty("Connection", "Keep-Alive");
+				connection.setRequestProperty("Content-Type",
+						"multipart/form-data;boundary=" + boundary);
+				synchronized (cookies) {
+					StringBuilder sb = new StringBuilder();
+					for (HttpHeader c : cookies) {
+						if (sb.length() > 0)
+							sb.append("; ");
+						sb.append(c.getName() + "=" + c.getValue());
+					}
+					if (sb.length() > 0) {
+						connection.setRequestProperty("Cookie", sb.toString());
+					}
+				}
+
+				outputStream = new DataOutputStream(
+						connection.getOutputStream());
+				outputStream.writeBytes(twoHyphens + boundary + lineEnd);
+				outputStream
+						.writeBytes("Content-Disposition: form-data; name=\"picture\";filename=\""
+								+ mFilename + "\"" + lineEnd);
+				outputStream.writeBytes(lineEnd);
+
+				bytesAvailable = fileInputStream.available();
+				bufferSize = Math.min(bytesAvailable, maxBufferSize);
+				buffer = new byte[bufferSize];
+
+				// Read file
+				bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+				while (bytesRead > 0) {
+					outputStream.write(buffer, 0, bufferSize);
+					bytesAvailable = fileInputStream.available();
+					bufferSize = Math.min(bytesAvailable, maxBufferSize);
+					bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+				}
+
+				outputStream.writeBytes(lineEnd);
+				outputStream.writeBytes(twoHyphens + boundary + twoHyphens
+						+ lineEnd);
+
+				// Responses from the server (code and message)
+				int serverResponseCode = connection.getResponseCode();
+				String serverResponseMessage = connection.getResponseMessage();
+
+				ObjectResponse res = null;
+				try {
+					/* Get a SAXParser from the SAXPArserFactory. */
+					SAXParserFactory spf = SAXParserFactory.newInstance();
+					SAXParser sp = spf.newSAXParser();
+
+					/* Get the XMLReader of the SAXParser we created. */
+					XMLReader xr = sp.getXMLReader();
+
+					/*
+					 * Create a new ContentHandler and apply it to the
+					 * XML-Reader
+					 */
+					xr.setContentHandler(mXmlHandler);
+
+					Log.d(TAG, serverResponseMessage);
+
+					/* Parse the xml-data from our string */
+					xr.parse(new InputSource(new StringReader(
+							serverResponseMessage)));
+
+					/* Our ExampleHandler now provides the parsed data to us. */
+					res = (ObjectResponse) mXmlHandler.getParsedData();
+				} catch (Exception e) {
+					Log.d(TAG, e.getMessage());
+				}
+
+				fileInputStream.close();
+				outputStream.flush();
+				outputStream.close();
+			} catch (Exception ex) {
+				Log.e(TAG, ex.getMessage());
+			}
+		}
+
+	}
+
 	private class CommonResponseHandler<T> implements ResponseHandler<T> {
 		private MyDefaultHandler mXmlHandler;
 
@@ -474,14 +601,14 @@ public class ArmpApp extends Application {
 
 		// @Override
 		public T handleResponse(HttpResponse r) {
-			String result = "";
+			StringBuilder result = new StringBuilder();
 			try {
 				// First, we retrieve the xml string from the server
 				BufferedReader br = new BufferedReader(new InputStreamReader(r
 						.getEntity().getContent()));
 				String line;
 				while ((line = br.readLine()) != null) {
-					result += line;
+					result.append(line);
 				}
 			} catch (IOException e) {
 				Log.e(TAG, e.getMessage());
@@ -502,16 +629,15 @@ public class ArmpApp extends Application {
 				/* Create a new ContentHandler and apply it to the XML-Reader */
 				xr.setContentHandler(mXmlHandler);
 
-				Log.d(TAG, result);
+				Log.d(TAG, result.toString());
 
 				/* Parse the xml-data from our string */
-				xr.parse(new InputSource(new StringReader(result)));
+				xr.parse(new InputSource(new StringReader(result.toString())));
 
 				/* Our ExampleHandler now provides the parsed data to us. */
 				res = (T) mXmlHandler.getParsedData();
 			} catch (Exception e) {
 				Log.d(TAG, e.getMessage());
-				e.printStackTrace();
 			}
 
 			return res;

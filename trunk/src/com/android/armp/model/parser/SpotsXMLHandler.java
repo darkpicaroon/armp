@@ -1,7 +1,6 @@
 package com.android.armp.model.parser;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -12,6 +11,7 @@ import android.util.Log;
 import com.android.armp.localized.MusicSourceSolver;
 import com.android.armp.model.Channel;
 import com.android.armp.model.Music;
+import com.android.armp.model.ObjectResponse;
 import com.android.armp.model.Spot;
 
 public class SpotsXMLHandler extends MyDefaultHandler {
@@ -74,8 +74,10 @@ public class SpotsXMLHandler extends MyDefaultHandler {
 	// ===========================================================
 
 	@Override
-	public ArrayList<Spot> getParsedData() {
-		return this.mParsed;
+	public ObjectResponse getParsedData() {
+		ObjectResponse r = super.getParsedData();
+		r.setObject(this.mParsed);
+		return r;
 	}
 
 	// ===========================================================
@@ -98,9 +100,8 @@ public class SpotsXMLHandler extends MyDefaultHandler {
 	@Override
 	public void startElement(String namespaceURI, String localName,
 			String qName, Attributes atts) throws SAXException {
-		if (localName.equals("root")) {
-			this.inRootTag = true;
-		} else if (localName.equals("spot")) {
+		super.startElement(namespaceURI, localName, qName, atts);
+		if (localName.equals("spot")) {
 			this.inSpotTag = true;
 			String attr = atts.getValue("id");
 			if (attr != null) {
@@ -185,9 +186,7 @@ public class SpotsXMLHandler extends MyDefaultHandler {
 	@Override
 	public void endElement(String namespaceURI, String localName, String qName)
 			throws SAXException {
-		if (localName.equals("root")) {
-			this.inRootTag = false;
-		} else if (localName.equals("spot")) {
+		if (localName.equals("spot")) {
 			this.inSpotTag = false;
 			mParsed.add(mSpot);
 		} else if (localName.equals("user") && !inChannelTag) {
@@ -259,6 +258,7 @@ public class SpotsXMLHandler extends MyDefaultHandler {
 	 */
 	@Override
 	public void characters(char ch[], int start, int length) {
+		super.characters(ch, start, length);
 		if (this.inRootTag && this.inSpotTag) {
 			if (this.inUserTag) {
 				mSpot.setUser(new String(ch, start, length));

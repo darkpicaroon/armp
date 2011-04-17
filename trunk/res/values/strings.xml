@@ -321,7 +321,7 @@
     
     <!-- Localized dialogs strings -->
     <string name="spot_name_label">Spot Name</string>
-    <string name="channel_name_label">Spot Name</string>
+    <string name="channel_name_label">Channel Name</string>
     <string name="set_color_label">Spot Color</string>
     <string name="set_picture_label">Spot Picture</string>
     <string name="take_picture_label">Take Picture</string>
