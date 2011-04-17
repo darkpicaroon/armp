@@ -24,7 +24,7 @@ Then the server creates a PHP session and sends back a PHPSESSID value. That PHP
 
 By analyzing what a regular web browser sends a receives, we can easily find out what to implement.
 
-=== LoginUser HTTP request header ===
+=== `LoginUser` HTTP request header ===
 {{{
 POST /armp/www/loginUser.php HTTP/1.1
 User-Agent: Opera/9.80 (X11; Linux x86_64; U; en) Presto/2.8.131 Version/11.10
@@ -41,7 +41,7 @@ Content-Type: text/xml; charset=utf-8
 Content-Transfer-Encoding: binary
 }}}
 
-=== LoginUser HTTP response header ===
+=== `LoginUser` HTTP response header ===
 {{{
 HTTP/1.0 200 OK
 Set-Cookie: PHPSESSID=7gklpkf5uv8gpivn9l3cotmor3; 90plan=R3276318907; path=/; expires=Wed, 20-Apr-2011 03:16:07 GMT
@@ -67,7 +67,7 @@ Thus, to authenticate a Facebook user on the ARMP server from the Android, the o
 
 Hence the code implemented in the [http://code.google.com/p/armp/source/detail?r=283 code revision 283]:
 
-=== The loginUser method ===
+=== The `loginUser` method ===
 {{{
 private void loginUser() {
   if (mFacebook == null || !mFacebook.isSessionValid())
@@ -84,7 +84,7 @@ private void loginUser() {
 }
 }}}
 
-=== The updateFacebookCookie method ===
+=== The `updateFacebookCookie` method ===
 {{{
 public void updateFacebookCookie() {
   String name = "fbs_" + mFacebook.getAppId();
@@ -129,7 +129,7 @@ private String md5(String s) {
 }
 }}}
 
-=== The saveCookies method ===
+=== The `saveCookies` method ===
 
 That method has to be called each time a HTTP response is received from the ARMP server.
 {{{
@@ -187,9 +187,9 @@ private boolean removeCookie(String name) {
 }
 }}}
 
-=== The setHeaders method ===
+=== The `setHeaders` method ===
 
-That method has to be called each time just before a HttpRequest (HttpPost or HttpGet) is sent by a AndroidHttpClient.
+That method has to be called each time just before a `HttpRequest` (`HttpPost` or `HttpGet`) is sent by a `AndroidHttpClient`.
 
 {{{
 private void setHeaders(HttpRequest r) {
