@@ -79,8 +79,8 @@ The spot elements will also contain a tree identical of those replied by the [WS
 
 == See also ==
 
- * [WS_CreateSpots Create Spots]
- * [WS_CreateChannels Create Channels]
+ * [WS_CreateSpot Create Spot]
+ * [WS_CreateChannel Create Channel]
  * [WS_GetSpots Get Spots]
  * [WS_GetChannels Get Channels]
  * [WS_DefaultResponse Common/Default WS Response]
