@@ -4,6 +4,10 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import android.util.Log;
+
+import com.android.armp.model.ObjectResponse;
+
 public class MyDefaultHandler extends DefaultHandler {
 	
 	protected boolean inRootTag   = false;
@@ -13,8 +17,9 @@ public class MyDefaultHandler extends DefaultHandler {
 	private int status;
 	private boolean isLogged;
 	
-	public Object getParsedData() {
-		return new Object[] { status, isLogged };
+	public ObjectResponse getParsedData() {
+		Log.d("RES", "Status: " + status + "; Logged: " + isLogged);
+		return new ObjectResponse(status, isLogged);
 	}
 	
 	/**
