@@ -12,7 +12,7 @@
 === Resources ===
 
  * Start day: 3/23/2011
- * End day: 4/12/2011
+ * End day: 4/19/2011
 
 === Backlog ===
 
@@ -43,6 +43,10 @@
 || US65 || Studies of the iTunes and Napster API || Check [http://www.apple.com/itunes/affiliates/resources/documentation/itunes-store-web-service-search-api.html iTunes API] and [http://access.napster.com/docs/ Napster API]|| 38 || Mathieu || 2 || 1 || http://fabienrenaud.com/armp/success.gif ||
 || US66 || Implementation of the iTunes request and playback of music preview || See the [US65_HowToDemo wiki page] || 37 || Mathieu || 6 || 5 || http://fabienrenaud.com/armp/success.gif ||
 || US66 || Implementation of recording activity || || 36 || Mathieu || 4 || - || http://fabienrenaud.com/armp/star-gold.png ||
+|| US67 || Implementation of the Facebook authentication on the ARMP server with a Facebook account from the Android. || See the [US67_HowToDemo wiki page] || 35 || Fabien || 3 || 4 || http://fabienrenaud.com/armp/success.gif ||
+|| US68 || Fetch the standard XML responses of the ARMP server whatever the request is. Provide an object able to get string message from the ARMP server. || See the [http://code.google.com/p/armp/source/browse/trunk/src/com/android/armp/model/parser/MyDefaultHandler.java?spec=svn283&r=283 MyDefaultHandler] object and the over XML handlers of the [http://code.google.com/p/armp/source/detail?r=283 revision 283]. || 34 || Fabien || 1 || 1 || http://fabienrenaud.com/armp/success.gif ||
+|| US69 || Implementation of objects sending post requests and able to send a file. || See the HttpPostRequest and HttpSendFile objects in the [http://code.google.com/p/armp/source/browse/trunk/src/com/android/armp/localized/ArmpApp.java?spec=svn283&r=283 ArmpApp object]. || 33 || Fabien || 1 || 1 || http://fabienrenaud.com/armp/success.gif ||
+|| US70 || Fix bugs causing a crash of the application when listing musics or local pictures. || See code [http://code.google.com/p/armp/source/detail?r=283 revision 283]. || 32 || Fabien || 1 || 1½ || http://fabienrenaud.com/armp/success.gif ||
 
 === Links ===
 
