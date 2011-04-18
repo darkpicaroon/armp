@@ -176,7 +176,7 @@ public class ArmpApp extends Application {
 	 */
 	public void saveSpotAndChannel(Spot s, Channel c) {
 		// dec ARGB to hex RGB
-		String color = String.format("%1$x", s.getColor()).substring(2);
+		String color = String.format("%1$8x", s.getColor()).substring(2);
 		String radius = String.format("%1$d", Math.round(s.getRadius()));
 
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -481,7 +481,6 @@ public class ArmpApp extends Application {
 			this.mXmlHandler = xmlHandler;
 		}
 
-		@Override
 		public void run() {
 			HttpURLConnection connection = null;
 			DataOutputStream outputStream = null;
