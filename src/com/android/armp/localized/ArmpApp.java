@@ -315,6 +315,7 @@ public class ArmpApp extends Application {
 				sb.append(c.getName() + "=" + c.getValue());
 			}
 			if (sb.length() > 0) {
+//				Log.d(TAG, "Cookie:" + sb.toString());
 				r.addHeader("Cookie", sb.toString());
 			}
 		}
@@ -331,7 +332,7 @@ public class ArmpApp extends Application {
 			// Create Hex String
 			StringBuffer hexString = new StringBuffer();
 			for (int i = 0; i < messageDigest.length; i++)
-				hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
+				hexString.append(String.format("%02x", messageDigest[i] & 0xFF));
 			return hexString.toString();
 
 		} catch (NoSuchAlgorithmException e) {
