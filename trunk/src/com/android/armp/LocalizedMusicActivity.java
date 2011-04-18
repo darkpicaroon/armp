@@ -39,6 +39,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
@@ -51,6 +52,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -109,7 +111,8 @@ public class LocalizedMusicActivity extends MapActivity implements
 	private Dialog mAddPictureDialog = null;
 	private Dialog mAddChannelDialog = null;
 	private ColorPickerDialog mColorDialog = null;
-
+	private Dialog mAlertNameDialog = null;
+	
 	/**
 	 * Objects tags
 	 */
@@ -159,6 +162,7 @@ public class LocalizedMusicActivity extends MapActivity implements
 	private final static int DIALOG_CREATE_CHANNEL = 1;
 	private final static int DIALOG_SELECT_COLOR = 2;
 	private final static int DIALOG_SELECT_PICTURE = 3;
+	private final static int DIALOG_ALERT_NAME = 4;
 
 	/**
 	 * Creation members
@@ -197,6 +201,7 @@ public class LocalizedMusicActivity extends MapActivity implements
 			// Save the currently displayed spot
 			mCurrSpots = ms;
 
+			dismissProgress(mProgressSpot);
 			// Send a message to the activity to update the view (on the UI
 			// thread)
 			mHandler.sendEmptyMessage(GOT_SPOTS);
@@ -485,6 +490,9 @@ public class LocalizedMusicActivity extends MapActivity implements
 		case DIALOG_SELECT_PICTURE:
 			mAddPictureDialog = dialog = addPictureDialog();
 			break;
+		case DIALOG_ALERT_NAME:
+			mAlertNameDialog = dialog = alertNameDialog();
+			break;
 		default:
 			dialog = null;
 		}
@@ -522,14 +530,23 @@ public class LocalizedMusicActivity extends MapActivity implements
 			LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
 			layout = inflater.inflate(R.layout.ok_cancel_btn,
 					(ViewGroup) findViewById(R.id.footer_btn));
-
+			
 			// Add the buttons view
 			this.addContentView(layout, new ViewGroup.LayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+
+			// AJOUT !!!!!!
+			View layout_h = inflater.inflate(R.layout.size_btn,
+					(ViewGroup) findViewById(R.id.header_btn));
+		
+			this.addContentView(layout_h, new ViewGroup.LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+			// -------------
 		} else {
 			layout.setVisibility(View.VISIBLE);
 		}
-
+		
+		
 		// Create bitmap
 		Bitmap bmp = BitmapFactory.decodeResource(getResources(),
 				R.drawable.spot_pin);
@@ -547,7 +564,47 @@ public class LocalizedMusicActivity extends MapActivity implements
 		mMapView.getOverlays().add(mNewSpotOverlay);
 		mSpotOverlays.add(mNewSpotOverlay);
 		// Log.d(TAG, "Added the new spot to the map: " + mNewSpot.toString());
+// AJOUT !!!!!!!!!!
+		
+		
+		ProgressBar sizeBar;
+	
+		sizeBar=(ProgressBar)findViewById(R.id.progressbar_Horizontal);
+		sizeBar.setProgress(100);
+		sizeBar.setOnTouchListener(new OnTouchListener() {
+			public boolean onTouch(View v, MotionEvent event) {
+				int action = event.getAction();
+                if (action == MotionEvent.ACTION_DOWN
+                        || action == MotionEvent.ACTION_MOVE) {
+    				Log.d(TAG, "SIZE_SETTER value =  in action");
+    				float x_mouse = event.getX();
+                    float width = v.getWidth();
+                    Log.d(TAG, "SIZE_SETTER x_value = " + x_mouse + " and width = " + width);
+                    int progress = Math.round(300*(float)(x_mouse / width));
+                    Log.d(TAG, "SIZE CHOSEN = " + progress);
+                    // Progress must be between 50 and 300
+                    if (progress < 50)
+                            progress = 50;
+                    ProgressBar sizeBar=(ProgressBar)findViewById(R.id.progressbar_Horizontal);
+                    sizeBar.setProgress(progress);
+                    if(mNewSpot == null ){
+                    	Log.d(TAG, "mNewSpot est nulle !!!!");
+                    } else{
+                    	mNewSpot.setRadius(progress);
+                        Bitmap bmp = BitmapFactory.decodeResource(getResources(),
+                				R.drawable.spot_pin);
+                        mNewSpotOverlay = new SpotOverlay(mNewSpot, bmp, true);
+                        refreshMusicSpots();
+                    }
 
+                }
+				return false;
+			}
+			
+		});
+		
+		// ----------
+		
 		// Set the click listener of the ok button
 		Button b = (Button) layout.findViewById(R.id.set_spot_position);
 		b.setOnClickListener(new OnClickListener() {
@@ -621,8 +678,13 @@ public class LocalizedMusicActivity extends MapActivity implements
 							public void onClick(DialogInterface dialog, int item) {
 								EditText e = (EditText) mAddSpotDialog
 										.findViewById(R.id.spot_name_value);
-								mNewSpot.setName(e.getEditableText().toString());
-								LocalizedMusicActivity.this.showDialog(DIALOG_CREATE_CHANNEL);
+								String spotName = e.getEditableText().toString();
+								if(spotName.length()<1){
+									LocalizedMusicActivity.this.showDialog(DIALOG_ALERT_NAME);
+								} else {
+									mNewSpot.setName(e.getEditableText().toString());
+									LocalizedMusicActivity.this.showDialog(DIALOG_CREATE_CHANNEL);
+								}
 							}
 						})
 				.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -812,6 +874,36 @@ public class LocalizedMusicActivity extends MapActivity implements
 							mNewChannel.setName(channelName);
 							LocalizedMusicActivity.this.saveSpotAndChannel(
 									mNewSpot, mNewChannel);
+						}
+					});
+
+		alertDialog = builder.create();
+
+		return alertDialog;
+	}
+	
+	private Dialog alertNameDialog() {
+		Log.d(TAG, "alertnamedialog()");
+		AlertDialog.Builder builder;
+		AlertDialog alertDialog;
+
+		Context mContext = this;
+		LayoutInflater inflater = (LayoutInflater) mContext
+				.getSystemService(LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(R.layout.alert_name_dialog,
+				(ViewGroup) findViewById(R.id.alert_name_dialog));
+
+		builder = new AlertDialog.Builder(mContext);
+
+		/**
+		 * Set the dialog title, the cancel button handler, the next button
+		 * handler and the cancel listener
+		 */
+		builder.setView(layout)
+				.setNegativeButton(R.string.back_step,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int item) {
+							LocalizedMusicActivity.this.showDialog(DIALOG_CREATE_SPOT);
 						}
 					});
 
@@ -1145,7 +1237,7 @@ public class LocalizedMusicActivity extends MapActivity implements
 	 */
 	private void saveSpotAndChannel(Spot s, Channel c) {
 		// Show dialog
-		mProgressChannel = ProgressDialog.show(LocalizedMusicActivity.this, "",
+		mProgressSpot = ProgressDialog.show(LocalizedMusicActivity.this, "",
 				"Saving the Spot...", true, false);
 
 		// Retrieve the channels from the content provider
