@@ -200,7 +200,7 @@ public class LocalizedMusicActivity extends MapActivity implements
 		public void onSpotsReceived(ArrayList<Spot> ms) {
 			// Save the currently displayed spot
 			mCurrSpots = ms;
-
+			Log.d(TAG,"en spot receiveeeeeed!!!!!!!!!!!");
 			dismissProgress(mProgressSpot);
 			// Send a message to the activity to update the view (on the UI
 			// thread)
@@ -874,6 +874,11 @@ public class LocalizedMusicActivity extends MapActivity implements
 							mNewChannel.setName(channelName);
 							LocalizedMusicActivity.this.saveSpotAndChannel(
 									mNewSpot, mNewChannel);
+							
+							View layout_header = LocalizedMusicActivity.this.findViewById(R.id.header_btn);
+							View layout_footer = LocalizedMusicActivity.this.findViewById(R.id.footer_btn);
+							layout_header.setVisibility(View.GONE);
+							layout_footer.setVisibility(View.GONE);   
 						}
 					});
 
