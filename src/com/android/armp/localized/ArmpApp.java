@@ -34,6 +34,7 @@ import android.app.Application;
 import android.net.http.AndroidHttpClient;
 import android.util.Log;
 
+import com.android.armp.LocalizedMusicActivity;
 import com.android.armp.model.Channel;
 import com.android.armp.model.HttpHeader;
 import com.android.armp.model.Music;
@@ -636,6 +637,12 @@ public class ArmpApp extends Application {
 
 				/* Our ExampleHandler now provides the parsed data to us. */
 				res = (T) mXmlHandler.getParsedData();
+				
+				if (mSpotsListener != null) {
+					Log.d(TAG,"le spotlistenereets non nullle " + res.toString());
+					mSpotsListener.onSpotsReceived(null);    
+				}
+				
 			} catch (Exception e) {
 				Log.d(TAG, e.getMessage());
 			}
