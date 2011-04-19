@@ -1,19 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/footer_btn" android:layout_width="fill_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/footer_btn" android:layout_width="match_parent"
     android:layout_height="wrap_content" android:orientation="horizontal"
-    android:layout_alignParentBottom="true" style="@android:style/ButtonBar">
+    android:layout_alignParentBottom="true" android:background="#000"
+    >
+    
+    <TextView
+        android:id="@+id/spot_size_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Spot size"
+        android:layout_centerVertical="true"/>
+    <SeekBar
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_toRightOf="@id/spot_size_label"
+		android:layout_centerVertical="true"
+		android:layout_centerInParent="true"
+		android:id="@+id/progressbar_Horizontal"
+		android:layout_margin="10px"/>              
 
     <Button android:id="@+id/set_spot_position" android:layout_width="wrap_content"
         android:layout_height="wrap_content" android:layout_weight="1"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/progressbar_Horizontal"
         android:text="@string/next_step" />
 
     <Button android:id="@+id/cancel_spot_creation" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/set_spot_position"
+        android:layout_centerVertical="true"
+        android:layout_weight="1"
         android:text="@string/cancel" />
               
-</LinearLayout> 
+</RelativeLayout> 
 
 
 
