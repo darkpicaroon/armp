@@ -532,16 +532,16 @@ public class LocalizedMusicActivity extends MapActivity implements
 					(ViewGroup) findViewById(R.id.footer_btn));
 			
 			// Add the buttons view
-			this.addContentView(layout, new ViewGroup.LayoutParams(
+			mMapView.addView(layout, new ViewGroup.LayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+			//this.addContentView(layout, new ViewGroup.LayoutParams(
+				//	LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 
-			// AJOUT !!!!!!
-			View layout_h = inflater.inflate(R.layout.size_btn,
-					(ViewGroup) findViewById(R.id.header_btn));
+			/*View layout_h = inflater.inflate(R.layout.size_btn,
+					(ViewGroup) findViewById(R.id.header_btn));		
 		
 			this.addContentView(layout_h, new ViewGroup.LayoutParams(
-					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-			// -------------
+					LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));*/
 		} else {
 			layout.setVisibility(View.VISIBLE);
 		}
@@ -552,11 +552,11 @@ public class LocalizedMusicActivity extends MapActivity implements
 				R.drawable.spot_pin);
 		Log.d(TAG, "before set lat and long");
 		// fake position for debugging purposes
-		mNewSpot.setLatitude(49.10223849249091);
-		mNewSpot.setLongitude(6.232860658932102);
+		//mNewSpot.setLatitude(49.10223849249091);
+		//mNewSpot.setLongitude(6.232860658932102);
 		// Set the initial position of the marker
-		// mNewSpot.setLatitude(mLocation.getMyLocation().getLatitudeE6()/1E6);
-		// mNewSpot.setLongitude(mLocation.getMyLocation().getLongitudeE6()/1E6);
+		mNewSpot.setLatitude(mLocation.getMyLocation().getLatitudeE6()/1E6);
+		mNewSpot.setLongitude(mLocation.getMyLocation().getLongitudeE6()/1E6);
 		mNewSpot.setRadius(100);
 
 		// Create a spot overlay, with the draggable flag set at true
