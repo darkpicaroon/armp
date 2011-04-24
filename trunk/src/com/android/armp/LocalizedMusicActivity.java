@@ -467,7 +467,6 @@ public class LocalizedMusicActivity extends MapActivity implements
 		case R.id.discovery_mode:
 			discoveryMode = (discoveryMode) ? false : true;
 			String debug = (discoveryMode) ? "on" : "off";
-			Log.d(TAG, "discoveryMode = " + debug);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -552,11 +551,11 @@ public class LocalizedMusicActivity extends MapActivity implements
 				R.drawable.spot_pin);
 		Log.d(TAG, "before set lat and long");
 		// fake position for debugging purposes
-		//mNewSpot.setLatitude(49.10223849249091);
-		//mNewSpot.setLongitude(6.232860658932102);
+		mNewSpot.setLatitude(49.10223849249091);
+		mNewSpot.setLongitude(6.232860658932102);
 		// Set the initial position of the marker
-		mNewSpot.setLatitude(mLocation.getMyLocation().getLatitudeE6()/1E6);
-		mNewSpot.setLongitude(mLocation.getMyLocation().getLongitudeE6()/1E6);
+//		mNewSpot.setLatitude(mLocation.getMyLocation().getLatitudeE6()/1E6);
+//		mNewSpot.setLongitude(mLocation.getMyLocation().getLongitudeE6()/1E6);
 		mNewSpot.setRadius(100);
 
 		// Create a spot overlay, with the draggable flag set at true
@@ -585,6 +584,8 @@ public class LocalizedMusicActivity extends MapActivity implements
                     // Progress must be between 50 and 300
                     if (progress < 50)
                             progress = 50;
+                    if (progress > 300)
+                    	progress = 300;
                     ProgressBar sizeBar=(ProgressBar)findViewById(R.id.progressbar_Horizontal);
                     sizeBar.setProgress(progress);
                     if(mNewSpot == null ){
@@ -594,6 +595,8 @@ public class LocalizedMusicActivity extends MapActivity implements
                         Bitmap bmp = BitmapFactory.decodeResource(getResources(),
                 				R.drawable.spot_pin);
                         mNewSpotOverlay = new SpotOverlay(mNewSpot, bmp, true);
+//                        mMapView.findFocus();
+                        mMapView.invalidate();
                         refreshMusicSpots();
                     }
 
@@ -619,8 +622,15 @@ public class LocalizedMusicActivity extends MapActivity implements
 		Button c = (Button) layout.findViewById(R.id.cancel_spot_creation);
 		c.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+				mMapView.getOverlays().remove(mNewSpotOverlay);
+				mSpotOverlays.remove(mNewSpotOverlay);
+				mNewSpotOverlay = null;
+				mNewSpot = null;
+				mNewChannel = null;
+				mMapView.invalidate();
 				View parentView = (View) v.getParent();
 				parentView.setVisibility(View.GONE);
+				refreshMusicSpots();
 			}
 		});
 	}
