@@ -13,11 +13,13 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.graphics.drawable.shapes.Shape;
 import android.location.Location;
+import android.provider.Settings.System;
 import android.util.Log;
 import android.view.MotionEvent;
 
 import com.android.armp.model.Spot;
 import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 
@@ -86,11 +88,14 @@ public class SpotOverlay extends Overlay {
 			canvas.drawBitmap(mBmp, bottom.x - mBmp.getWidth() / 2, left.y
 					- mBmp.getHeight(), null);
 		} else {
+			int red   = Color.red(this.mSpot.getColor());
+			int green = Color.green(this.mSpot.getColor());
+			int blue  = Color.blue(this.mSpot.getColor());
 			mShapeDrawable.setStrokeColour(Color.argb(255, 255, 255, 255));
 			if (dragging) {
 				mShapeDrawable.setFillColour(Color.argb(80, 0, 255, 40));
 			} else {
-				mShapeDrawable.setFillColour(Color.argb(80, 0, 40, 255));
+				mShapeDrawable.setFillColour(Color.argb(80, red, green, blue));
 			}
 			mShapeDrawable.draw(canvas);
 		}
@@ -123,7 +128,6 @@ public class SpotOverlay extends Overlay {
 				Log.d(TAG, "in ACTION_DOWN");
 				if (dist < mSpot.getRadius()) {
 					inDrag = true;
-					mapView.setKeepScreenOn(false);
 				}
 			} else if (action == MotionEvent.ACTION_MOVE && inDrag) {
 				Log.d(TAG, "in ACTION_MOVE");
@@ -144,7 +148,7 @@ public class SpotOverlay extends Overlay {
 				mSpot.setLatitude(pt.getLatitudeE6() / 1E6);
 				mSpot.setLongitude(pt.getLongitudeE6() / 1E6);
 				mShapeDrawable = new CustomShapeDrawable(new OvalShape());
-
+				
 				inDrag = false;
 			}
 		} else {
