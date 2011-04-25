@@ -202,6 +202,13 @@ public class LocalizedMusicActivity extends MapActivity implements
 			mCurrSpots = ms;
 			Log.d(TAG,"en spot receiveeeeeed!!!!!!!!!!!");
 			dismissProgress(mProgressSpot);
+			
+			// case where a new spot has just been saved
+			if(mNewSpot==null){
+				Log.d(TAG, "DABUG: on vient de sauvegarder un spot= "+ms.size());
+			}else{
+				Log.d(TAG, "TATADABUG: on vient de sauvegarder un spot= "+ms.size());
+			}
 			// Send a message to the activity to update the view (on the UI
 			// thread)
 			mHandler.sendEmptyMessage(GOT_SPOTS);
@@ -507,6 +514,12 @@ public class LocalizedMusicActivity extends MapActivity implements
 			// Set the color of the spot being created
 			mNewSpot.setColor(color);
 
+			// update the color of the spot in the mapview
+            Bitmap bmp = BitmapFactory.decodeResource(getResources(),
+    				R.drawable.spot_pin);
+            mNewSpotOverlay = new SpotOverlay(mNewSpot, bmp, true);
+            mMapView.invalidate();
+			
 			// Update the color on the view
 			mAddSpotDialog.findViewById(R.id.color_preview).setBackgroundColor(
 					color);
@@ -556,6 +569,7 @@ public class LocalizedMusicActivity extends MapActivity implements
 		// Set the initial position of the marker
 //		mNewSpot.setLatitude(mLocation.getMyLocation().getLatitudeE6()/1E6);
 //		mNewSpot.setLongitude(mLocation.getMyLocation().getLongitudeE6()/1E6);
+		mNewSpot.setColor(Color.BLUE); // set the default color
 		mNewSpot.setRadius(100);
 
 		// Create a spot overlay, with the draggable flag set at true
@@ -575,7 +589,6 @@ public class LocalizedMusicActivity extends MapActivity implements
 				int action = event.getAction();
                 if (action == MotionEvent.ACTION_DOWN
                         || action == MotionEvent.ACTION_MOVE) {
-    				Log.d(TAG, "SIZE_SETTER value =  in action");
     				float x_mouse = event.getX();
                     float width = v.getWidth();
                     Log.d(TAG, "SIZE_SETTER x_value = " + x_mouse + " and width = " + width);
@@ -588,17 +601,13 @@ public class LocalizedMusicActivity extends MapActivity implements
                     	progress = 300;
                     ProgressBar sizeBar=(ProgressBar)findViewById(R.id.progressbar_Horizontal);
                     sizeBar.setProgress(progress);
-                    if(mNewSpot == null ){
-                    	Log.d(TAG, "mNewSpot est nulle !!!!");
-                    } else{
-                    	mNewSpot.setRadius(progress);
-                        Bitmap bmp = BitmapFactory.decodeResource(getResources(),
-                				R.drawable.spot_pin);
-                        mNewSpotOverlay = new SpotOverlay(mNewSpot, bmp, true);
-//                        mMapView.findFocus();
-                        mMapView.invalidate();
-                        refreshMusicSpots();
-                    }
+                    
+                	mNewSpot.setRadius(progress);
+                    Bitmap bmp = BitmapFactory.decodeResource(getResources(),
+            				R.drawable.spot_pin);
+                    mNewSpotOverlay = new SpotOverlay(mNewSpot, bmp, true);
+                    mMapView.invalidate();
+                    
 
                 }
 				return false;
@@ -622,15 +631,17 @@ public class LocalizedMusicActivity extends MapActivity implements
 		Button c = (Button) layout.findViewById(R.id.cancel_spot_creation);
 		c.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+				Log.d(TAG, "DEBUG: about to remove created spot");
 				mMapView.getOverlays().remove(mNewSpotOverlay);
 				mSpotOverlays.remove(mNewSpotOverlay);
 				mNewSpotOverlay = null;
 				mNewSpot = null;
 				mNewChannel = null;
 				mMapView.invalidate();
+				refreshMusicSpots();
 				View parentView = (View) v.getParent();
 				parentView.setVisibility(View.GONE);
-				refreshMusicSpots();
+				Log.d(TAG, "DEBUG: REMOVED");
 			}
 		});
 	}
@@ -679,8 +690,8 @@ public class LocalizedMusicActivity extends MapActivity implements
 				.setNegativeButton(R.string.cancel,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int item) {
-								mNewChannel = null;
-								mNewSpot = null;
+//								mNewChannel = null;
+//								mNewSpot = null;
 							}
 						})
 				.setPositiveButton(R.string.next_step,
@@ -885,9 +896,7 @@ public class LocalizedMusicActivity extends MapActivity implements
 							LocalizedMusicActivity.this.saveSpotAndChannel(
 									mNewSpot, mNewChannel);
 							
-							View layout_header = LocalizedMusicActivity.this.findViewById(R.id.header_btn);
 							View layout_footer = LocalizedMusicActivity.this.findViewById(R.id.footer_btn);
-							layout_header.setVisibility(View.GONE);
 							layout_footer.setVisibility(View.GONE);   
 						}
 					});
@@ -897,8 +906,8 @@ public class LocalizedMusicActivity extends MapActivity implements
 		return alertDialog;
 	}
 	
+	// Display an alert box when a required name has not been set
 	private Dialog alertNameDialog() {
-		Log.d(TAG, "alertnamedialog()");
 		AlertDialog.Builder builder;
 		AlertDialog alertDialog;
 
@@ -1068,7 +1077,7 @@ public class LocalizedMusicActivity extends MapActivity implements
 			// Go from the map view to the channels view
 			mFlipper.showNext();
 			mCurrView = CHANNELS_VIEW;
-
+			Log.d(TAG,"DEBUG: displayed channelview");
 			/*
 			 * for (Channel mc : mCurrChans) { Log.d(TAG, "Music channel #" +
 			 * mc.getId() + " - " + mc.getName()); }
