@@ -12,7 +12,6 @@
 </table>
 
 Mandatory parameters:
- * channelId = _int_ > 0
  * sound = _binary data_ The uploaded file.
 
 Optional parameters:
