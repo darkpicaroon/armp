@@ -1,0 +1,41 @@
+= Upload Sound =
+
+== Actions ==
+
+ * Upload a sound on the server.
+
+== Request ==
+<table cellspacing="4" border="0">
+ <tr><td>*URL*</td><td>[http://fabienrenaud.com/armp/www/uploadSound.php]</td></tr>
+ <tr><td>*Method*</td><td>POST</td></tr>
+ <tr><td>*Authentication*</td><td>Required.</td></tr>
+</table>
+
+Mandatory parameters:
+ * sound = _binary data_ The uploaded file.
+
+Optional parameters:
+ * name = _string_ The name of the spot.
+
+== Response ==
+
+That WS returns a XML file with the following tree:
+ * *root*
+  * *message* The url where the picture has been stored.
+  * *logged* _See [WS_DefaultResponse Common/Default WS Response]_
+  * *status* _See [WS_DefaultResponse Common/Default WS Response]_
+
+==== Sample ====
+
+{{{
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <message>snd/sound.wav</message>
+  <logged>1</logged>
+  <status>1</status>
+</root>
+}}}
+
+== See also ==
+
+ * [WS_DefaultResponse Common/Default WS Response]
