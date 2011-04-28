@@ -2,7 +2,7 @@
 
 == Actions ==
 
- * Upload a sound on the server.
+ * Upload a sound on the server for the specified channel.
 
 == Request ==
 <table cellspacing="4" border="0">
@@ -12,6 +12,7 @@
 </table>
 
 Mandatory parameters:
+ * channelId = _int_ > 0
  * sound = _binary data_ The uploaded file.
 
 Optional parameters:
