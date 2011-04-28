@@ -30,7 +30,7 @@ That WS returns a XML file with the following tree:
 {{{
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <message>img/picture.jpg</message>
+  <message>sound/sound.wav</message>
   <logged>1</logged>
   <status>1</status>
 </root>
