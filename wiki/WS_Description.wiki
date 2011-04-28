@@ -17,7 +17,7 @@
 || setChannelStartTime.php || Updates a channel listening startTime. || Yes || POST || <ul><li>channelId = _int_</li></ul> || || [WS_SetChannelStartTime More] ||
 || setChannelEndTime.php || Updates a channel listening endTime. || Yes || POST || <ul><li>channelId = _int_</li></ul> || || [WS_SetChannelStartTime More] ||
 || uploadPhoto.php || Upload a photo for a spot. || Yes || POST || <ul><li>picture = _binary data_</li></ul> || <ul><li>name = _string_</li></ul> || [WS_UploadPhoto More] ||
-|| uploadSound.php || Upload a sound for a channel. || Yes || POST || <ul><li>channelId = _int_</li><li>sound = _binary data_</li></ul> || <ul><li>name = _string_</li></ul> || [WS_UploadSound More] ||
+|| uploadSound.php || Upload a sound for a channel. || Yes || POST || <ul><li>sound = _binary data_</li></ul> || <ul><li>name = _string_</li></ul> || [WS_UploadSound More] ||
 || deleteSpot.php || Delete a spot. || Yes || GET || <ul><li>id = _int_</li></ul> || || [WS_DeleteSpot More] ||
 || deleteChannel.php || Delete a channel. || Yes || GET || <ul><li>id = _int_</li></ul> || || [WS_DeleteChannel More] ||
 || deleteMusic.php || Delete a music. || Yes || GET || <ul><li>id = _int_</li></ul> || || [WS_DeleteMusic More] ||
