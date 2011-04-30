@@ -106,13 +106,13 @@ public class MusicSourceSolver {
 					m.setIsPlayable(true);
 					found = true;
 				}
-				Log.d(TAG, "Nb results for " + artist + ": " + cursor.getCount());
+				Log.v(TAG, "Nb results for " + artist + ": " + cursor.getCount());
 				cursor.close();
 			}
 		}
 		
 		if (!found) {
-			Log.i(TAG, "Track not found on local device, trying iTunes");
+			Log.v(TAG, "Track not found on local device, trying iTunes");
 			try {
 				pool.execute(new HttpPreviewRequest(artist, title, m));
 			} catch (Exception e) {
@@ -143,11 +143,11 @@ public class MusicSourceSolver {
 			String iTunesUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch?entity=musicTrack&media=music&limit=3&term=";
 
 			try {
-				Log.i(TAG, "params before sanitization : " + artist + title);
+				Log.v(TAG, "params before sanitization : " + artist + title);
 				term = term.replace(' ', '+');
 				term = term.replace('-', '+');
 				term = term.replace('\'', '+');
-				Log.i(TAG, "params after sanitization : " + term);
+				Log.v(TAG, "params after sanitization : " + term);
 
 				httpclient = AndroidHttpClient.newInstance("");
 				HttpGet httpget = new HttpGet(iTunesUrl + term);
@@ -161,11 +161,11 @@ public class MusicSourceSolver {
 
 					int countresult = json.getInt("resultCount");
 					if (countresult == 0) {
-						Log.d(TAG, "no result found on iTunes for: " + artist
+						Log.v(TAG, "no result found on iTunes for: " + artist
 								+ " " + title);
 						m.setIsPlayable(false);
 					} else {
-						Log.d(TAG, "there is/are " + countresult
+						Log.v(TAG, "there is/are " + countresult
 								+ " on iTunes for " + artist + " " + title);
 						JSONArray results = new JSONArray();
 						results = json.getJSONArray("results");
@@ -178,12 +178,12 @@ public class MusicSourceSolver {
 						}
 
 						if (previewUrl != "null") {
-							Log.d(TAG, " Found a preview on iTunes at: "
+							Log.v(TAG, " Found a preview on iTunes at: "
 									+ previewUrl);
 							m.setSource(previewUrl);
 							m.setIsPlayable(true);
 						} else {
-							Log.d(TAG, " No preview found on iTunes!");
+							Log.v(TAG, " No preview found on iTunes!");
 							m.setIsPlayable(false);
 						}
 					}

@@ -125,12 +125,10 @@ public class SpotOverlay extends Overlay {
 			double dist = (res[0] * 1E4) / mapView.getLatitudeSpan();
 
 			if (action == MotionEvent.ACTION_DOWN) {
-				Log.d(TAG, "in ACTION_DOWN");
 				if (dist < mSpot.getRadius()) {
 					inDrag = true;
 				}
 			} else if (action == MotionEvent.ACTION_MOVE && inDrag) {
-				Log.d(TAG, "in ACTION_MOVE");
 				this.dragging = true;
 				mapView.getOverlays().remove(this);
 				GeoPoint pt = mapView.getProjection().fromPixels(
@@ -160,6 +158,7 @@ public class SpotOverlay extends Overlay {
 				}
 			}
 		}
+		mapView.invalidate();
 		return super.onTouchEvent(e, mapView);
 	}
 

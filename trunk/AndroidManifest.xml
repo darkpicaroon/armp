@@ -257,8 +257,7 @@
             
         
         <activity android:name="com.android.armp.LocalizedMusicActivity"
-                android:label="@string/maplabel" 
-                android:configChanges="keyboardHidden|orientation" />
+                android:label="@string/maplabel" />
         <activity android:name="com.android.armp.localized.MusicChannelView"
           android:label="@string/localizedchan"/>
         <service android:name="com.android.armp.localized.LocalizedMusicService"
