@@ -274,16 +274,14 @@ public class ArmpApp extends Application {
 		}
 	}
 
-	private void saveCookies(HttpResponse r) {
-		synchronized (cookies) {
-			Header[] headers = r.getHeaders("Set-Cookie");
-			for (Header h : headers) {
-				String[] cc = h.getValue().split(";");
-				for (String c : cc) {
-					String[] nv = c.split("=");
-					if (nv.length == 2) {
-						updateCookie(nv[0], nv[1]);
-					}
+	private synchronized void saveCookies(HttpResponse r) {
+		Header[] headers = r.getHeaders("Set-Cookie");
+		for (Header h : headers) {
+			String[] cc = h.getValue().split(";");
+			for (String c : cc) {
+				String[] nv = c.split("=");
+				if (nv.length == 2) {
+					updateCookie(nv[0], nv[1]);
 				}
 			}
 		}
@@ -316,18 +314,16 @@ public class ArmpApp extends Application {
 		return null;
 	}
 
-	private void setHeaders(HttpRequest r) {
-		synchronized (cookies) {
-			StringBuilder sb = new StringBuilder();
-			for (HttpHeader c : cookies) {
-				if (sb.length() > 0)
-					sb.append("; ");
-				sb.append(c.getName() + "=" + c.getValue());
-			}
-			if (sb.length() > 0) {
-				// Log.d(TAG, "Cookie:" + sb.toString());
-				r.addHeader("Cookie", sb.toString());
-			}
+	private synchronized void setHeaders(HttpRequest r) {
+		StringBuilder sb = new StringBuilder();
+		for (HttpHeader c : cookies) {
+			if (sb.length() > 0)
+				sb.append("; ");
+			sb.append(c.getName() + "=" + c.getValue());
+		}
+		if (sb.length() > 0) {
+			// Log.d(TAG, "Cookie:" + sb.toString());
+			r.addHeader("Cookie", sb.toString());
 		}
 	}
 
@@ -450,7 +446,9 @@ public class ArmpApp extends Application {
 
 				Log.d(TAG, "Sending request: " + mUrl);
 				HttpResponse response = httpclient.execute(httppost);
+				Log.d(TAG, "Receive response for: " + mUrl);
 				ObjectResponse res = mXmlHandler.handleResponse(response);
+				Log.d(TAG, "Parsing ok for: " + mUrl);
 				saveCookies(response);
 
 				synchronized (mLock) {
