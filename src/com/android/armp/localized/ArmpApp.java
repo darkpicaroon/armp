@@ -76,6 +76,7 @@ public class ArmpApp extends Application {
 	private static final String LOGIN_REQ = rootUrl + "loginUser.php";
 	private static final String SPOT_CHANNEL_ADD = rootUrl + "createSC.php";
 	private static final String PHOTO_UPLOAD = rootUrl + "uploadPhoto.php";
+	private static final String SOUND_UPLOAD = rootUrl + "uploadSound.php";
 	private static final int SPOTS_REQ_T = 0;
 	private static final int CHANNELS_REQ_T = 1;
 	private static final int MUSICS_REQ_T = 2;
@@ -83,6 +84,7 @@ public class ArmpApp extends Application {
 	private static final int LOGIN_REQ_T = 4;
 	private static final int SPOT_CHANNEL_ADD_REQ_T = 5;
 	private static final int PHOTO_UPLOAD_REQ_T = 6;
+	private static final int SOUND_UPLOAD_REQ_T = 7;
 
 	/**
 	 * Response listeners
@@ -203,8 +205,8 @@ public class ArmpApp extends Application {
 	}
 
 	public void uploadSound(String absolutePath) {
-		Thread t = new Thread(new HttpSendFile(PHOTO_UPLOAD_REQ_T,
-				PHOTO_UPLOAD, "sound", absolutePath, new MessageXMLHandler()));
+		Thread t = new Thread(new HttpSendFile(SOUND_UPLOAD_REQ_T,
+				SOUND_UPLOAD, "sound", absolutePath, new MessageXMLHandler()));
 		t.start();
 	}
 
