@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -197,7 +198,13 @@ public class ArmpApp extends Application {
 
 	public void uploadPhoto(String absolutePath) {
 		Thread t = new Thread(new HttpSendFile(PHOTO_UPLOAD_REQ_T,
-				PHOTO_UPLOAD, absolutePath, new MessageXMLHandler()));
+				PHOTO_UPLOAD, "picture", absolutePath, new MessageXMLHandler()));
+		t.start();
+	}
+
+	public void uploadSound(String absolutePath) {
+		Thread t = new Thread(new HttpSendFile(PHOTO_UPLOAD_REQ_T,
+				PHOTO_UPLOAD, "sound", absolutePath, new MessageXMLHandler()));
 		t.start();
 	}
 
@@ -316,7 +323,7 @@ public class ArmpApp extends Application {
 				sb.append(c.getName() + "=" + c.getValue());
 			}
 			if (sb.length() > 0) {
-//				Log.d(TAG, "Cookie:" + sb.toString());
+				// Log.d(TAG, "Cookie:" + sb.toString());
 				r.addHeader("Cookie", sb.toString());
 			}
 		}
@@ -333,7 +340,8 @@ public class ArmpApp extends Application {
 			// Create Hex String
 			StringBuffer hexString = new StringBuffer();
 			for (int i = 0; i < messageDigest.length; i++)
-				hexString.append(String.format("%02x", messageDigest[i] & 0xFF));
+				hexString
+						.append(String.format("%02x", messageDigest[i] & 0xFF));
 			return hexString.toString();
 
 		} catch (NoSuchAlgorithmException e) {
@@ -432,13 +440,13 @@ public class ArmpApp extends Application {
 			try {
 				httpclient = AndroidHttpClient.newInstance(userAgent);
 
-				Log.d(TAG, "Sending request: " + mUrl);
 				HttpPost httppost = new HttpPost(mUrl);
 				setHeaders(httppost);
 				if (params != null) {
 					httppost.setEntity(new UrlEncodedFormEntity(params));
 				}
 
+				Log.d(TAG, "Sending request: " + mUrl);
 				HttpResponse response = httpclient.execute(httppost);
 				ObjectResponse res = mXmlHandler.handleResponse(response);
 				saveCookies(response);
@@ -472,13 +480,15 @@ public class ArmpApp extends Application {
 
 		private int mReqType;
 		private String mUrl;
+		private String mVariableName;
 		private String mFilename;
 		private MyDefaultHandler mXmlHandler;
 
-		public HttpSendFile(int req, String url, String filename,
-				MyDefaultHandler xmlHandler) {
+		public HttpSendFile(int req, String url, String variableName,
+				String filename, MyDefaultHandler xmlHandler) {
 			this.mReqType = req;
 			this.mUrl = url;
+			this.mVariableName = variableName;
 			this.mFilename = filename; // absolute path
 			this.mXmlHandler = xmlHandler;
 		}
@@ -530,8 +540,9 @@ public class ArmpApp extends Application {
 						connection.getOutputStream());
 				outputStream.writeBytes(twoHyphens + boundary + lineEnd);
 				outputStream
-						.writeBytes("Content-Disposition: form-data; name=\"picture\";filename=\""
-								+ mFilename + "\"" + lineEnd);
+						.writeBytes("Content-Disposition: form-data; name=\""
+								+ URLEncoder.encode(mVariableName)
+								+ "\";filename=\"" + mFilename + "\"" + lineEnd);
 				outputStream.writeBytes(lineEnd);
 
 				bytesAvailable = fileInputStream.available();
@@ -637,12 +648,7 @@ public class ArmpApp extends Application {
 
 				/* Our ExampleHandler now provides the parsed data to us. */
 				res = (T) mXmlHandler.getParsedData();
-				
-				if (mSpotsListener != null) {
-					Log.d(TAG,"le spotlistenereets non nullle " + res.toString());
-					mSpotsListener.onSpotsReceived(null);    
-				}
-				
+
 			} catch (Exception e) {
 				Log.d(TAG, e.getMessage());
 			}
