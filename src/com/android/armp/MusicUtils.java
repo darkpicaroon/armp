@@ -1348,6 +1348,7 @@ public class MusicUtils {
 	}
 
 	static void updateNowPlaying(Activity a) {
+		Log.d(TAG, "Updating now playing view");
 		View nowPlayingView = a.findViewById(R.id.nowplaying);
 		if (nowPlayingView == null) {
 			return;
@@ -1373,6 +1374,7 @@ public class MusicUtils {
 				// mNowPlayingView.setOnFocusChangeListener(mFocuser);
 				// mNowPlayingView.setOnClickListener(this);
 				nowPlayingView.setVisibility(View.VISIBLE);
+				Log.d(TAG, "VISIBLE");
 				nowPlayingView.setOnClickListener(new View.OnClickListener() {
 
 					public void onClick(View v) {
@@ -1386,6 +1388,7 @@ public class MusicUtils {
 		} catch (RemoteException ex) {
 		}
 		nowPlayingView.setVisibility(View.GONE);
+		Log.d(TAG, "GONE "+(MusicUtils.sService != null));
 	}
 
 	static void setBackground(View v, Bitmap bm) {

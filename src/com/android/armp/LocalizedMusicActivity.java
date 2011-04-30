@@ -22,6 +22,9 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.hardware.Camera;
+import android.hardware.Camera.CameraInfo;
+import android.hardware.Camera.Size;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -63,9 +66,11 @@ import com.android.armp.localized.ArmpApp;
 import com.android.armp.localized.ArmpApp.OnChannelsReceivedListener;
 import com.android.armp.localized.ArmpApp.OnMusicsReceivedListener;
 import com.android.armp.localized.ArmpApp.OnSpotsReceivedListener;
+import com.android.armp.localized.ButtonBar;
 import com.android.armp.localized.ColorPickerDialog;
 import com.android.armp.localized.LocalizedMusicService;
 import com.android.armp.localized.LocalizedPreferencesActivity;
+import com.android.armp.localized.SpotSizePanel;
 import com.android.armp.localized.SmartMapView;
 import com.android.armp.localized.SmartMapView.OnAreaChangedListener;
 import com.android.armp.localized.SpotOverlay;
@@ -84,6 +89,8 @@ import com.google.android.maps.Overlay;
 public class LocalizedMusicActivity extends MapActivity implements
 		ServiceConnection {
 	private final static String TAG = "LMA"; // Debug TAG
+	
+	private final static int CREATE_MODE_ZOOM_LVL = 17;
 
 	/**
 	 * Music spots and spots overlays
@@ -112,6 +119,9 @@ public class LocalizedMusicActivity extends MapActivity implements
 	private Dialog mAddChannelDialog = null;
 	private ColorPickerDialog mColorDialog = null;
 	private Dialog mAlertNameDialog = null;
+	private Bitmap pinBmp = null;
+	
+	private SpotSizePanel mPanel = null;
 	
 	/**
 	 * Objects tags
@@ -154,6 +164,20 @@ public class LocalizedMusicActivity extends MapActivity implements
 	public final static int MUSICS_VIEW = 2;
 	private static int mCurrView; // Used to load displayed view on resume
 	private ViewFlipper mFlipper;
+	
+	/**
+	 * Button bar camera display
+	 */
+	private ButtonBar mPreview;
+    private Camera mCamera;
+    private int numberOfCameras;
+    private int cameraCurrentlyLocked;
+    private int defaultCameraId;
+    
+    /**
+     * State
+     */
+    private boolean inCreationMode = false;
 
 	/**
 	 * Dialog ids
@@ -322,8 +346,9 @@ public class LocalizedMusicActivity extends MapActivity implements
 
 		// Set basic properties
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.localized_music_activity);
-		setTitle(R.string.maps_title);
+		//setTitle(R.string.maps_title);
 
 		// Get the maps references
 		mMapView = (SmartMapView) findViewById(R.id.mapview);
@@ -336,6 +361,9 @@ public class LocalizedMusicActivity extends MapActivity implements
 		mFlipper = (ViewFlipper) findViewById(R.id.flipper);
 		mFlipper.setInAnimation(fadeInAnimation());
 		mFlipper.setOutAnimation(fadeOutAnimation());
+		
+		// Get a reference to the spot creation panel
+		mPanel = (SpotSizePanel)findViewById(R.id.spot_panel);
 
 		// Display the user's location on the map view
 		mLocation = new MyLocationOverlay(mMapView.getContext(), mMapView);
@@ -360,8 +388,26 @@ public class LocalizedMusicActivity extends MapActivity implements
 			Log.d(TAG, "Facebook token: " + mFacebook.getAccessToken());
 			theApp.updateFacebookCookie();
 		}
+		
+		// Button bar bg with camera
+		mPreview = (ButtonBar) findViewById(R.id.buttonbar);
+		
+		// Find the total number of cameras available
+        numberOfCameras = Camera.getNumberOfCameras();
+
+        // Find the ID of the default camera
+        CameraInfo cameraInfo = new CameraInfo();
+            for (int i = 0; i < numberOfCameras; i++) {
+                Camera.getCameraInfo(i, cameraInfo);
+                if (cameraInfo.facing == CameraInfo.CAMERA_FACING_BACK) {
+                    defaultCameraId = i;
+                }
+            }
 		// Start tracing
 		// Debug.startMethodTracing("LocalizedMusic");
+            
+        pinBmp =    BitmapFactory.decodeResource(getResources(),
+        			R.drawable.spot_pin);
 
 	}
 
@@ -371,6 +417,11 @@ public class LocalizedMusicActivity extends MapActivity implements
 		// Update the now playing bar
 		MusicUtils.setSpinnerState(this);
 		MusicUtils.updateNowPlaying(this);
+		
+		mCamera = Camera.open();
+        cameraCurrentlyLocked = defaultCameraId;
+        mPreview.setCamera(mCamera);
+        mCamera.startPreview();
 
 		// Update the currently displayed view
 		mCurrView = MAP_VIEW;
@@ -397,6 +448,9 @@ public class LocalizedMusicActivity extends MapActivity implements
 		super.onStop();
 
 		unregisterReceiver(mStatusListener);
+		
+		mCamera.stopPreview();
+		mCamera.release();
 
 		// Unbind the mediaplayback service
 		MusicUtils.unbindFromService(mToken);
@@ -466,10 +520,9 @@ public class LocalizedMusicActivity extends MapActivity implements
 			startActivity(new Intent(this, LocalizedPreferencesActivity.class));
 			return true;
 		case R.id.add_spot:
-			Log.d(TAG, "Create SPOT");
 			mNewSpot = new Spot(-1);
 			mNewChannel = new Channel(-1);
-			setMarkerDialog();
+			displayCreationPanel();
 			return true;
 		case R.id.discovery_mode:
 			discoveryMode = (discoveryMode) ? false : true;
@@ -535,55 +588,51 @@ public class LocalizedMusicActivity extends MapActivity implements
 	 * Finish the drag n drop on the SpotOverlay class TODO: Close the button
 	 * view on OK or cancel
 	 */
-	private void setMarkerDialog() {
-		View layout = this.findViewById(R.id.footer_btn);
+	private void displayCreationPanel() {
+		inCreationMode = true;
+		
+		View layout = this.findViewById(R.id.spot_panel);
+		
 		if (layout == null) {
-			Log.d(TAG, "footer_btn est null!");
 			LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-			layout = inflater.inflate(R.layout.ok_cancel_btn,
-					(ViewGroup) findViewById(R.id.footer_btn));
+			layout = inflater.inflate(R.layout.spot_panel,
+					(ViewGroup) findViewById(R.id.spot_panel));
 			
 			// Add the buttons view
 			mMapView.addView(layout, new ViewGroup.LayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-			//this.addContentView(layout, new ViewGroup.LayoutParams(
-				//	LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+			mPanel = (SpotSizePanel)findViewById(R.id.spot_panel);
+			mPanel.setViewHeight(this.findViewById(R.id.flipper).getHeight());
 
-			/*View layout_h = inflater.inflate(R.layout.size_btn,
-					(ViewGroup) findViewById(R.id.header_btn));		
-		
-			this.addContentView(layout_h, new ViewGroup.LayoutParams(
-					LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));*/
-		} else {
-			layout.setVisibility(View.VISIBLE);
 		}
 		
+		mPanel.toggle();
 		
-		// Create bitmap
-		Bitmap bmp = BitmapFactory.decodeResource(getResources(),
-				R.drawable.spot_pin);
-		Log.d(TAG, "before set lat and long");
 		// fake position for debugging purposes
-		mNewSpot.setLatitude(49.10223849249091);
-		mNewSpot.setLongitude(6.232860658932102);
+		//mNewSpot.setLatitude(49.10223849249091);
+		//mNewSpot.setLongitude(6.232860658932102);
+		
 		// Set the initial position of the marker
-//		mNewSpot.setLatitude(mLocation.getMyLocation().getLatitudeE6()/1E6);
-//		mNewSpot.setLongitude(mLocation.getMyLocation().getLongitudeE6()/1E6);
+		mNewSpot.setLatitude(mLocation.getMyLocation().getLatitudeE6()/1E6);
+		mNewSpot.setLongitude(mLocation.getMyLocation().getLongitudeE6()/1E6);
 		mNewSpot.setColor(Color.BLUE); // set the default color
 		mNewSpot.setRadius(100);
 
 		// Create a spot overlay, with the draggable flag set at true
-		mNewSpotOverlay = new SpotOverlay(mNewSpot, bmp, true);
+		mNewSpotOverlay = new SpotOverlay(mNewSpot, pinBmp, true);
 		mMapView.getOverlays().add(mNewSpotOverlay);
 		mSpotOverlays.add(mNewSpotOverlay);
-		// Log.d(TAG, "Added the new spot to the map: " + mNewSpot.toString());
-// AJOUT !!!!!!!!!!
 		
-		
+		// Block scrolling of the map and zoom to the user position
+		mMapView.setInAddMode(inCreationMode);
+		mMapCtrl.animateTo(mLocation.getMyLocation());		
+		mMapCtrl.setZoom(CREATE_MODE_ZOOM_LVL);
+		mMapView.getOverlays().remove(mLocation);
+				
 		ProgressBar sizeBar;
 	
-		sizeBar=(ProgressBar)findViewById(R.id.progressbar_Horizontal);
-		sizeBar.setProgress(100);
+		sizeBar = (ProgressBar)findViewById(R.id.progressbar_Horizontal);
+		sizeBar.setProgress(50);
 		sizeBar.setOnTouchListener(new OnTouchListener() {
 			public boolean onTouch(View v, MotionEvent event) {
 				int action = event.getAction();
@@ -603,45 +652,45 @@ public class LocalizedMusicActivity extends MapActivity implements
                     sizeBar.setProgress(progress);
                     
                 	mNewSpot.setRadius(progress);
-                    Bitmap bmp = BitmapFactory.decodeResource(getResources(),
-            				R.drawable.spot_pin);
-                    mNewSpotOverlay = new SpotOverlay(mNewSpot, bmp, true);
-                    mMapView.invalidate();
-                    
+                	mMapView.getOverlays().remove(mNewSpotOverlay);
+                	mSpotOverlays.remove(mNewSpotOverlay);
 
+                    mNewSpotOverlay = new SpotOverlay(mNewSpot, pinBmp, true);
+                    
+                    mMapView.getOverlays().add(mNewSpotOverlay);
+                	mSpotOverlays.add(mNewSpotOverlay);
+                    
+                    mMapView.invalidate();
                 }
 				return false;
 			}
 			
 		});
-		
-		// ----------
-		
+
 		// Set the click listener of the ok button
 		Button b = (Button) layout.findViewById(R.id.set_spot_position);
 		b.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				mNewSpot = mNewSpotOverlay.getSpot();
-				Log.d(TAG, "About to complete form: " + mNewSpot.toString());
+
 				LocalizedMusicActivity.this.showDialog(DIALOG_CREATE_SPOT);
 			}
 		});
 
-		// TODO: Set the click listener of the cancel button?
 		Button c = (Button) layout.findViewById(R.id.cancel_spot_creation);
 		c.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				Log.d(TAG, "DEBUG: about to remove created spot");
 				mMapView.getOverlays().remove(mNewSpotOverlay);
 				mSpotOverlays.remove(mNewSpotOverlay);
 				mNewSpotOverlay = null;
 				mNewSpot = null;
 				mNewChannel = null;
 				mMapView.invalidate();
-				refreshMusicSpots();
-				View parentView = (View) v.getParent();
-				parentView.setVisibility(View.GONE);
-				Log.d(TAG, "DEBUG: REMOVED");
+				mPanel.toggle();
+				inCreationMode = false;
+				mMapView.setInAddMode(inCreationMode);
+				mMapView.getOverlays().add(mLocation);
+				refreshMusicSpots();				
 			}
 		});
 	}
@@ -681,6 +730,14 @@ public class LocalizedMusicActivity extends MapActivity implements
 								.showDialog(DIALOG_SELECT_PICTURE);
 					}
 				});
+		
+		// Set the click listener of the musics selection item
+		layout.findViewById(R.id.select_musics).setOnClickListener(
+				new OnClickListener() {
+					public void onClick(View v) {
+						Log.d(TAG,"SŽlectionner musiques");
+					}
+				});
 		/**
 		 * Set the dialog title, the cancel button handler, the next button
 		 * handler and the cancel listener
@@ -694,20 +751,23 @@ public class LocalizedMusicActivity extends MapActivity implements
 //								mNewSpot = null;
 							}
 						})
-				.setPositiveButton(R.string.next_step,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int item) {
-								EditText e = (EditText) mAddSpotDialog
-										.findViewById(R.id.spot_name_value);
-								String spotName = e.getEditableText().toString();
-								if(spotName.length()<1){
-									LocalizedMusicActivity.this.showDialog(DIALOG_ALERT_NAME);
-								} else {
-									mNewSpot.setName(e.getEditableText().toString());
-									LocalizedMusicActivity.this.showDialog(DIALOG_CREATE_CHANNEL);
-								}
-							}
-						})
+				.setPositiveButton(R.string.save_step,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int item) {
+							EditText e = (EditText) mAddSpotDialog.findViewById(R.id.channel_name_value);
+							String channelName = e.getEditableText().toString();
+							e = (EditText)mAddSpotDialog.findViewById(R.id.spot_name_value);
+							String spotName = e.getEditableText().toString();
+							if(channelName.length() < 1 || spotName.length() < 1) {
+								LocalizedMusicActivity.this.showDialog(DIALOG_ALERT_NAME);
+							} else {
+								mNewChannel.setName(channelName);
+								LocalizedMusicActivity.this.saveSpotAndChannel(
+										mNewSpot, mNewChannel);
+								mPanel.toggle();
+							}							
+						}
+					})
 				.setOnCancelListener(new DialogInterface.OnCancelListener() {
 					public void onCancel(DialogInterface dialog) {
 						mNewChannel = null;
@@ -896,8 +956,9 @@ public class LocalizedMusicActivity extends MapActivity implements
 							LocalizedMusicActivity.this.saveSpotAndChannel(
 									mNewSpot, mNewChannel);
 							
-							View layout_footer = LocalizedMusicActivity.this.findViewById(R.id.footer_btn);
-							layout_footer.setVisibility(View.GONE);   
+							//View layout_footer = LocalizedMusicActivity.this.findViewById(R.id.spot_panel);
+							//layout_footer.setVisibility(View.GONE);   
+							mPanel.toggle();
 						}
 					});
 

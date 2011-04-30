@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fadingEdge="horizontal"
     android:orientation="vertical">
     
     <include layout="@layout/sd_error" />
@@ -13,19 +12,24 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_weight="1"
-		android:fadingEdge="horizontal"
 		android:drawSelectorOnTop="false"
 		android:foreground="@drawable/test"
 		android:padding="0dip">
-    	
-    	<include layout="@layout/map_layout" />
+    
+		<com.android.armp.localized.SmartMapView
+	        android:id="@+id/mapview"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:layout_weight="1"
+	        android:clickable="true"        
+	        android:apiKey="06A1dckQYkmMgtwfy1exJLG90TwS5ngIvBL4Xew"
+	    />
+	    <!-- android:apiKey="06A1dckQYkmMgtwfy1exJLG90TwS5ngIvBL4Xew" --><!-- abarreir -->
+    	<!-- android:apiKey="0QfQVQVtmYQnZXSKvRXzFfyi3Bx-QezTWM2cr-A" --><!-- fabien -->
+    	<!-- android:apiKey="0gyttNRjv44C-YlDo7Ok26dmNKzeas_SECuN8RA" --><!-- mathieu -->
+    
 		<include android:id="@+id/chan_list"  layout="@layout/localized_music_channel_list" />		
 		<include android:id="@+id/music_list" layout="@layout/localized_music_list" />
 	
 	</ViewFlipper>
-	
-	<include layout="@layout/nowplaying" />  
-    
-    
-
 </LinearLayout>

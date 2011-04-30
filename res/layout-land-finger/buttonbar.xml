@@ -7,7 +7,7 @@
 ** you may not use this file except in compliance with the License.
 ** You may obtain a copy of the License at
 **
-**     http://www.apache.org/licenses/LICENSE-2.0
+**     http://www.apache.org/licenses/LICENSE-1.0
 **
 ** Unless required by applicable law or agreed to in writing, software
 ** distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,112 +17,122 @@
 */
 -->
 
-<TabWidget xmlns:android="http://schemas.android.com/apk/res/android"
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+							android:layout_width="fill_parent"
+                          android:layout_height="wrap_content"
+                          android:fillViewport="true"
+                          android:scrollbars="none">
+
+<com.android.armp.localized.ButtonBar
     android:id="@+id/buttonbar"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+	android:background="@drawable/tabwidget_bg"
+	android:tabStripEnabled="false">
 
     <TextView
         android:id="@+id/artisttab"
         android:focusable="true"
         android:background="@drawable/buttonbarbackground"
-        android:drawableTop="@drawable/ic_tab_artists"
         android:text="@string/browse_menu"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/tab_indicator_text"
-        android:paddingTop="7dip"
-        android:paddingBottom="2dip"
+        android:shadowColor="#000"  
+        android:shadowRadius="1.0"  
+        android:shadowDx="0"  
+        android:shadowDy="-1"  
+        android:textSize="30sp"
         android:gravity="center"
         android:layout_weight="1"
-        android:layout_marginLeft="-3dip"
-        android:layout_marginRight="-3dip"
         android:layout_width="match_parent"
-        android:layout_height="64dip" />
+        android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/albumtab"
-        android:focusable="true"
-        android:background="@drawable/buttonbarbackground"
-        android:drawableTop="@drawable/ic_tab_albums"
-        android:text="@string/albums_menu"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@color/tab_indicator_text"
-        android:paddingTop="7dip"
-        android:paddingBottom="2dip"
-        android:gravity="center"
-        android:layout_weight="1"
-        android:layout_marginLeft="-3dip"
-        android:layout_marginRight="-3dip"
-        android:layout_width="match_parent"
-        android:layout_height="64dip" />
+	    android:id="@+id/albumtab"
+     	android:focusable="true"
+     	android:background="@drawable/buttonbarbackground"
+	    android:text="@string/albums_menu"
+	    android:textAppearance="?android:attr/textAppearanceLarge"
+	    android:textColor="@color/tab_indicator_text"
+	    android:shadowColor="#000"  
+        android:shadowRadius="1.0"  
+        android:shadowDx="0"  
+        android:shadowDy="-1"  
+	    android:textSize="30sp"
+	    android:gravity="center"
+	    android:layout_weight="1"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/songtab"
+	<TextView
+       	android:id="@+id/songtab"
         android:focusable="true"
         android:background="@drawable/buttonbarbackground"
-        android:drawableTop="@drawable/ic_tab_songs"
         android:text="@string/tracks_menu"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@color/tab_indicator_text"
-        android:paddingTop="7dip"
-        android:paddingBottom="2dip"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/tab_indicator_text" 
+        android:shadowColor="#000"  
+        android:shadowRadius="1.0"  
+        android:shadowDx="0"  
+        android:shadowDy="-1"  
+        android:textSize="30sp"       
         android:gravity="center"
         android:layout_weight="1"
-        android:layout_marginLeft="-3dip"
-        android:layout_marginRight="-3dip"
         android:layout_width="match_parent"
-        android:layout_height="64dip" />
+        android:layout_height="wrap_content" />
 
-    <TextView
+	<TextView
         android:id="@+id/playlisttab"
         android:focusable="true"
         android:background="@drawable/buttonbarbackground"
-        android:drawableTop="@drawable/ic_tab_playlists"
         android:text="@string/playlists_menu"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/tab_indicator_text"
-        android:paddingTop="7dip"
-        android:paddingBottom="2dip"
-        android:gravity="center"
+        android:shadowColor="#000"  
+        android:shadowRadius="1.0"  
+        android:shadowDx="0"  
+        android:shadowDy="-1"  
+        android:textSize="30sp"
+       	android:gravity="center"
         android:layout_weight="1"
-        android:layout_marginLeft="-3dip"
-        android:layout_marginRight="-3dip"
         android:layout_width="match_parent"
-        android:layout_height="64dip" />
+        android:layout_height="wrap_content" />
         
-    <TextView
+	<TextView
         android:id="@+id/maptab"
         android:focusable="true"
         android:background="@drawable/buttonbarbackground"
-        android:drawableTop="@drawable/ic_tab_maps"
         android:text="@string/maps_menu"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/tab_indicator_text"
-        android:paddingTop="7dip"
-        android:paddingBottom="2dip"
+        android:shadowColor="#000"  
+        android:shadowRadius="1.0"  
+        android:shadowDx="0"  
+        android:shadowDy="-1"  
+        android:textSize="30sp"
         android:gravity="center"
         android:layout_weight="1"
-        android:layout_marginLeft="-3dip"
-        android:layout_marginRight="-3dip"
         android:layout_width="match_parent"
-        android:layout_height="64dip" />
+        android:layout_height="wrap_content" />
+				
+				
+	<TextView
+	    android:id="@+id/nowplayingtab"
+	    android:focusable="false"
+	    android:background="@drawable/buttonbarbackground"
+	  	android:text="@string/nowplaying_title"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:textColor="@color/tab_indicator_text"
+		android:shadowColor="#000"  
+        android:shadowRadius="1.0"  
+        android:shadowDx="0"  
+        android:shadowDy="-1"  
+		android:textSize="30sp"
+		android:gravity="center"
+		android:layout_weight="1"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/nowplayingtab"
-        android:focusable="false"
-        android:background="@drawable/buttonbarbackground"
-        android:drawableTop="@drawable/ic_tab_playback"
-        android:text="@string/nowplaying_title"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@color/tab_indicator_text"
-        android:paddingTop="7dip"
-        android:paddingBottom="2dip"
-        android:gravity="center"
-        android:layout_weight="1"
-        android:layout_marginLeft="3dip"
-        android:layout_marginRight="-3dip"
-        android:layout_width="match_parent"
-        android:layout_height="64dip" />
 
-</TabWidget>
-
+</com.android.armp.localized.ButtonBar>
+</HorizontalScrollView>

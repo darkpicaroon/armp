@@ -1,5 +1,7 @@
 package com.android.armp.localized;
 
+import java.util.List;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.location.Location;
@@ -8,6 +10,7 @@ import android.view.MotionEvent;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
+import com.google.android.maps.Overlay;
 
 public class SmartMapView extends MapView {
 	private static final String TAG = "SmartMapView";
@@ -17,11 +20,16 @@ public class SmartMapView extends MapView {
 	private GeoPoint mPrevCenter;
 	private boolean inMotion;
 	private boolean isTouching;
+	private boolean inAddMode = false;
 	private static OnAreaChangedListener mListener;
 
 	public SmartMapView(Context arg0, AttributeSet arg1) {
 		super(arg0, arg1);
 		mPrevCenter = new GeoPoint(0, 0);
+		
+		setFadingEdgeLength(25);
+		setHorizontalFadingEdgeEnabled(true);
+		setVerticalFadingEdgeEnabled(true);
 	}
 
 	public interface OnAreaChangedListener {
@@ -30,6 +38,10 @@ public class SmartMapView extends MapView {
 
 	public void setOnAreaChangedListener(OnAreaChangedListener l) {
 		mListener = l;
+	}
+	
+	public void setInAddMode(boolean inAddMode) {
+		this.inAddMode = inAddMode;
 	}
 
 	@Override
@@ -59,12 +71,24 @@ public class SmartMapView extends MapView {
 	}
 
 	@Override
-	public boolean onTouchEvent(MotionEvent e) {
+	public boolean onTouchEvent(MotionEvent e) {		
 		if (e.getAction() == MotionEvent.ACTION_DOWN)
 			isTouching = true;
 		else if (e.getAction() == MotionEvent.ACTION_UP)
 			isTouching = false;
-
+		
+		if(inAddMode) {			
+			List<Overlay> ovs = getOverlays();
+			
+			synchronized(ovs) {
+				for(int i = 0; i < ovs.size(); ++i) {
+					ovs.get(i).onTouchEvent(e, this);
+				}
+			}
+			
+			return true;			
+		}
+		
 		return super.onTouchEvent(e);
 	}
 

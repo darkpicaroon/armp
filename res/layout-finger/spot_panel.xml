@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.android.armp.localized.SpotSizePanel xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res/com.android.armp"
+	android:id="@+id/spot_panel" android:layout_width="match_parent"
+    android:layout_height="75px"
+    android:layout_alignParentBottom="true" android:background="@drawable/spot_bar"
+    android:paddingLeft="10dip" android:paddingRight="10dip"
+    android:visibility="gone"
+    app:speed="1000"
+	
+		
+    >
+    
+    <SeekBar
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/progressbar_Horizontal"
+		android:padding="0dip"
+		android:layout_marginTop="10dip"
+		android:layout_marginBottom="0dip"
+		android:progressDrawable="@drawable/custom_seekbar"
+		android:thumb="@drawable/thumb"
+		/>              
+
+    <Button android:id="@+id/set_spot_position" android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="false"
+        android:background="#0000"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/progressbar_Horizontal"
+        android:textSize="30sp"
+        android:textColor="#fff"
+        android:shadowColor="#000"  
+        android:shadowRadius="1.0"  
+        android:shadowDx="0"  
+        android:shadowDy="-1" 
+        android:text="@string/next_step"
+        />
+
+    <Button android:id="@+id/cancel_spot_creation" android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#0000"
+        android:layout_below="@id/progressbar_Horizontal"
+        android:textSize="30sp"
+        android:textColor="#fff"
+        android:shadowColor="#000"  
+        android:shadowRadius="1.0"  
+        android:shadowDx="0"  
+        android:shadowDy="-1" 
+        android:layout_centerVertical="false"
+        android:layout_alignParentRight="true"
+        android:text="@string/cancel" 
+        />
+              
+</com.android.armp.localized.SpotSizePanel> 
+
+
+

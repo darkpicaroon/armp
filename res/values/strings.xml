@@ -324,10 +324,12 @@
     <string name="channel_name_label">Channel Name</string>
     <string name="set_color_label">Spot Color</string>
     <string name="set_picture_label">Spot Picture</string>
+    <string name="set_musics_label">Spot Picture</string>
     <string name="take_picture_label">Take Picture</string>
     <string name="upload_picture_label">Upload Picture</string>
     <string name="next_step">Next</string>
     <string name="back_step">Back</string>
+    <string name="save_step">Save</string>
     <string name="need_name_label">You must enter a name!</string>
     
     <!-- Localized preferences strings -->
