@@ -27,6 +27,7 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -166,9 +167,8 @@ public class ArmpApp extends Application {
 		params.add(new BasicNameValuePair("pseudo", ""));
 		if (connectionAttempt < 2) {
 			connectionAttempt++;
-			Thread t = new Thread(new HttpPostRequest(LOGIN_REQ_T, LOGIN_REQ,
-					params, new MyDefaultHandler()));
-			t.start();
+			new HttpPostRequest(LOGIN_REQ_T, LOGIN_REQ,
+					params, new MyDefaultHandler()).run();
 		}
 	}
 
@@ -434,21 +434,21 @@ public class ArmpApp extends Application {
 		}
 
 		public void run() {
-			AndroidHttpClient httpclient = null;
+			DefaultHttpClient httpclient = null;
 			try {
-				httpclient = AndroidHttpClient.newInstance(userAgent);
+				httpclient = new DefaultHttpClient();
 
+				Log.d(TAG, "Sending request: " + mUrl);
 				HttpPost httppost = new HttpPost(mUrl);
 				setHeaders(httppost);
 				if (params != null) {
 					httppost.setEntity(new UrlEncodedFormEntity(params));
 				}
 
-				Log.d(TAG, "Sending request: " + mUrl);
 				HttpResponse response = httpclient.execute(httppost);
-				Log.d(TAG, "Receive response for: " + mUrl);
+//				Log.d(TAG, "Receive response for: " + mUrl);
 				ObjectResponse res = mXmlHandler.handleResponse(response);
-				Log.d(TAG, "Parsing ok for: " + mUrl);
+//				Log.d(TAG, "Parsing ok for: " + mUrl);
 				saveCookies(response);
 
 				synchronized (mLock) {
@@ -469,7 +469,7 @@ public class ArmpApp extends Application {
 				e.printStackTrace();
 			} finally {
 				if (httpclient != null) {
-					httpclient.close();
+//					httpclient.close();
 					Log.d(TAG, "Request over: " + mUrl);
 				}
 			}
