@@ -14,13 +14,13 @@
 Mandatory parameters:
  * {{{channelId}}} = _int_ > 0
  * title = _string_ The name of the channel.
- * genre = _string_ The genre of the music.
  * duration = _int_ The music's duration in seconds.
 
 Optional parameters:
  * source = _string_ The source of the channel, if it is a stream.
  * artist = _string_
  * album = _string_
+ * genre = _string_ The genre of the music.
  * year = _int_
  * track = _string_
 
