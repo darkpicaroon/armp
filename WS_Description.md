@@ -1,0 +1,25 @@
+# Web Services Summary #
+
+| **Filename** | **Actions** | **Auth** | **Method** | **Mandatory parameters** | **Optional parameters** |  |
+|:-------------|:------------|:---------|:-----------|:-------------------------|:------------------------|:-|
+| getSpots.php | Provide all spots in a given area. | No       | GET        | <ul><li>latne = <i>double</i></li><li>lngne = <i>double</i></li><li>latsw = <i>double</i></li><li>lngsw = <i>double</i></li><li>zoom = <i>int</i></li></ul> | <ul><li>heavy = <i>int</i></li></ul> | [More](WS_GetSpots.md) |
+| getChannels.php | Provide channels for a specified spot. | Yes/No   | GET        | <ul><li>spotId = <i>int</i></li></ul> | <ul><li>start = <i>int</i></li><li>limit = <i>int</i></li><li>heavy = <i>int</i></li></ul> | [More](WS_GetChannels.md) |
+| getMusics.php | Provide musics for a specified channel. | Yes/No   | GET        | <ul><li>channelId = <i>int</i></li></ul> | <ul><li>start = <i>int</i></li><li>limit = <i>int</i></li></ul> | [More](WS_GetMusics.md) |
+| getMessage.php | Obtains the message corresponding to a number. | No       | GET        | <ul><li>no = <i>int</i></li></ul> | <ul><li>hl = <i>string</i></li></ul> | [More](WS_GetMessage.md) |
+| loginUser.php | Creates a user or updates its last connection field in the database. Initializes the php session. | Yes/No   | POST       | <ul><li>udid = <i>string</i></li><li>facebookId = <i>int</i></li><li>facebookName = <i>string</i></li></ul> |                         | [More](WS_LoginUser.md) |
+| likeChannel.php | Likes a specified channel. | Yes      | POST       | <ul><li>channelId = <i>int</i></li></ul> |                         | [More](WS_LikeChannel.md) |
+| createSpot.php | Creates a spot at the given location with the specified name. | Yes      | POST       | <ul><li>lat = <i>double</i></li><li>lng = <i>double</i></li><li>name = <i>string</i></li><li>color = <i>string</i></li></ul> | <ul><li>radius = <i>int</i></li><li>picture = <i>string</i></li></ul> | [More](WS_CreateSpot.md) |
+| createChannel.php | Creates a channel for a specified spot with a given name. | Yes      | POST       | <ul><li><code>spotId</code> = <i>int</i></li><li>name = <i>string</i></li></ul> |                         | [More](WS_CreateChannel.md) |
+| createMusic.php | Creates/adds a music for a specified channel. | Yes      | POST       | <ul><li><code>channelId</code> = <i>int</i></li><li>title = <i>string</i></li><li>duration = <i>int</i></li></ul> | <ul><li>source = <i>string</i></li><li>artist = <i>string</i></li><li>album = <i>string</i></li><li>genre = <i>string</i></li><li>year = <i>int</i></li><li>track = <i>string</i></li></ul> | [More](WS_CreateMusic.md) |
+| createSC.php | Creates a spot at the given location with the specified name and creates its first channel. | Yes      | POST       | <ul><li>lat = <i>double</i></li><li>lng = <i>double</i></li><li>spotName = <i>string</i></li><li>color = <i>string</i></li><li>channelName = <i>string</i></li></ul> | <ul><li>radius = <i>int</i></li><li>picture = <i>string</i></li></ul> | [More](WS_CreateSC.md) |
+| addFriends.php | Adds friends for the current user. | Yes      | POST       | <ul><li>facebookIds = <i>list of integers</i></li><li>facebookNames = <i>list of strings</i></li></ul> |                         | [More](WS_AddFriends.md) |
+| setFrequencyOnPhone.php | Updates phone's music genre frequency. | Yes      | POST       | <ul><li>genres = <i>list of strings</i></li><li>freqs = <i>list of integers</i></li></ul> |                         | [More](WS_SetFrequencyOnPhone.md) |
+| setFrequencyOfChannels.php | Updates the frequency of a channel. | Yes      | POST       | <ul><li>channelId = <i>int</i></li></ul> |                         | [More](WS_SetFrequencyOfChannels.md) |
+| setChannelStartTime.php | Updates a channel listening startTime. | Yes      | POST       | <ul><li>channelId = <i>int</i></li></ul> |                         | [More](WS_SetChannelStartTime.md) |
+| setChannelEndTime.php | Updates a channel listening endTime. | Yes      | POST       | <ul><li>channelId = <i>int</i></li></ul> |                         | [More](WS_SetChannelStartTime.md) |
+| uploadPhoto.php | Upload a photo for a spot. | Yes      | POST       | <ul><li>picture = <i>binary data</i></li></ul> | <ul><li>name = <i>string</i></li></ul> | [More](WS_UploadPhoto.md) |
+| uploadSound.php | Upload a sound for a channel. | Yes      | POST       | <ul><li>sound = <i>binary data</i></li></ul> | <ul><li>name = <i>string</i></li></ul> | [More](WS_UploadSound.md) |
+| deleteSpot.php | Delete a spot. | Yes      | GET        | <ul><li>id = <i>int</i></li></ul> |                         | [More](WS_DeleteSpot.md) |
+| deleteChannel.php | Delete a channel. | Yes      | GET        | <ul><li>id = <i>int</i></li></ul> |                         | [More](WS_DeleteChannel.md) |
+| deleteMusic.php | Delete a music. | Yes      | GET        | <ul><li>id = <i>int</i></li></ul> |                         | [More](WS_DeleteMusic.md) |
+_Auth = Authentication required_
